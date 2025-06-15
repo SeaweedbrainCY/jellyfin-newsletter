@@ -24,7 +24,6 @@ translation = {
     }
 }
 
-
 def populate_email_template(movies, series, total_tv, total_movie) -> str:
     with open("./template/new_media_notification.html") as template_file:
         template = template_file.read()
@@ -61,13 +60,17 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                 <div class="movie-card">
                     <table class="movie-flex" width="100%" role="presentation" style="display: flex; border-collapse: collapse;">
                         <tr>
-                            <td class="movie-image" width="120" style="vertical-align: middle;">
+                            <td class="movie-image" width="120" style="vertical-align: middle; padding: 10px;">
                                 <img src="{movie_data['poster']}" alt="{movie_title}" style="max-width: 100px; height: auto; display: block;">
                             </td>
-                            <td class="movie-content" style="vertical-align: top; padding-left: 15px;">
-                                <h3 class="movie-title">{movie_title}</h3>
-                                <div class="movie-date">{translation[configuration.conf.email_template.language]['added_on']} {added_date}</div>
-                                <div class="movie-description">{movie_data['description']}</div>
+                            <td class="movie-content" style="vertical-align: top; padding: 10px 15px;">
+                                <h3 class="movie-title" style="color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;">{movie_title}</h3>
+                                <div class="movie-date" style="color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;">
+                                    {translation[configuration.conf.email_template.language]['added_on']} {added_date}
+                                </div>
+                                <div class="movie-description" style="color: #dddddd !important; font-size: 14px !important; line-height: 1.4 !important;">
+                                    {movie_data['description']}
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -90,13 +93,17 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                 <div class="movie-card">
                     <table class="movie-flex" width="100%" role="presentation" style="display: flex; border-collapse: collapse;">
                         <tr>
-                            <td class="movie-image" width="120" style="vertical-align: middle;">
+                            <td class="movie-image" width="120" style="vertical-align: middle; padding: 10px;">
                                 <img src="{serie_data['poster']}" alt="{serie_title}" style="max-width: 100px; height: auto; display: block;">
                             </td>
-                            <td class="movie-content" style="vertical-align: top; padding-left: 15px;">
-                                <h3 class="movie-title">{serie_title} {seasons_str}</h3>
-                                <div class="movie-date">{translation[configuration.conf.email_template.language]['added_on']} {added_date}</div>
-                                <div class="movie-description">{serie_data['description']}</div>
+                            <td class="movie-content" style="vertical-align: top; padding: 10px 15px;">
+                                <h3 class="movie-title" style="color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;">{serie_title} {seasons_str}</h3>
+                                <div class="movie-date" style="color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;">
+                                    {translation[configuration.conf.email_template.language]['added_on']} {added_date}
+                                </div>
+                                <div class="movie-description" style="color: #dddddd !important; font-size: 14px !important; line-height: 1.4 !important;">
+                                    {serie_data['description']}
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -112,5 +119,3 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         template = re.sub(r"\${movies_count}", str(total_movie), template)
         
         return template
-
-

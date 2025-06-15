@@ -4,17 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Gmail-specific meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="date=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="email=no">
     <style>
         /* Reset for email clients */
         body, table, td, p, a, h1, h2, h3 {
             font-family: Arial, Helvetica, sans-serif;
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
+            color: #ffffff !important;
         }
         
         body {
             background: #000011;
-            color: #ffffff;
             margin: 0;
             padding: 0;
         }
@@ -41,15 +47,16 @@
         }
         
         h1 {
-            color: #00ccff;
-            font-size: 24px;
-            margin: 0 0 10px;
+            color: #00ccff !important;
+            font-size: 24px !important;
+            margin: 0 0 10px !important;
         }
         
         p {
-            font-size: 16px;
-            line-height: 1.4;
-            margin: 0 0 15px;
+            font-size: 16px !important;
+            line-height: 1.4 !important;
+            margin: 0 0 15px !important;
+            color: #dddddd !important;
         }
         
         .button {
@@ -93,24 +100,29 @@
         }
         
         .movie-title {
-            font-size: 18px;
-            margin: 0 0 5px;
+            font-size: 18px !important;
+            margin: 0 0 5px !important;
+            color: #ffffff !important;
         }
         
         .movie-date {
-            color: #cccccc;
-            font-size: 14px;
-            margin: 0 0 10px;
+            color: #dddddd !important;
+            font-size: 14px !important;
+            margin: 0 0 10px !important;
         }
         
         .movie-description {
-            font-size: 14px;
-            line-height: 1.4;
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+            color: #dddddd !important;
+            word-wrap: break-word !important;
+            max-width: 100% !important;
+            overflow-wrap: break-word !important;
         }
         
         .section-title {
-            color: #00ccff;
-            font-size: 20px;
+            color: #00ccff !important;
+            font-size: 20px !important;
             padding: 10px 15px;
         }
         
@@ -127,14 +139,14 @@
         }
         
         .stats-number {
-            font-size: 28px;
-            margin: 0 0 5px;
-            color: #00ccff;
+            font-size: 28px !important;
+            margin: 0 0 5px !important;
+            color: #00ccff !important;
         }
         
         .stats-label {
-            font-size: 14px;
-            color: #cccccc;
+            font-size: 14px !important;
+            color: #dddddd !important;
         }
         
         .divider {
@@ -145,13 +157,23 @@
         footer {
             text-align: center;
             padding: 20px 0;
-            font-size: 12px;
-            color: #aaaaaa;
+            font-size: 12px !important;
+            color: #aaaaaa !important;
         }
         
         .footer-link, .footer-link:visited {
-            color: #4287f5;
-            text-decoration: underline;
+            color: #4287f5 !important;
+            text-decoration: underline !important;
+        }
+        
+        /* Gmail-specific fixes */
+        u + .body a {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
         }
         
         /* Media Queries */
@@ -169,10 +191,22 @@
             .movie-image img {
                 max-width: 150px;
             }
+            .movie-content {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+            .movie-description {
+                font-size: 13px !important;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Hidden content to prevent Gmail clipping -->
+    <div style="display: none; max-height: 0px; overflow: hidden;">
+        ‌ ‍ ‌ ‍ ‌ ‍ ‌ ‍ ‌ ‍ ‌ ‍ ‌ ‍ ‌ ‍ ‌ ‍ 
+    </div>
+    
     <center>
         <table class="main-table" role="presentation" cellpadding="0" cellspacing="0">
             <tr>
@@ -234,5 +268,10 @@
             </tr>
         </table>
     </center>
+    
+    <!-- Prevent Gmail clipping -->
+    <div style="display: none; white-space: nowrap; font: 15px courier; line-height: 0;">
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    </div>
 </body>
 </html>
