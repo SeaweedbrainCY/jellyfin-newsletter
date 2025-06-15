@@ -3,203 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <style>
+        /* Reset for email clients */
+        body, table, td, p, a, h1, h2, h3 {
+            font-family: Arial, Helvetica, sans-serif;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
         body {
             background: #000011;
-            color: white;
-            font-family: Arial, sans-serif;
-            
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
         }
+        
         .container {
-       
-            border-radius: 10px;
-            display: inline-block;
-            width:100%;
+            max-width: 600px;
+            margin: 0 auto;
         }
+        
+        .main-table {
+            width: 100%;
+            max-width: 600px;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        
+        .content-cell {
+            padding: 15px;
+        }
+        
+        .title {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
         h1 {
             color: #00ccff;
+            font-size: 24px;
+            margin: 0 0 10px;
         }
+        
         p {
-            font-size: 18px;
+            font-size: 16px;
+            line-height: 1.4;
+            margin: 0 0 15px;
         }
+        
         .button {
             background-color: #00ccff;
-            color: white;
-            padding: 10px 20px;
+            color: #ffffff !important;
+            display: inline-block;
+            padding: 12px 25px;
             text-decoration: none;
             border-radius: 5px;
             font-size: 16px;
-        }
-        .button:hover {
-            background-color: #0099cc;
-        }
-
-        .title {
-            text-align: center;
-            width:100%;
-            margin-bottom: 20px;
-        }
-
-        .title a {
-            color:white;
-        }
-
-        .foo
-
-        #movies, #tvs{
-            width: 100vw;
-            border-collapse: collapse;
-        }
-
-        .movie_container {
-            
-        }
-
-        .movie_bg {
-            border: white 0.5px solid;
-            border-radius: 15px;
-            
-            margin: 10px;
-            margin-left:auto; 
-            margin-right:auto;
-            width:90vw;
-            
-        }
-
-        .movie {
-            padding: 10px;
-            border-radius: 15px;
-            background: rgba(0, 0, 0, 0.7); 
-            backdrop-filter: blur(20px);
-            color: white;
-            width: 100%;
-        }
-
-        .movie h3 {
-            font-size: x-large;
-            margin-bottom: 2px;
-        }
-
-        .movie .description {
-            margin-top: 10px;
-            font-size:small;
-        }
-
-        .img{
-            vertical-align: middle;
-            text-align: center;
-        }
-
-        .movie .img img {
-            height: 100px;
-            width: auto !important;
-            min-width: 70px;
-            padding: 10px;
-        }
-
-        .total_container {
-            
+            font-weight: bold;
+            margin: 10px 0;
         }
         
-        .total {
-            table-layout: fixed;
-            width: 100vw;
+        .movie-container {
+            padding: 10px 0;
+        }
+        
+        .movie-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #444;
+            border-radius: 10px;
+            margin: 0 0 15px;
+            overflow: hidden;
+        }
+        
+        .movie-content {
+            padding: 15px;
+        }
+        
+        .movie-image {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .movie-image img {
+            max-width: 100px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .movie-title {
+            font-size: 18px;
+            margin: 0 0 5px;
+        }
+        
+        .movie-date {
+            color: #cccccc;
+            font-size: 14px;
+            margin: 0 0 10px;
+        }
+        
+        .movie-description {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .section-title {
+            color: #00ccff;
+            font-size: 20px;
+            padding: 10px 15px;
+        }
+        
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
             text-align: center;
         }
-
-        .total_title {
-            border-top: lightgray 0.3px solid;
-            text-align: center;
-            margin-top: 50px;
+        
+        .stats-cell {
+            padding: 15px;
+            width: 50%;
         }
-
-        .container h2 {
-            margin-left: 10px;
+        
+        .stats-number {
+            font-size: 28px;
+            margin: 0 0 5px;
+            color: #00ccff;
         }
-
-        .added {
-            color:lightgray;
-            font-weight: lighter;
-            
+        
+        .stats-label {
+            font-size: 14px;
+            color: #cccccc;
         }
-
+        
+        .divider {
+            border-top: 1px solid #333;
+            margin: 30px 0;
+        }
+        
         footer {
-            margin-top: 50px;
-            padding-top:10px;
-            border-top: lightgray 0.3px solid;
             text-align: center;
-            font-size: smaller;
+            padding: 20px 0;
+            font-size: 12px;
+            color: #aaaaaa;
         }
-
-        .ack {
-            font-size: smaller;
-        }
-        .ack a, .ack a:visited {
+        
+        .footer-link, .footer-link:visited {
             color: #4287f5;
             text-decoration: underline;
         }
-
-
+        
+        /* Media Queries */
+        @media screen and (max-width: 600px) {
+            .movie-flex {
+                display: block !important;
+            }
+            .movie-image, .movie-content {
+                width: 100% !important;
+                display: block;
+            }
+            .movie-image {
+                padding-bottom: 0;
+            }
+            .movie-image img {
+                max-width: 150px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container title">
-        <div>
-        <h1>${title}</h1>
-        <p>${subtitle}</p>
-        <br>
-        <a href="${jellyfin_url}" class="button">${discover_now}</a>
-    </div>
-    </div>
-    <br>
-    <div class="container"  style="${display_movies}">
-        <h2>${new_film}</h2>
-        <div id="movies">
-            ${films}
-        
-    </div>
-        
-
-        </div>
-
-
-        <div class="container" style="${display_tv}">
-            <h2>${new_tvs}</h2>
-            <div id="tvs">
-
-               ${tvs}
-
-        </div>
-            
-    
-            </div>
-
-
-        <div class="total_title">
-            <h2>${currently_available} </h2>
-
-        </div>
-
-        <div class="total_container">
-    <table class="total">
-        <tr>
-        <td class="films">
-            <h1>${movies_count}</h1><p>${movies_label}</p>
-
-        </td>
-        <td class="series">
-            <h1>${series_count}</h1><p>${episodes_label}</p>
-        </td>
-        </tr>
-    </table>
-    </div>
-
-
-    </div>
-
-    <footer>
-        ${footer_label}<br><br>
-        <p class="ack"><a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter">Jellyfin Newsletter</a> an open source project. Developed with ❤️ by <a href="https://github.com/SeaweedbrainCY/">Seaweedbrain</a></p>
-    </footer>
+    <center>
+        <table class="main-table" role="presentation" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="content-cell" bgcolor="#000011">
+                    <!-- Title Section -->
+                    <table width="100%" role="presentation" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="title">
+                                <h1>${title}</h1>
+                                <p>${subtitle}</p>
+                                <br>
+                                <a href="${jellyfin_url}" class="button">${discover_now}</a>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Movies Section -->
+                    <div style="${display_movies}">
+                        <h2 class="section-title">${new_film}</h2>
+                        <div class="movie-container">
+                            ${films}
+                        </div>
+                    </div>
+                    
+                    <!-- TV Shows Section -->
+                    <div style="${display_tv}">
+                        <h2 class="section-title">${new_tvs}</h2>
+                        <div class="movie-container">
+                            ${tvs}
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Section -->
+                    <div class="divider"></div>
+                    <h2 class="section-title">${currently_available}</h2>
+                    <table class="stats-table" role="presentation">
+                        <tr>
+                            <td class="stats-cell">
+                                <div class="stats-number">${movies_count}</div>
+                                <div class="stats-label">${movies_label}</div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stats-number">${series_count}</div>
+                                <div class="stats-label">${episodes_label}</div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Footer -->
+                    <footer>
+                        ${footer_label}<br><br>
+                        <p>
+                            <a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter" class="footer-link">Jellyfin Newsletter</a> 
+                            an open source project. Developed with ❤️ by 
+                            <a href="https://github.com/SeaweedbrainCY/" class="footer-link">Seaweedbrain</a>
+                        </p>
+                    </footer>
+                </td>
+            </tr>
+        </table>
+    </center>
 </body>
 </html>
