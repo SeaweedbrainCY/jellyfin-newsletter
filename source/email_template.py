@@ -4,9 +4,9 @@ import re
 translation = {
     "en":{
         "discover_now": "Discover now",
-        "new_film": "New films :",
-        "new_tvs": "New Series :",
-        "currently_available": "Currently available in Jellyfin :",
+        "new_film": "New movies:",
+        "new_tvs": "New shows:",
+        "currently_available": "Currently available in Jellyfin:",
         "movies_label": "Movies",
         "episodes_label": "Episodes",
         "footer_label":"You are recieving this email because you are using ${jellyfin_owner_name}'s Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying ${unsubscribe_email}.",
