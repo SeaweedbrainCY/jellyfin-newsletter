@@ -55,32 +55,33 @@ jellyfin:
     # URL of your jellyfin server
     url: "" 
 
-    # API token of your jellyfin server. See requirements for more info
+    # API token of your jellyfin server, see requirements for more info
     api_token: ""
 
-    # List of folders to watch for new movies. 
+    # List of folders to watch for new movies 
     # You can find them in your Jellyfin Dashboard -> Libraries -> Select a library -> Folder **WITHOUT THE TRAILING /**
     watched_film_folders:
         - ""
         # example for /movies folder add "movies"
 
 
-    # List of folders to watch for new movies. 
+    # List of folders to watch for new shows
     # You can find them in your Jellyfin Dashboard -> Libraries -> Select a library -> Folder **WITHOUT THE TRAILING /**
     watched_tv_folders:
         - ""
-        # example for /movies folder add "movies"
+        # example for /tv folder add "tv"
   
   # Number of days to look back for new items
   observed_period_days: 30
 
 tmdb:
-    # TMDB API key. See requirements for more info.
+    # TMDB API key, see requirements for more info
     api_key: ""
 
 # Email template to use for the newsletter
+# You can use placeholders to dynamically insert values. See available placeholders here : https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/How-to-use-placeholder
 email_template:
-    # Language of the email. Supported languages are "en" and "fr".
+    # Language of the email, supported languages are "en" and "fr"
     language: "en"
     # Subject of the email
     subject: ""
@@ -90,25 +91,30 @@ email_template:
     subtitle: ""
     # Will be used to redirect the user to your Jellyfin instance
     jellyfin_url: ""
-    # Used in the footer. This is a legal notice.
+    # For the legal notice in the footer
     unsubscribe_email: ""
     # Used in the footer
     jellyfin_owner_name: ""
 
-
+# SMTP server configuration, TLS is required for now
+# Check your email provider for more information
 email:
-    # SMTP server configuration. TLS is required for now.
+    # Example: GMail: smtp.gmail.com
     smtp_server: ""
+    # Usually 587
     smtp_port: 
+    # The username of your SMTP account
     smtp_username: ""
+    # The password of your SMTP account
     smtp_password: ""
+    # Example: "jellyfin@example.com" or to set display username "Jellyfin <jellyfin@example.com>"
     smtp_sender_email: ""
 
 
-# List of users to send the newsletter to.
+# List of users to send the newsletter to
 recipients:
   - ""
-  # Example : "fname@email.com" or "fname <fname@email.com">
+  # Example: "name@example.com" or to set username "Name <name@example.com>"
 ```
 
 3. Make sure to support the following locales:

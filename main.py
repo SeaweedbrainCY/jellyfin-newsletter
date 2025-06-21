@@ -61,7 +61,7 @@ def catch_undefined_series(series_items, watched_tv_folders_id):
 if __name__ == "__main__":
     logging.info("""
 
-Jellyfin automatic newsletter is starting ....
+Jellyfin Newsletter is starting ....
 ##############################################
 
 
@@ -151,8 +151,8 @@ Jellyfin automatic newsletter is starting ....
     
     
 ##############################################
-Thanks for using jellyfin automatic newsletter !
-Developped by Seaweedbrain, under MIT License.""")
+Thanks for using Jellyfin Newsletter!
+Developed by Seaweedbrain, under MIT License.""")
 
     
 

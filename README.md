@@ -1,4 +1,4 @@
-# Jellyfin Newsletter - Your recent additions in your users' inbox
+# Jellyfin Newsletter - keep your users updated
 
 <p align="center">
 <img src="https://github.com/SeaweedbrainCY/jellyfin-newsletter/actions/workflows/build_and_deploy.yml/badge.svg?branch="/>
@@ -10,14 +10,14 @@
 <img src="https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/assets/jellyfin_newsletter.png" width=100>
 </p>
 
-A simple newsletter python script for Jellyfin to notify your users of your last additions. Based on your jellyfin API it will retrieve the last added items and send them to your users. 
+A newsletter for Jellyfin to notify your users of your latest additions. Jellyfin Newsletter connects to the Jellyfin API to retrieve recently added items and send them to your users. 
 
 It is fully customizable and can be run on a schedule using a cron job or a task scheduler.
 
 ## Table of Contents
-1. [What it looks like ?](#what-it-looks-like-)
+1. [What it looks like](#what-it-looks-like)
 2. [Features](#features)
-3. [Installation (docker) (recommended ⭐)](#installation-docker-recommended-)
+3. [Recommended installation: Docker](#recommended-installation-docker)
 4. [Current limitations](#current-limitations)
 5. [License](#license)
 6. [Contribution](#contribution)
@@ -25,7 +25,7 @@ It is fully customizable and can be run on a schedule using a cron job or a task
    - [How to generate a Jellyfin API key](#how-to-generate-a-jellyfin-api-key)
    - [How to generate a TMDB API key](#how-to-generate-a-tmdb-api-key)
 
-## What it looks like ? 
+## What it looks like 
 <p align="center">
 <img src="https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/assets/new_media_notification_preview.png" width=500>
 </p>
@@ -33,15 +33,15 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 ## Features
 - Retrieve the last added movies and TV shows from your Jellyfin server
 - Send a newsletter to your users with the last added items
-- Retrieve the movie details from TMDB, including its poster
+- Retrieve the movie details from TMDB, including poster
 - Group TV shows by seasons
 - Fully customizable and responsive email template
 - Easy to maintain, extend, setup and run
-- Support for multiple languages (English and French for now)
+- Support for English and French
 - Configure the list of recipients
 - Configure specific folders to watch for new items
 
-## Installation (docker) (recommended ⭐)
+## Recommended installation: Docker
 ### Requirements
 
 - Docker 
@@ -50,43 +50,43 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 - A SMTP server 
 
 ### Configuration
-1. Download the [config file](https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/config/config-example.yml) :
+1. Download the [config file](https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/config/config-example.yml):
 ```
 curl -o config.yml https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/config/config-example.yml
 ```
-2. Edit the `config.yml` file and fill in the required fields. **All fields are required**.
+2. Edit the `config.yml` file and fill in the required fields. **All fields are required.**
 ```yaml
 jellyfin:
     # URL of your jellyfin server
     url: "" 
 
-    # API token of your jellyfin server. See requirements for more info
+    # API token of your jellyfin server, see requirements for more info
     api_token: ""
 
-    # List of folders to watch for new movies. 
+    # List of folders to watch for new movies 
     # You can find them in your Jellyfin Dashboard -> Libraries -> Select a library -> Folder **WITHOUT THE TRAILING /**
     watched_film_folders:
         - ""
         # example for /movies folder add "movies"
 
 
-    # List of folders to watch for new movies. 
+    # List of folders to watch for new shows
     # You can find them in your Jellyfin Dashboard -> Libraries -> Select a library -> Folder **WITHOUT THE TRAILING /**
     watched_tv_folders:
         - ""
-        # example for /movies folder add "movies"
+        # example for /tv folder add "tv"
   
   # Number of days to look back for new items
   observed_period_days: 30
 
 tmdb:
-    # TMDB API key. See requirements for more info.
+    # TMDB API key, see requirements for more info
     api_key: ""
 
 # Email template to use for the newsletter
 # You can use placeholders to dynamically insert values. See available placeholders here : https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/How-to-use-placeholder
 email_template:
-    # Language of the email. Supported languages are "en" and "fr".
+    # Language of the email, supported languages are "en" and "fr"
     language: "en"
     # Subject of the email
     subject: ""
@@ -96,25 +96,30 @@ email_template:
     subtitle: ""
     # Will be used to redirect the user to your Jellyfin instance
     jellyfin_url: ""
-    # Used in the footer. This is a legal notice.
+    # For the legal notice in the footer
     unsubscribe_email: ""
     # Used in the footer
     jellyfin_owner_name: ""
 
-
+# SMTP server configuration, TLS is required for now
+# Check your email provider for more information
 email:
-    # SMTP server configuration. TLS is required for now.
+    # Example: GMail: smtp.gmail.com
     smtp_server: ""
+    # Usually 587
     smtp_port: 
+    # The username of your SMTP account
     smtp_username: ""
+    # The password of your SMTP account
     smtp_password: ""
+    # Example: "jellyfin@example.com" or to set display username "Jellyfin <jellyfin@example.com>"
     smtp_sender_email: ""
 
 
-# List of users to send the newsletter to.
+# List of users to send the newsletter to
 recipients:
   - ""
-  # Example : "fname@email.com" or "fname <fname@email.com">
+  # Example: "name@example.com" or to set username "Name <name@example.com>"
 ```
 
 3. Run the docker container 
@@ -123,7 +128,7 @@ docker run --rm \
     -v ./config.yml:/app/config/config.yml \
     ghcr.io/seaweedbraincy/jellyfin-newsletter:latest
 ```
-*Note : It is recommended to use a static version instead of  `latest`, and manually upgrade. [Last version](https://github.com/SeaweedbrainCY/jellyfin-newsletter/pkgs/container/jellyfin-newsletter)*
+*Note: It is recommended to use a static version instead of  `latest`, and manually upgrade. [Last version](https://github.com/SeaweedbrainCY/jellyfin-newsletter/pkgs/container/jellyfin-newsletter)*
 
 4. (Optional) Schedule the script to run on a regular basis. 
 ```bash
@@ -132,7 +137,7 @@ crontab -e
 # Add the following line to run the script every 1st of the month at 8am
 0 8 1 * * root docker run --rm -v $(pwd)/config.yml:/app/config/config.yml ghcr.io/seaweedbraincy/jellyfin-newsletter:latest
 ```
-*Note : It is recommended to use a static version instead of `latest`, and manually upgrade. [Last version](https://github.com/SeaweedbrainCY/jellyfin-newsletter/pkgs/container/jellyfin-newsletter)*
+*Note: It is recommended to use a static version instead of `latest`, and manually upgrade. [Last version](https://github.com/SeaweedbrainCY/jellyfin-newsletter/pkgs/container/jellyfin-newsletter)*
 
 
 
@@ -141,10 +146,11 @@ crontab -e
 - Only supports English and French languages for the email template
 - Only supports TLS for the SMTP server
 - Only supports movies and TV shows for now
-- Not included as a Jellyfin plugin yet. It required to be run manually or scheduled
+- Not available as a Jellyfin plugin yet 
+- Must be run manually or scheduled
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License—see the [LICENSE](LICENSE) file for details.
 
 ## Contribution
 Feel free to contribute to this project by opening an issue or a pull request.
