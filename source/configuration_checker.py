@@ -57,6 +57,15 @@ def email_template_configuration():
     # Jellyfin owner name
     assert isinstance(conf.email_template.jellyfin_owner_name, str), "[FATAL] Invalid email template Jellyfin owner name. The Jellyfin owner name must be a string. Please check the configuration."
 
+    # Sort mode
+    assert isinstance(conf.email_template.sort_mode, str), "[FATAL] Invalid email template sort_mode. The sort_mode must be a string. Please check the configuration."
+    allowed_sort_modes = {"date_asc", "date_desc", "name_asc", "name_desc"}
+    assert conf.email_template.sort_mode in allowed_sort_modes, (
+        f"[FATAL] Invalid email template sort_mode. Got '{conf.email_template.sort_mode}'. "
+        f"Allowed values are: {sorted(list(allowed_sort_modes))}. Please check the configuration."
+    )
+
+
 
 def check_email_configuration():
     # SMTP server
