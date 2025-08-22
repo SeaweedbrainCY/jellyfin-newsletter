@@ -62,7 +62,7 @@ class EmailTemplate:
         self.jellyfin_url = data["jellyfin_url"]
         self.unsubscribe_email = data["unsubscribe_email"]
         self.jellyfin_owner_name = data["jellyfin_owner_name"]
-        self.display_overview_max_items = data.get("display_overview_max_items") or 10
+        self.display_overview_max_items = data.get("display_overview_max_items", 10)
 
 
 class Email:
