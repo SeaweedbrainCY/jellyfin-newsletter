@@ -1,0 +1,46 @@
+# Version control
+.git
+.gitignore
+
+# Python cache files
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Editor/OS artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment files and runtime state
+.env
+.env.*
+config/config.yml
+config/LAST_NEWSLETTER.txt
+
+# CI/metadata
+.github/
+
+# Python virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Testing and development
+tests/
+**/*.log
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Documentation
+README.md
+LICENSE
+docs/
+
+# Docker files (not needed inside the image)
+Dockerfile
+.dockerignore
