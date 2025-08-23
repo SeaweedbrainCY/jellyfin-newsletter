@@ -14,6 +14,8 @@ translation = {
         "episodes": "Episodes",
          "episode": "Episode",
          "new_episodes": "new episodes",
+         "footer_project_open_source": "is an open source project.",
+         "footer_developed_by": "Developed with ❤️ by",
     },
     "fr":{
         "discover_now": "Découvrir maintenant",
@@ -26,7 +28,25 @@ translation = {
         "added_on": "Ajouté le",
         "episodes": "Épisodes",
         "episode": "Épisode",
-        "new_episodes": "nouveaux épisodes",
+    "new_episodes": "nouveaux épisodes",
+    "footer_project_open_source": "est un projet open source.",
+    "footer_developed_by": "Développé avec ❤️ par",
+    },
+    "he":{
+        "discover_now": "גלה עכשיו",
+    "new_film": "סרטים חדשים:\u200f",
+    "new_tvs": "סדרות חדשות:\u200f",
+    # Add RLM (\u200f) after colon to keep it properly positioned in RTL text
+    "currently_available": "זמין כעת בג'ליפין:\u200f",
+        "movies_label": "סרטים",
+        "episodes_label": "פרקים",
+    "footer_label":"אתם מקבלים מייל זה משום שאתם משתמשים בשרת ג'ליפין של ${jellyfin_owner_name}. כדי להפסיק לקבל מיילים אלה, ניתן לבקש להסיר ב־${unsubscribe_email}.",
+        "added_on": "נוסף בתאריך",
+        "episodes": "פרקים",
+        "episode": "פרק",
+    "new_episodes": "פרקים חדשים",
+    "footer_project_open_source": "הוא פרויקט קוד פתוח.",
+    "footer_developed_by": "פותח באהבה על ידי",
     }
 }
 
@@ -44,7 +64,7 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
     with open("./template/new_media_notification.html") as template_file:
         template = template_file.read()
         
-        if configuration.conf.email_template.language in ["fr", "en"]:
+        if configuration.conf.email_template.language in ["fr", "en", "he"]:
             for key in translation[configuration.conf.email_template.language]:
                 template = re.sub(
                     r"\${" + key + "}", 
@@ -52,14 +72,30 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     template
                 )
         else:
-            raise Exception(f"[FATAL] Language {configuration.conf.email_template.language} not supported. Supported languages are fr and en")
+            raise Exception(f"[FATAL] Language {configuration.conf.email_template.language} not supported. Supported languages are fr, en and he")
+
+        # lang/dir for the root HTML tag
+        html_lang = configuration.conf.email_template.language if configuration.conf.email_template.language in ["en","fr","he"] else "en"
+        text_dir = "rtl" if configuration.conf.email_template.language == "he" else "ltr"
+
+        # Wrap English link texts in <bdi> for Hebrew to preserve word order
+        project_text = "Jellyfin Newsletter"
+        developer_text = "Seaweedbrain"
+        if configuration.conf.email_template.language == "he":
+            project_text = f"<bdi>{project_text}</bdi>"
+            developer_text = f"<bdi>{developer_text}</bdi>"
 
         custom_keys = [
             {"key": "title", "value": configuration.conf.email_template.title.format_map(context.placeholders)}, 
             {"key": "subtitle", "value": configuration.conf.email_template.subtitle.format_map(context.placeholders)},
             {"key": "jellyfin_url", "value": configuration.conf.email_template.jellyfin_url},
             {"key": "jellyfin_owner_name", "value": configuration.conf.email_template.jellyfin_owner_name.format_map(context.placeholders)},
-            {"key": "unsubscribe_email", "value": configuration.conf.email_template.unsubscribe_email.format_map(context.placeholders)}
+            {"key": "unsubscribe_email", "value": configuration.conf.email_template.unsubscribe_email.format_map(context.placeholders)},
+            {"key": "html_lang", "value": html_lang},
+            {"key": "dir", "value": text_dir},
+            {"key": "rtl_align", "value": "right" if text_dir == "rtl" else "left"},
+            {"key": "project_link_text", "value": project_text},
+            {"key": "developer_link_text", "value": developer_text},
         ]
         
         for key in custom_keys:
@@ -72,6 +108,8 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
             
             for movie_id, movie_data in movies.items():
                 added_date = movie_data["created_on"].split("T")[0]
+                # Ensure dates render correctly in RTL contexts
+                added_date_html = f"<bdi>{added_date}</bdi>" if text_dir == "rtl" else added_date
                 item_overview_html = ""
                 if include_overview:
                     item_overview_html = f"""
@@ -79,23 +117,30 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                                             {movie_data['description']}
 </div>
 """
-                movies_html += f"""
-                <div class="movie_container" style="margin-bottom: 15px;">
-                    <div class="movie_bg" style="background: url('{movie_data['poster']}') no-repeat center center; background-size: cover; border-radius: 10px;">
-                        <table class="movie" width="100%" role="presentation" cellpadding="0" cellspacing="0" style="background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;">
-                            <tr>
-                                <td class="movie-image" valign="middle" style="padding: 15px; text-align: center; width: 120px;">
-                                    <img src="{movie_data['poster']}" alt="{movie_data['name']}" style="max-width: 100px; height: auto; display: block; margin: 0 auto;">
+                image_cell = f"""
+                                <td class=\"movie-image\" valign=\"middle\" style=\"padding: 15px; text-align: center; width: 120px;\"> 
+                                    <img src=\"{movie_data['poster']}\" alt=\"{movie_data['name']}\" style=\"max-width: 100px; height: auto; display: block; margin: 0 auto;\">
                                 </td>
-                                <td class="movie-content-cell" valign="middle" style="padding: 15px;">
-                                    <div class="mobile-text-container">
-                                        <h3 class="movie-title" style="color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;">{movie_data['name']}</h3>
-                                        <div class="movie-date" style="color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;">
-                                            {translation[configuration.conf.email_template.language]['added_on']} {added_date}
+                """
+                content_td_style = "padding: 15px; text-align: right; direction: rtl;" if text_dir == "rtl" else "padding: 15px;"
+                content_cell = f"""
+                                <td class=\"movie-content-cell\" valign=\"middle\" style=\"{content_td_style}\">
+                                    <div class=\"mobile-text-container\">
+                                        <h3 class=\"movie-title\" style=\"color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;\">{movie_data['name']}</h3>
+                                        <div class=\"movie-date\" style=\"color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;\">
+                                            {translation[configuration.conf.email_template.language]['added_on']} {added_date_html}
                                         </div>
                                         {item_overview_html}
                                     </div>
                                 </td>
+                """
+                row_cells = content_cell + image_cell if text_dir == "rtl" else image_cell + content_cell
+                movies_html += f"""
+                <div class=\"movie_container\" style=\"margin-bottom: 15px;\">
+                    <div class=\"movie_bg\" style=\"background: url('{movie_data['poster']}') no-repeat center center; background-size: cover; border-radius: 10px;\">
+                        <table class=\"movie\" width=\"100%\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;\">
+                            <tr>
+{row_cells}
                             </tr>
                         </table>
                     </div>
@@ -113,6 +158,7 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
             
             for serie_id, serie_data in series.items():
                 added_date = serie_data["created_on"].split("T")[0]
+                added_date_html = f"<bdi>{added_date}</bdi>" if text_dir == "rtl" else added_date
                 if len(serie_data["seasons"]) == 1 :
                     if len(serie_data["episodes"]) == 1:
                         added_items_str = f"{serie_data['seasons'][0]}, {translation[configuration.conf.email_template.language]['episode']} {serie_data['episodes'][0]}"
@@ -128,6 +174,8 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     serie_data["seasons"].sort()
                     added_items_str = ", ".join(serie_data["seasons"])
 
+                added_items_str_display = f"<bdi>{added_items_str}</bdi>" if text_dir == "rtl" else added_items_str
+
                 item_overview_html = ""
                 if include_overview:
                     item_overview_html = f"""
@@ -135,23 +183,30 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                                             {serie_data['description']}
                                         </div>
 """
-                series_html += f"""
-                <div class="movie_container" style="margin-bottom: 15px;">
-                    <div class="movie_bg" style="background: url('{serie_data['poster']}') no-repeat center center; background-size: cover; border-radius: 10px;">
-                        <table class="movie" width="100%" role="presentation" cellpadding="0" cellspacing="0" style="background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;">
-                            <tr>
-                                <td class="movie-image" valign="middle" style="padding: 15px; text-align: center; width: 120px;">
-                                    <img src="{serie_data['poster']}" alt="{serie_data['series_name']}" style="max-width: 100px; height: auto; display: block; margin: 0 auto;">
+                s_image_cell = f"""
+                                <td class=\"movie-image\" valign=\"middle\" style=\"padding: 15px; text-align: center; width: 120px;\">
+                                    <img src=\"{serie_data['poster']}\" alt=\"{serie_data['series_name']}\" style=\"max-width: 100px; height: auto; display: block; margin: 0 auto;\">
                                 </td>
-                                <td class="movie-content-cell" valign="middle" style="padding: 15px;">
-                                    <div class="mobile-text-container">
-                                        <h3 class="movie-title" style="color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;">{serie_data['series_name']}: {added_items_str}</h3>
-                                        <div class="movie-date" style="color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;">
-                                            {translation[configuration.conf.email_template.language]['added_on']} {added_date}
+                """
+                s_content_td_style = "padding: 15px; text-align: right; direction: rtl;" if text_dir == "rtl" else "padding: 15px;"
+                s_content_cell = f"""
+                                <td class=\"movie-content-cell\" valign=\"middle\" style=\"{s_content_td_style}\">
+                                    <div class=\"mobile-text-container\"> 
+                                        <h3 class=\"movie-title\" style=\"color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;\">{serie_data['series_name']}: {added_items_str_display}</h3>
+                                        <div class=\"movie-date\" style=\"color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;\">
+                                            {translation[configuration.conf.email_template.language]['added_on']} {added_date_html}
                                         </div>
                                         {item_overview_html}
                                     </div>
                                 </td>
+                """
+                s_row_cells = s_content_cell + s_image_cell if text_dir == "rtl" else s_image_cell + s_content_cell
+                series_html += f"""
+                <div class=\"movie_container\" style=\"margin-bottom: 15px;\">
+                    <div class=\"movie_bg\" style=\"background: url('{serie_data['poster']}') no-repeat center center; background-size: cover; border-radius: 10px;\">
+                        <table class=\"movie\" width=\"100%\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;\">
+                            <tr>
+{s_row_cells}
                             </tr>
                         </table>
                     </div>
@@ -162,8 +217,10 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         else:
             template = re.sub(r"\${display_tv}", "display:none", template)
 
-        # Statistics section
-        template = re.sub(r"\${series_count}", str(total_tv), template)
-        template = re.sub(r"\${movies_count}", str(total_movie), template)
+    # Statistics section
+    series_count_value = f"<bdi>{total_tv}</bdi>" if text_dir == "rtl" else str(total_tv)
+    movies_count_value = f"<bdi>{total_movie}</bdi>" if text_dir == "rtl" else str(total_movie)
+    template = re.sub(r"\${series_count}", series_count_value, template)
+    template = re.sub(r"\${movies_count}", movies_count_value, template)
         
-        return template
+    return template
