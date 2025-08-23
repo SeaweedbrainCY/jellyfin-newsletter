@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="${html_lang}" dir="${dir}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,7 +46,7 @@
             padding: 20px 0;
         }
         
-        h1 {
+    h1 {
             color: #00ccff !important;
             font-size: 24px !important;
             margin: 0 0 10px !important;
@@ -121,7 +121,7 @@
             color: #ffffff !important;
         }
         
-        .movie-date {
+    .movie-date {
             color: #dddddd !important;
             font-size: 14px !important;
             margin: 0 0 10px !important;
@@ -178,6 +178,11 @@
             color: #aaaaaa !important;
         }
         
+        /* Override footer alignment for RTL */
+        footer p {
+            text-align: inherit;
+        }
+        
         .footer-link, .footer-link:visited {
             color: #4287f5 !important;
             text-decoration: underline !important;
@@ -213,6 +218,28 @@
                 padding-left: 15px !important;
                 padding-right: 15px !important;
             }
+        }
+        
+        /* RTL adjustments */
+        [dir="rtl"] h1,
+        [dir="rtl"] h2,
+        [dir="rtl"] p,
+        [dir="rtl"] .movie-date,
+        [dir="rtl"] .movie-description,
+        [dir="rtl"] .section-title,
+        [dir="rtl"] .stats-label,
+        [dir="rtl"] .stats-number,
+        [dir="rtl"] footer {
+            text-align: right !important;
+        }
+        [dir="rtl"] .movie-content-cell {
+            direction: rtl !important;
+        }
+        
+        /* Specific RTL footer handling */
+        [dir="rtl"] footer p {
+            text-align: right !important;
+            direction: rtl !important;
         }
         /* Media Queries */
         @media screen and (max-width: 600px) {
@@ -266,7 +293,7 @@
                     <!-- Title Section -->
                     <table width="100%" role="presentation" cellpadding="0" cellspacing="0">
                         <tr>
-                            <td class="title">
+                            <td class="title" style="text-align: center;">
                                 <h1>${title}</h1>
                                 <p>${subtitle}</p>
                                 <br>
@@ -276,16 +303,16 @@
                     </table>
                     
                     <!-- Movies Section -->
-                    <div style="${display_movies}">
-                        <h2 class="section-title">${new_film}</h2>
+                    <div style="${display_movies}; text-align: ${rtl_align};">
+                        <h2 class="section-title" style="text-align: ${rtl_align};">${new_film}</h2>
                         <div class="movie-container">
                             ${films}
                         </div>
                     </div>
                     
                     <!-- TV Shows Section -->
-                    <div style="${display_tv}">
-                        <h2 class="section-title">${new_tvs}</h2>
+                    <div style="${display_tv}; text-align: ${rtl_align};">
+                        <h2 class="section-title" style="text-align: ${rtl_align};">${new_tvs}</h2>
                         <div class="movie-container">
                             ${tvs}
                         </div>
@@ -293,7 +320,7 @@
                     
                     <!-- Stats Section -->
                     <div class="divider"></div>
-                    <h2 class="section-title">${currently_available}</h2>
+                    <h2 class="section-title" style="text-align: center;">${currently_available}</h2>
                     <table class="stats-table" role="presentation">
                         <tr>
                             <td class="stats-cell">
@@ -309,11 +336,15 @@
                     
                     <!-- Footer -->
                     <footer>
-                        ${footer_label}<br><br>
-                        <p>
-                            <a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter" class="footer-link">Jellyfin Newsletter</a> 
-                            is an open source project. Developed with ❤️ by 
-                            <a href="https://github.com/SeaweedbrainCY/" class="footer-link">Seaweedbrain</a>
+                        <p style="text-align: ${rtl_align}; direction: ${dir};">
+                            ${footer_label}
+                        </p>
+                        <br>
+                        <p style="text-align: ${rtl_align}; direction: ${dir};">
+                            <a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter" class="footer-link">${project_link_text}</a> 
+                            ${footer_project_open_source} 
+                            ${footer_developed_by} 
+                            <a href="https://github.com/SeaweedbrainCY/" class="footer-link">${developer_link_text}</a>
                         </p>
                     </footer>
                 </td>
