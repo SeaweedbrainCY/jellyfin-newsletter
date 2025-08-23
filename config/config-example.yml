@@ -45,6 +45,7 @@ tmdb:
 # You can use placeholders to dynamically insert values. See available placeholders here : https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/How-to-use-placeholder
 email_template:
     # Language of the email, supported languages are "en" and "fr"
+    # Supported: "en", "fr", "he" (Hebrew)
     language: "en"
     # Subject of the email
     subject: ""

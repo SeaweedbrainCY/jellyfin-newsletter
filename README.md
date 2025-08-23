@@ -37,7 +37,7 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 - Group TV shows by seasons
 - Fully customizable and responsive email template
 - Easy to maintain, extend, setup and run
-- Support for English and French
+- Support for English, French, and Hebrew (RTL-aware template)
 - Configure the list of recipients
 - Configure specific folders to watch for new items
 
@@ -118,7 +118,7 @@ crontab -e
 
 
 ## Current limitations
-- Only supports English and French languages for the email template
+- Email template translations are available for English, French, and Hebrew
 - Only supports TLS for the SMTP server
 - Only supports movies and TV shows for now
 - Not available as a Jellyfin plugin yet 
