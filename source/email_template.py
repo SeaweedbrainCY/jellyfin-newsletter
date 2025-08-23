@@ -34,19 +34,19 @@ translation = {
     },
     "he":{
         "discover_now": "גלה עכשיו",
-    "new_film": "סרטים חדשים:\u200f",
-    "new_tvs": "סדרות חדשות:\u200f",
-    # Add RLM (\u200f) after colon to keep it properly positioned in RTL text
-    "currently_available": "זמין כעת בג'ליפין:\u200f",
+        "new_film": "סרטים חדשים:\u200f",
+        "new_tvs": "סדרות חדשות:\u200f",
+        # Add RLM (\u200f) after colon to keep it properly positioned in RTL text
+        "currently_available": "זמין כעת בג'ליפין:\u200f",
         "movies_label": "סרטים",
         "episodes_label": "פרקים",
-    "footer_label":"אתם מקבלים מייל זה משום שאתם משתמשים בשרת ג'ליפין של ${jellyfin_owner_name}. כדי להפסיק לקבל מיילים אלה, ניתן לבקש להסיר ב־${unsubscribe_email}.",
+        "footer_label":"אתם מקבלים מייל זה משום שאתם משתמשים בשרת ג'ליפין של ${jellyfin_owner_name}. כדי להפסיק לקבל מיילים אלה, ניתן לבקש להסיר ב־${unsubscribe_email}.",
         "added_on": "נוסף בתאריך",
         "episodes": "פרקים",
         "episode": "פרק",
-    "new_episodes": "פרקים חדשים",
-    "footer_project_open_source": "הוא פרויקט קוד פתוח.",
-    "footer_developed_by": "פותח באהבה על ידי",
+        "new_episodes": "פרקים חדשים",
+        "footer_project_open_source": "הוא פרויקט קוד פתוח.",
+        "footer_developed_by": "פותח באהבה על ידי",
     }
 }
 
@@ -217,10 +217,10 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         else:
             template = re.sub(r"\${display_tv}", "display:none", template)
 
-    # Statistics section
-    series_count_value = f"<bdi>{total_tv}</bdi>" if text_dir == "rtl" else str(total_tv)
-    movies_count_value = f"<bdi>{total_movie}</bdi>" if text_dir == "rtl" else str(total_movie)
-    template = re.sub(r"\${series_count}", series_count_value, template)
-    template = re.sub(r"\${movies_count}", movies_count_value, template)
-        
-    return template
+        # Statistics section
+        series_count_value = f"<bdi>{total_tv}</bdi>" if text_dir == "rtl" else str(total_tv)
+        movies_count_value = f"<bdi>{total_movie}</bdi>" if text_dir == "rtl" else str(total_movie)
+        template = re.sub(r"\${series_count}", series_count_value, template)
+        template = re.sub(r"\${movies_count}", movies_count_value, template)
+
+        return template
