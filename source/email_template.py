@@ -41,7 +41,7 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
     elif len(movies) + len(series) > configuration.conf.email_template.display_overview_max_items :
         include_overview = False
         configuration.logging.info(f"There are more than {configuration.conf.email_template.display_overview_max_items} new items, overview will not be included in the email template to avoid too much content.")
-    with open("./template/new_media_notification.html") as template_file:
+    with open("./template/new_media_notification.html", encoding='utf-8') as template_file:
         template = template_file.read()
         
         if configuration.conf.email_template.language in ["fr", "en"]:

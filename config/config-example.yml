@@ -82,6 +82,29 @@ email:
     smtp_tls_type: "STARTTLS" # "STARTTLS" or "TLS" (implicit TLS)
 
 
+# Preview and testing configuration
+preview:
+    # Enable preview mode instead of sending emails
+    enabled: false
+    
+    # Test SMTP connection during preview (dry-run mode)
+    # true = dry-run: test SMTP connection but don't send
+    # false = preview-only: skip SMTP entirely
+    test_smtp_connection: false
+    
+    # Directory to save preview files
+    output_directory: "/app/config/previews/"
+    
+    # Preview filename pattern (supports {date}, {timestamp} placeholders)
+    output_filename: "newsletter_{date}.html"
+    
+    # Include generation metadata in HTML comments
+    include_metadata: true
+    
+    # Save email data as JSON file alongside HTML
+    save_email_data: true
+
+
 # List of users to send the newsletter to
 recipients:
   - ""

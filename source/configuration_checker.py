@@ -89,6 +89,37 @@ def check_scheduler_configuration():
         assert isinstance(conf.scheduler.cron, str), "[FATAL] Invalid scheduler cron expression. The cron expression must be a string. Please check the configuration."
 
 
+def check_preview_configuration():
+    # enabled
+    assert isinstance(conf.preview.enabled, bool), "[FATAL] Invalid preview.enabled. The enabled flag must be a boolean. Please check the configuration."
+    
+    # test_smtp_connection  
+    assert isinstance(conf.preview.test_smtp_connection, bool), "[FATAL] Invalid preview.test_smtp_connection. The test_smtp_connection flag must be a boolean. Please check the configuration."
+    
+    # output_directory
+    assert isinstance(conf.preview.output_directory, str), "[FATAL] Invalid preview.output_directory. The output_directory must be a string. Please check the configuration."
+    assert conf.preview.output_directory != '', "[FATAL] Invalid preview.output_directory. The output_directory cannot be empty. Please check the configuration."
+    
+    # output_filename
+    assert isinstance(conf.preview.output_filename, str), "[FATAL] Invalid preview.output_filename. The output_filename must be a string. Please check the configuration."
+    assert conf.preview.output_filename != '', "[FATAL] Invalid preview.output_filename. The output_filename cannot be empty. Please check the configuration."
+    
+    # include_metadata
+    assert isinstance(conf.preview.include_metadata, bool), "[FATAL] Invalid preview.include_metadata. The include_metadata flag must be a boolean. Please check the configuration."
+    
+    # save_email_data
+    assert isinstance(conf.preview.save_email_data, bool), "[FATAL] Invalid preview.save_email_data. The save_email_data flag must be a boolean. Please check the configuration."
+    
+    # If preview enabled, validate directory exists or can be created
+    if conf.preview.enabled:
+        import os
+        try:
+            os.makedirs(conf.preview.output_directory, exist_ok=True)
+        except Exception as e:
+            logging.error(f"[FATAL] Cannot create preview output directory '{conf.preview.output_directory}': {e}")
+            exit(1)
+
+
 def check_configuration():
     """
     Check if the configuration is valid.
@@ -99,5 +130,6 @@ def check_configuration():
     email_template_configuration()
     check_email_configuration()
     check_recipients_configuration()
+    check_preview_configuration()
     
     

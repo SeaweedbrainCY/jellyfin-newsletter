@@ -78,6 +78,16 @@ class Email:
         self.smtp_sender_email = data["smtp_sender_email"]
         self.smtp_tls_type = data.get("smtp_tls_type") or "STARTTLS" # Fallback to STARTTLS if not specified
 
+
+class PreviewConfig:
+    def __init__(self, data):
+        self.enabled = data.get("enabled", False)
+        self.test_smtp_connection = data.get("test_smtp_connection", False)
+        self.output_directory = data.get("output_directory", "./previews/")
+        self.output_filename = data.get("output_filename", "newsletter_{date}_{time}.html")
+        self.include_metadata = data.get("include_metadata", True)
+        self.save_email_data = data.get("save_email_data", True)
+
         
 
 class Config:
@@ -102,13 +112,14 @@ class Config:
         self.email = Email(data["email"]) 
         self.recipients = data["recipients"]
         self.scheduler = Scheduler(data["scheduler"]) if "scheduler" in data else Scheduler([])
+        self.preview = PreviewConfig(data.get("preview", {}))
     
     
 
 
 
 try:
-    with open("./config/config.yml") as config_yml:
+    with open("./config/config.yml", encoding='utf-8') as config_yml:
         try:
             raw_conf = yaml.safe_load(config_yml)
             conf = Config(raw_conf)
