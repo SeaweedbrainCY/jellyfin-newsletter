@@ -102,9 +102,9 @@ class Config:
             if data["debug"]:
                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(filename)s->%(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
             else:
-                logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(filename)s->%(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
+                logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
         else: 
-            logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(filename)s->%(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
+            logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
     
         self.jellyfin = Jellyfin(data["jellyfin"])
         self.tmdb = Tmdb(data["tmdb"])
