@@ -172,10 +172,11 @@ def send_newsletter():
 
                 movie_items[item["Id"]] = {
                     "name": item["Name"],
-                    "year":item["ProductionYear"],
+                    "year":item.get("ProductionYear", ""),
                     "created_on":item["DateCreated"],
                     "description": tmdb_info["overview"],
-                    "poster": f"https://image.tmdb.org/t/p/w500{tmdb_info['poster_path']}" if tmdb_info["poster_path"] else "https://redthread.uoregon.edu/files/original/affd16fd5264cab9197da4cd1a996f820e601ee4.png"
+                    "poster": f"https://image.tmdb.org/t/p/w500{tmdb_info['poster_path']}" if tmdb_info["poster_path"] else "https://redthread.uoregon.edu/files/original/affd16fd5264cab9197da4cd1a996f820e601ee4.png",
+                    "tmdb_id": tmdb_id if tmdb_id is not None else "-1"
                 }
             
     
@@ -213,7 +214,7 @@ def send_newsletter():
         elif result["mode"] == "dry-run":
             logging.info(f"Dry-run completed successfully (dry-run only mode).")
         elif result["mode"] == "dry-run-smtp-only":
-            smtp_status = "PASSED" if result["smtp_tested"] else "FAILED"
+            smtp_status = "PASSED" if result["smtp_tested"] else "FAILED (see the error above)"
             logging.info(f"Dry-run completed. SMTP test: {smtp_status}")
         
         logging.info("Newsletter processing completed.")
