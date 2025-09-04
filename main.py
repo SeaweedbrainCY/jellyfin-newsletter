@@ -71,7 +71,7 @@ def populate_series_item_with_series_related_information(series_items, watched_t
                     if key not in item.keys():
                         logging.warning(f"Item {item} has no {key}. Skipping.")
                         continue
-                series_items[item['Id']]["year"] = item["ProductionYear"]
+                series_items[item['Id']]["year"] = item.get("ProductionYear", "")
                 tmdb_id = None
                 if "ProviderIds" in item.keys():
                     if "Tmdb" in item["ProviderIds"].keys():
@@ -87,7 +87,7 @@ def populate_series_item_with_series_related_information(series_items, watched_t
                 if tmdb_id is None or tmdb_info is None:
                     logging.info(f"Item {item} has no TMDB id or search by id failed. Searching by title.")
                     try:
-                        tmdb_info = TmdbAPI.get_media_detail_from_title(title=item["Name"], type="tv", year=item["ProductionYear"])
+                        tmdb_info = TmdbAPI.get_media_detail_from_title(title=item["Name"], type="tv", year=item.get("ProductionYear", ""))
                     except Exception as e:
                         logging.error(f"Item {item['Name']} could not be retrieved from TMDB by title due to an API error: {e}")   
                                        
@@ -161,7 +161,7 @@ def send_newsletter():
                 tmdb_info = TmdbAPI.get_media_detail_from_id(id=tmdb_id, type="movie")
             else:
                 logging.info(f"Item {item['Name']} has no TMDB id, searching by title.")
-                tmdb_info = TmdbAPI.get_media_detail_from_title(title=item["Name"], type="movie", year=item["ProductionYear"])
+                tmdb_info = TmdbAPI.get_media_detail_from_title(title=item["Name"], type="movie", year=item.get("ProductionYear", ""))
 
             if tmdb_info is None:
                 logging.warning(f"Item {item['Name']} has not been found on TMDB. Skipping.")
