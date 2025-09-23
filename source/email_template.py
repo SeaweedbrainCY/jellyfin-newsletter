@@ -69,42 +69,18 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         if movies:
             template = re.sub(r"\${display_movies}", "", template)
             movies_html = ""
-            
-             # Build a deterministically sorted list of movies according to sort_mode
-            movie_items_sorted = list(movies.items())
             sort_mode = getattr(configuration.conf.email_template, "sort_mode", "date_asc")
-            def _movie_date_key(kv):
-                date_raw = (kv[1].get("created_on", "") or "")
-                date_part = date_raw.split("T")[0]
-                valid = len(date_part) == 10 and date_part[4] == '-' and date_part[7] == '-'
-                missing = 1 if not valid else 0
-                return (missing, date_part, kv[1].get("name", "").casefold())
-            def _movie_date_key_desc(kv):
-                date_raw = (kv[1].get("created_on", "") or "")
-                date_part = date_raw.split("T")[0]
-                valid = len(date_part) == 10 and date_part[4] == '-' and date_part[7] == '-'
-                if valid:
-                    try:
-                        y, m, d = date_part.split("-")
-                        n = int(y) * 10000 + int(m) * 100 + int(d)
-                        return (0, -n)  # ascending sort -> date desc
-                    except Exception:
-                        pass
-                return (1, 0)  # missing/invalid dates last
             if sort_mode == "name_asc":
-                movie_items_sorted.sort(key=lambda kv: kv[1].get("name", "").casefold())
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["name"].casefold())
             elif sort_mode == "name_desc":
-                movie_items_sorted.sort(key=lambda kv: kv[1].get("name", "").casefold(), reverse=True)
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["name"].casefold(), reverse=True)
             elif sort_mode == "date_desc":
-                # Keep missing/invalid dates at the end, date newest first, tie-break by name asc
-                movie_items_sorted.sort(key=lambda kv: kv[1].get("name", "").casefold())  # tie-breaker
-                movie_items_sorted.sort(key=_movie_date_key_desc)
-            else:  # default date_asc
-                movie_items_sorted.sort(key=_movie_date_key)
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["created_on"] or "", reverse=True)
+            else:  # date_asc
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["created_on"] or "")
 
             for movie_id, movie_data in movie_items_sorted:
-                _created_on = movie_data.get("created_on") or ""
-                added_date = _created_on.split("T")[0] if isinstance(_created_on, str) else ""
+                added_date = movie_data["created_on"].split("T")[0]
                 item_overview_html = ""
                 if include_overview:
                     item_overview_html = f"""
@@ -143,41 +119,18 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         if series:
             template = re.sub(r"\${display_tv}", "", template)
             series_html = ""
-            
-            # Build a deterministically sorted list of series according to sort_mode
-            series_items_sorted = list(series.items())
             sort_mode = getattr(configuration.conf.email_template, "sort_mode", "date_asc")
-            def _series_date_key(kv):
-                date_raw = (kv[1].get("created_on", "") or "")
-                date_part = date_raw.split("T")[0]
-                valid = len(date_part) == 10 and date_part[4] == '-' and date_part[7] == '-'
-                missing = 1 if not valid else 0
-                return (missing, date_part, kv[1].get("series_name", "").casefold())
-            def _series_date_key_desc(kv):
-                date_raw = (kv[1].get("created_on", "") or "")
-                date_part = date_raw.split("T")[0]
-                valid = len(date_part) == 10 and date_part[4] == '-' and date_part[7] == '-'
-                if valid:
-                    try:
-                        y, m, d = date_part.split("-")
-                        n = int(y) * 10000 + int(m) * 100 + int(d)
-                        return (0, -n)  # ascending sort -> date desc
-                    except Exception:
-                        pass
-                return (1, 0)  # missing/invalid dates last
             if sort_mode == "name_asc":
-                series_items_sorted.sort(key=lambda kv: kv[1].get("series_name", "").casefold())
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["series_name"].casefold())
             elif sort_mode == "name_desc":
-                series_items_sorted.sort(key=lambda kv: kv[1].get("series_name", "").casefold(), reverse=True)
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["series_name"].casefold(), reverse=True)
             elif sort_mode == "date_desc":
-                series_items_sorted.sort(key=lambda kv: kv[1].get("series_name", "").casefold())  # tie-breaker
-                series_items_sorted.sort(key=_series_date_key_desc)
-            else:  # default date_asc
-                series_items_sorted.sort(key=_series_date_key)
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["created_on"] or "", reverse=True)
+            else:  # date_asc
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["created_on"] or "")
 
             for serie_id, serie_data in series_items_sorted:
-                _created_on = serie_data.get("created_on") or ""
-                added_date = _created_on.split("T")[0] if isinstance(_created_on, str) else ""
+                added_date = serie_data["created_on"].split("T")[0]
                 if len(serie_data["seasons"]) == 1 :
                     if len(serie_data["episodes"]) == 1:
                         added_items_str = f"{serie_data['seasons'][0]}, {translation[configuration.conf.email_template.language]['episode']} {serie_data['episodes'][0]}"
