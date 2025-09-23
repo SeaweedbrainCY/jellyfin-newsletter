@@ -71,7 +71,7 @@ def populate_series_item_with_series_related_information(series_items, watched_t
                     if key not in item.keys():
                         logging.warning(f"Item {item} has no {key}. Skipping.")
                         continue
-                series_items[item['Id']]["year"] = item["ProductionYear"]
+                series_items[item['Id']]["year"] = item.get("ProductionYear", "")
                 tmdb_id = None
                 if "ProviderIds" in item.keys():
                     if "Tmdb" in item["ProviderIds"].keys():
@@ -87,7 +87,7 @@ def populate_series_item_with_series_related_information(series_items, watched_t
                 if tmdb_id is None or tmdb_info is None:
                     logging.info(f"Item {item} has no TMDB id or search by id failed. Searching by title.")
                     try:
-                        tmdb_info = TmdbAPI.get_media_detail_from_title(title=item["Name"], type="tv", year=item["ProductionYear"])
+                        tmdb_info = TmdbAPI.get_media_detail_from_title(title=item["Name"], type="tv", year=item.get("ProductionYear", ""))
                     except Exception as e:
                         logging.error(f"Item {item['Name']} could not be retrieved from TMDB by title due to an API error: {e}")   
                                        
@@ -161,7 +161,7 @@ def send_newsletter():
                 tmdb_info = TmdbAPI.get_media_detail_from_id(id=tmdb_id, type="movie")
             else:
                 logging.info(f"Item {item['Name']} has no TMDB id, searching by title.")
-                tmdb_info = TmdbAPI.get_media_detail_from_title(title=item["Name"], type="movie", year=item["ProductionYear"])
+                tmdb_info = TmdbAPI.get_media_detail_from_title(title=item["Name"], type="movie", year=item.get("ProductionYear", ""))
 
             if tmdb_info is None:
                 logging.warning(f"Item {item['Name']} has not been found on TMDB. Skipping.")
@@ -172,10 +172,11 @@ def send_newsletter():
 
                 movie_items[item["Id"]] = {
                     "name": item["Name"],
-                    "year":item["ProductionYear"],
+                    "year":item.get("ProductionYear", ""),
                     "created_on":item["DateCreated"],
                     "description": tmdb_info["overview"],
-                    "poster": f"https://image.tmdb.org/t/p/w500{tmdb_info['poster_path']}" if tmdb_info["poster_path"] else "https://redthread.uoregon.edu/files/original/affd16fd5264cab9197da4cd1a996f820e601ee4.png"
+                    "poster": f"https://image.tmdb.org/t/p/w500{tmdb_info['poster_path']}" if tmdb_info["poster_path"] else "https://redthread.uoregon.edu/files/original/affd16fd5264cab9197da4cd1a996f820e601ee4.png",
+                    "tmdb_id": tmdb_id if tmdb_id is not None else "-1"
                 }
             
     
@@ -198,10 +199,25 @@ def send_newsletter():
     if len(movie_items) + len(series_items) > 0:
         template = email_template.populate_email_template(movies=movie_items, series=series_items, total_tv=total_tv, total_movie=total_movie)
 
+        # Use the new send_newsletter function with dry-run support
+        result = email_controller.send_newsletter(
+            html_content=template,
+            movies=movie_items,
+            series=series_items,
+            total_tv=total_tv,
+            total_movie=total_movie
+        )
 
-        email_controller.send_email(template)
-
-        logging.info("All emails sent.")
+        # Log results based on mode
+        if result["mode"] == "normal":
+            logging.info(f"All emails sent successfully to {result['sent_count']} recipients.")
+        elif result["mode"] == "dry-run":
+            logging.info(f"Dry-run completed successfully (dry-run only mode).")
+        elif result["mode"] == "dry-run-smtp-only":
+            smtp_status = "PASSED" if result["smtp_tested"] else "FAILED (see the error above)"
+            logging.info(f"Dry-run completed. SMTP test: {smtp_status}")
+        
+        logging.info("Newsletter processing completed.")
     else:
         logging.warning("No new items found in watched folders. No email sent.")
     

@@ -62,7 +62,7 @@ class EmailTemplate:
         self.jellyfin_url = data["jellyfin_url"]
         self.unsubscribe_email = data["unsubscribe_email"]
         self.jellyfin_owner_name = data["jellyfin_owner_name"]
-        self.display_overview_max_items = data.get("display_overview_max_items") or 10
+        self.display_overview_max_items = data.get("display_overview_max_items", 10)
         self.sort_mode = data.get("sort_mode") or "date_asc"
 
 
@@ -79,6 +79,16 @@ class Email:
         self.smtp_sender_email = data["smtp_sender_email"]
         self.smtp_tls_type = data.get("smtp_tls_type") or "STARTTLS" # Fallback to STARTTLS if not specified
 
+
+class DryRunConfig:
+    def __init__(self, data):
+        self.enabled = data.get("enabled", False)
+        self.test_smtp_connection = data.get("test_smtp_connection", False)
+        self.output_directory = data.get("output_directory", "./previews/")
+        self.output_filename = data.get("output_filename", "newsletter_{date}_{time}.html")
+        self.include_metadata = data.get("include_metadata", True)
+        self.save_email_data = data.get("save_email_data", True)
+
         
 
 class Config:
@@ -93,9 +103,9 @@ class Config:
             if data["debug"]:
                 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(filename)s->%(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
             else:
-                logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(filename)s->%(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
+                logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
         else: 
-            logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(filename)s->%(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
+            logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(funcName)s():%(lineno)s - %(levelname)s - %(message)s')
     
         self.jellyfin = Jellyfin(data["jellyfin"])
         self.tmdb = Tmdb(data["tmdb"])
@@ -103,13 +113,14 @@ class Config:
         self.email = Email(data["email"]) 
         self.recipients = data["recipients"]
         self.scheduler = Scheduler(data["scheduler"]) if "scheduler" in data else Scheduler([])
+        self.dry_run = DryRunConfig(data.get("dry-run", {}))
     
     
 
 
 
 try:
-    with open("./config/config.yml") as config_yml:
+    with open("./config/config.yml", encoding='utf-8') as config_yml:
         try:
             raw_conf = yaml.safe_load(config_yml)
             conf = Config(raw_conf)
