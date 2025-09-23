@@ -55,6 +55,7 @@ class EmailTemplate:
             if key not in data:
                 raise Exception(f"[FATAL] Load config fail. Was expecting the key email_template.{key}")
 
+        self.theme = data.get("theme", "classic")
         self.language = data["language"]
         self.subject = data["subject"]
         self.title = data["title"]
