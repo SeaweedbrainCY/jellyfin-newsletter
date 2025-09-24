@@ -236,6 +236,15 @@
             direction: rtl !important;
         }
         
+        /* RTL row ordering - reverse content and image cells */
+        [dir="rtl"] .movie-row {
+            display: flex !important;
+            flex-direction: row-reverse !important;
+        }
+        [dir="rtl"] .movie-row td {
+            display: block !important;
+        }
+        
         /* Specific RTL footer handling */
         [dir="rtl"] footer p {
             text-align: right !important;
@@ -303,16 +312,16 @@
                     </table>
                     
                     <!-- Movies Section -->
-                    <div style="${display_movies}; text-align: ${rtl_align};">
-                        <h2 class="section-title" style="text-align: ${rtl_align};">${new_film}</h2>
+                    <div style="${display_movies}">
+                        <h2 class="section-title">${new_film}</h2>
                         <div class="movie-container">
                             ${films}
                         </div>
                     </div>
                     
                     <!-- TV Shows Section -->
-                    <div style="${display_tv}; text-align: ${rtl_align};">
-                        <h2 class="section-title" style="text-align: ${rtl_align};">${new_tvs}</h2>
+                    <div style="${display_tv}">
+                        <h2 class="section-title">${new_tvs}</h2>
                         <div class="movie-container">
                             ${tvs}
                         </div>
@@ -336,11 +345,11 @@
                     
                     <!-- Footer -->
                     <footer>
-                        <p style="text-align: ${rtl_align}; direction: ${dir};">
+                        <p>
                             ${footer_label}
                         </p>
                         <br>
-                        <p style="text-align: ${rtl_align}; direction: ${dir};">
+                        <p>
                             <a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter" class="footer-link">${project_link_text}</a> 
                             ${footer_project_open_source} 
                             ${footer_developed_by} 
