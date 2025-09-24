@@ -6,7 +6,7 @@ Here are defined all placeholders the user can use in custom string to customize
 
 import datetime as dt 
 from source import configuration
-from source.configuration import logging
+import locale
 
 class SafeFormatDict(dict):
     """
@@ -16,53 +16,26 @@ class SafeFormatDict(dict):
     def __missing__(self, key): 
         return key.join("{}")
 
-# Localized day/month names without relying on system locales
-_DAY_NAMES = {
-    "en": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-    "fr": ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
-    "he": ["יום שני", "יום שלישי", "יום רביעי", "יום חמישי", "יום שישי", "שבת", "יום ראשון"],
-}
-
-_MONTH_NAMES = {
-    "en": [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ],
-    "fr": [
-        "janvier", "février", "mars", "avril", "mai", "juin",
-        "juillet", "août", "septembre", "octobre", "novembre", "décembre"
-    ],
-    "he": [
-        "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
-        "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
-    ],
-}
-
-def _day_name(date: dt.datetime, lang: str) -> str:
-    names = _DAY_NAMES.get(lang) or _DAY_NAMES.get("en")
-    # Python weekday(): Monday=0..Sunday=6
-    return names[date.weekday()]
-
-def _month_name(date: dt.datetime, lang: str) -> str:
-    names = _MONTH_NAMES.get(lang) or _MONTH_NAMES.get("en")
-    # month 1..12
-    return names[date.month - 1]
-
-_lang = configuration.conf.email_template.language if configuration.conf.email_template.language in ["en","fr","he"] else "en"
-now = dt.datetime.now()
-start = now - dt.timedelta(days=configuration.conf.jellyfin.observed_period_days)
+# Set locale to the user's locale
+if configuration.conf.email_template.language == "fr":
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+elif configuration.conf.email_template.language == "he":
+    locale.setlocale(locale.LC_TIME, 'he_IL.UTF-8')
+else:
+    locale.setlocale(locale.LC_TIME, 'en_US.UTF-8')
 
 placeholders = SafeFormatDict({
-    "date": now.strftime("%Y-%m-%d"),
-    "day_name": _day_name(now, _lang),
-    "day_number": now.strftime("%d"),
-    "month_name": _month_name(now, _lang),
-    "month_number": now.strftime("%m"),
-    "year": now.strftime("%Y"),
-    "start_date": start.strftime("%Y-%m-%d"),
-    "start_day_name": _day_name(start, _lang),
-    "start_day_number": start.strftime("%d"),
-    "start_month_name": _month_name(start, _lang),
-    "start_month_number": start.strftime("%m"),
-    "start_year": start.strftime("%Y")
+    "date": dt.datetime.now().strftime("%Y-%m-%d"),
+    "day_name": dt.datetime.now().strftime("%A"),
+    "day_number": dt.datetime.now().strftime("%d"),
+    "month_name": dt.datetime.now().strftime("%B"),
+    "month_number": dt.datetime.now().strftime("%m"),
+    "year": dt.datetime.now().strftime("%Y"),
+    "start_date": (dt.datetime.now() - dt.timedelta(days=configuration.conf.jellyfin.observed_period_days)).strftime("%Y-%m-%d"),
+    "start_day_name": (dt.datetime.now() - dt.timedelta(days=configuration.conf.jellyfin.observed_period_days)).strftime("%A"),
+    "start_day_number": (dt.datetime.now() - dt.timedelta(days=configuration.conf.jellyfin.observed_period_days)).strftime("%d"),
+    "start_month_name": (dt.datetime.now() - dt.timedelta(days=configuration.conf.jellyfin.observed_period_days)).strftime("%B"),
+    "start_month_number": (dt.datetime.now() - dt.timedelta(days=configuration.conf.jellyfin.observed_period_days)).strftime("%m"),
+    "start_year": (dt.datetime.now() - dt.timedelta(days=configuration.conf.jellyfin.observed_period_days)).strftime("%Y")
+
 })
