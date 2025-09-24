@@ -89,6 +89,37 @@ def check_scheduler_configuration():
         assert isinstance(conf.scheduler.cron, str), "[FATAL] Invalid scheduler cron expression. The cron expression must be a string. Please check the configuration."
 
 
+def check_dry_run_configuration():
+    # enabled
+    assert isinstance(conf.dry_run.enabled, bool), "[FATAL] Invalid dry-run.enabled. The enabled flag must be a boolean. Please check the configuration."
+    
+    # test_smtp_connection  
+    assert isinstance(conf.dry_run.test_smtp_connection, bool), "[FATAL] Invalid dry-run.test_smtp_connection. The test_smtp_connection flag must be a boolean. Please check the configuration."
+    
+    # output_directory
+    assert isinstance(conf.dry_run.output_directory, str), "[FATAL] Invalid dry-run.output_directory. The output_directory must be a string. Please check the configuration."
+    assert conf.dry_run.output_directory != '', "[FATAL] Invalid dry-run.output_directory. The output_directory cannot be empty. Please check the configuration."
+    
+    # output_filename
+    assert isinstance(conf.dry_run.output_filename, str), "[FATAL] Invalid dry-run.output_filename. The output_filename must be a string. Please check the configuration."
+    assert conf.dry_run.output_filename != '', "[FATAL] Invalid dry-run.output_filename. The output_filename cannot be empty. Please check the configuration."
+    
+    # include_metadata
+    assert isinstance(conf.dry_run.include_metadata, bool), "[FATAL] Invalid dry-run.include_metadata. The include_metadata flag must be a boolean. Please check the configuration."
+    
+    # save_email_data
+    assert isinstance(conf.dry_run.save_email_data, bool), "[FATAL] Invalid dry-run.save_email_data. The save_email_data flag must be a boolean. Please check the configuration."
+    
+    # If dry-run enabled, validate directory exists or can be created
+    if conf.dry_run.enabled:
+        import os
+        try:
+            os.makedirs(conf.dry_run.output_directory, exist_ok=True)
+        except Exception as e:
+            logging.error(f"[FATAL] Cannot create dry-run output directory '{conf.dry_run.output_directory}': {e}")
+            exit(1)
+
+
 def check_configuration():
     """
     Check if the configuration is valid.
@@ -99,5 +130,6 @@ def check_configuration():
     email_template_configuration()
     check_email_configuration()
     check_recipients_configuration()
+    check_dry_run_configuration()
     
     

@@ -31,6 +31,9 @@ jobs:
             echo "GIT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
             echo "CURRENT_VERSION=$(echo ${{ github.ref_name }} | sed 's/\([0-9]*\.[0-9]*\.[0-9]*\).*/\1/')" >> $GITHUB_ENV
             echo "CURRENT_SHORT_VERSION=$(echo ${{ github.ref_name }} | sed 's/\([0-9]*\.[0-9]*\).*$/\1/')" >> $GITHUB_ENV
+            echo "REPOSITORY_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV 
+            echo "DATE=$(date)" >> $GITHUB_ENV
+            
 
         - name: Set up Version file
           run: echo ${{ github.ref_name }} > VERSION
@@ -54,12 +57,12 @@ jobs:
             context: .
             push: true
             tags: |
-              ghcr.io/${{ github.repository }}:latest
-              ghcr.io/${{ github.repository }}:${{ env.CURRENT_VERSION }}
-              ghcr.io/${{ github.repository }}:${{ env.CURRENT_SHORT_VERSION }}
+              ghcr.io/${{ env.REPOSITORY_NAME }}:latest
+              ghcr.io/${{ env.REPOSITORY_NAME }}:${{ env.CURRENT_VERSION }}
+              ghcr.io/${{ env.REPOSITORY_NAME }}:${{ env.CURRENT_SHORT_VERSION }}
             labels: |
               org.opencontainers.image.revision=${{ env.GIT_COMMIT }}
-              org.opencontainers.image.created=${{ steps.meta.outputs.created }}
+              org.opencontainers.image.created=${{ env.DATE }}
               org.opencontainers.image.version=${{ github.ref_name }}
               org.opencontainers.image.title="Jellyfin Newsletter" 
               org.opencontainers.image.description="A Dockerized newsletter service that connects to Jellyfin  API to notify your users of newly added media." 

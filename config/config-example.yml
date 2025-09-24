@@ -82,6 +82,10 @@ email:
     smtp_tls_type: "STARTTLS" # "STARTTLS" or "TLS" (implicit TLS)
 
 
+#dry-run:
+#    enabled: false
+
+
 # List of users to send the newsletter to
 recipients:
   - ""
