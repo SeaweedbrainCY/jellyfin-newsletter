@@ -69,8 +69,17 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         if movies:
             template = re.sub(r"\${display_movies}", "", template)
             movies_html = ""
-            
-            for movie_id, movie_data in movies.items():
+            sort_mode = getattr(configuration.conf.email_template, "sort_mode", "date_asc")
+            if sort_mode == "name_asc":
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["name"].casefold())
+            elif sort_mode == "name_desc":
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["name"].casefold(), reverse=True)
+            elif sort_mode == "date_desc":
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["created_on"] or "", reverse=True)
+            else:  # date_asc
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["created_on"] or "")
+
+            for movie_id, movie_data in movie_items_sorted:
                 added_date = movie_data["created_on"].split("T")[0]
                 item_overview_html = ""
                 if include_overview:
@@ -110,8 +119,17 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         if series:
             template = re.sub(r"\${display_tv}", "", template)
             series_html = ""
-            
-            for serie_id, serie_data in series.items():
+            sort_mode = getattr(configuration.conf.email_template, "sort_mode", "date_asc")
+            if sort_mode == "name_asc":
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["series_name"].casefold())
+            elif sort_mode == "name_desc":
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["series_name"].casefold(), reverse=True)
+            elif sort_mode == "date_desc":
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["created_on"] or "", reverse=True)
+            else:  # date_asc
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["created_on"] or "")
+
+            for serie_id, serie_data in series_items_sorted:
                 added_date = serie_data["created_on"].split("T")[0]
                 if len(serie_data["seasons"]) == 1 :
                     if len(serie_data["episodes"]) == 1:

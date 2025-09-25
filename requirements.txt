@@ -1,8 +1,8 @@
 APScheduler==3.11.0
 certifi==2025.8.3
-charset-normalizer==3.4.1
+charset-normalizer==3.4.3
 idna==3.10
 PyYAML==6.0.2
-requests==2.32.4
+requests==2.32.5
 tzlocal==5.3.1
 urllib3==2.5.0
