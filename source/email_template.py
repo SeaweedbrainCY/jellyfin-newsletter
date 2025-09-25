@@ -16,8 +16,6 @@ translation = {
          "new_episodes": "new episodes",
          "footer_project_open_source": "is an open source project.",
          "footer_developed_by": "Developed with ❤️ by",
-         "title": "New Content This Week",
-         "subtitle": "Fresh additions you might enjoy",
     },
     "fr":{
         "discover_now": "Découvrir maintenant",
@@ -33,8 +31,6 @@ translation = {
     "new_episodes": "nouveaux épisodes",
     "footer_project_open_source": "est un projet open source.",
     "footer_developed_by": "Développé avec ❤️ par",
-    "title": "Nouveau contenu cette semaine",
-    "subtitle": "Nouveaux ajouts que vous pourriez apprécier",
     },
     "he":{
         "discover_now": "גלה עכשיו",
@@ -51,8 +47,6 @@ translation = {
         "new_episodes": "פרקים חדשים",
         "footer_project_open_source": "הוא פרויקט קוד פתוח.",
         "footer_developed_by": "פותח באהבה על ידי",
-        "title": "תוכן חדש השבוע",
-        "subtitle": "תוספות טריות שאולי תהנו מהן",
     }
 }
 
@@ -92,8 +86,8 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
             developer_text = f"<bdi>{developer_text}</bdi>"
 
         custom_keys = [
-            {"key": "title", "value": translation[configuration.conf.email_template.language]["title"]}, 
-            {"key": "subtitle", "value": translation[configuration.conf.email_template.language]["subtitle"]},
+            {"key": "title", "value": configuration.conf.email_template.title.format_map(context.placeholders)}, 
+            {"key": "subtitle", "value": configuration.conf.email_template.subtitle.format_map(context.placeholders)},
             {"key": "jellyfin_url", "value": configuration.conf.email_template.jellyfin_url},
             {"key": "jellyfin_owner_name", "value": configuration.conf.email_template.jellyfin_owner_name.format_map(context.placeholders)},
             {"key": "unsubscribe_email", "value": configuration.conf.email_template.unsubscribe_email.format_map(context.placeholders)},
