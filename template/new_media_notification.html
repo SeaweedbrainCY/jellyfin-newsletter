@@ -178,11 +178,6 @@
             color: #aaaaaa !important;
         }
         
-        /* Override footer alignment for RTL */
-        footer p {
-            text-align: inherit;
-        }
-        
         .footer-link, .footer-link:visited {
             color: #4287f5 !important;
             text-decoration: underline !important;
@@ -226,11 +221,19 @@
         [dir="rtl"] p,
         [dir="rtl"] .movie-date,
         [dir="rtl"] .movie-description,
-        [dir="rtl"] .section-title,
-        [dir="rtl"] .stats-label,
-        [dir="rtl"] .stats-number,
-        [dir="rtl"] footer {
+        [dir="rtl"] .section-title {
             text-align: right !important;
+        }
+        
+        /* Keep title section centered even in RTL */
+        [dir="rtl"] .title h1,
+        [dir="rtl"] .title p {
+            text-align: center !important;
+        }
+        
+        /* Keep stats section title centered even in RTL */
+        [dir="rtl"] h2[style*="text-align: center"] {
+            text-align: center !important;
         }
         [dir="rtl"] .movie-content-cell {
             direction: rtl !important;
@@ -245,9 +248,12 @@
             display: block !important;
         }
         
-        /* Specific RTL footer handling */
+        /* Specific RTL footer handling - keep center alignment but RTL direction */
+        [dir="rtl"] footer {
+            text-align: center !important;
+            direction: rtl !important;
+        }
         [dir="rtl"] footer p {
-            text-align: right !important;
             direction: rtl !important;
         }
         /* Media Queries */
@@ -345,9 +351,7 @@
                     
                     <!-- Footer -->
                     <footer>
-                        <p>
-                            ${footer_label}
-                        </p>
+                        ${footer_label}
                         <br>
                         <p>
                             <a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter" class="footer-link">${project_link_text}</a> 
