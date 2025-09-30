@@ -20,8 +20,13 @@ class DryRunHandler:
         """
         output_dir = self.config.output_directory
         
-        # Handle Docker vs local environment
-        if os.path.exists('/app'):
+        # Better Docker detection - check for Docker-specific indicators
+        is_docker = (os.path.exists('/app') and 
+                    (os.path.exists('/.dockerenv') or 
+                     os.environ.get('CONTAINER_ENV') or 
+                     os.path.exists('/app/main.py')))
+        
+        if is_docker:
             # Docker environment - use absolute paths as configured
             if output_dir.startswith('/app'):
                 return output_dir

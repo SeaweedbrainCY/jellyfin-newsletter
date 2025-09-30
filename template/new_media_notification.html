@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="${html_lang}" dir="${dir}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,7 +46,7 @@
             padding: 20px 0;
         }
         
-        h1 {
+    h1 {
             color: #00ccff !important;
             font-size: 24px !important;
             margin: 0 0 10px !important;
@@ -121,7 +121,7 @@
             color: #ffffff !important;
         }
         
-        .movie-date {
+    .movie-date {
             color: #dddddd !important;
             font-size: 14px !important;
             margin: 0 0 10px !important;
@@ -214,6 +214,48 @@
                 padding-right: 15px !important;
             }
         }
+        
+        /* RTL adjustments */
+        [dir="rtl"] h1,
+        [dir="rtl"] h2,
+        [dir="rtl"] p,
+        [dir="rtl"] .movie-date,
+        [dir="rtl"] .movie-description,
+        [dir="rtl"] .section-title {
+            text-align: right !important;
+        }
+        
+        /* Keep title section centered even in RTL */
+        [dir="rtl"] .title h1,
+        [dir="rtl"] .title p {
+            text-align: center !important;
+        }
+        
+        /* Keep stats section title centered even in RTL */
+        [dir="rtl"] h2[style*="text-align: center"] {
+            text-align: center !important;
+        }
+        [dir="rtl"] .movie-content-cell {
+            direction: rtl !important;
+        }
+        
+        /* RTL row ordering - reverse content and image cells */
+        [dir="rtl"] .movie-row {
+            display: flex !important;
+            flex-direction: row-reverse !important;
+        }
+        [dir="rtl"] .movie-row td {
+            display: block !important;
+        }
+        
+        /* Specific RTL footer handling - keep center alignment but RTL direction */
+        [dir="rtl"] footer {
+            text-align: center !important;
+            direction: rtl !important;
+        }
+        [dir="rtl"] footer p {
+            direction: rtl !important;
+        }
         /* Media Queries */
         @media screen and (max-width: 600px) {
             .movie-card-table {
@@ -266,7 +308,7 @@
                     <!-- Title Section -->
                     <table width="100%" role="presentation" cellpadding="0" cellspacing="0">
                         <tr>
-                            <td class="title">
+                            <td class="title" style="text-align: center;">
                                 <h1>${title}</h1>
                                 <p>${subtitle}</p>
                                 <br>
@@ -293,7 +335,7 @@
                     
                     <!-- Stats Section -->
                     <div class="divider"></div>
-                    <h2 class="section-title">${currently_available}</h2>
+                    <h2 class="section-title" style="text-align: center;">${currently_available}</h2>
                     <table class="stats-table" role="presentation">
                         <tr>
                             <td class="stats-cell">
@@ -309,11 +351,13 @@
                     
                     <!-- Footer -->
                     <footer>
-                        ${footer_label}<br><br>
+                        ${footer_label}
+                        <br>
                         <p>
-                            <a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter" class="footer-link">Jellyfin Newsletter</a> 
-                            is an open source project. Developed with ❤️ by 
-                            <a href="https://github.com/SeaweedbrainCY/" class="footer-link">Seaweedbrain</a>
+                            <a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter" class="footer-link">${project_link_text}</a> 
+                            ${footer_project_open_source} 
+                            ${footer_developed_by} 
+                            <a href="https://github.com/SeaweedbrainCY/" class="footer-link">${developer_link_text}</a>
                         </p>
                     </footer>
                 </td>
