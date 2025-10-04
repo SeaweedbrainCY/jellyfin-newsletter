@@ -108,6 +108,8 @@ jobs:
           id: vars
           run: |
             echo "GIT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+            echo "REPOSITORY_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV 
+            
 
         - name: Download digests
           uses: actions/download-artifact@v4
