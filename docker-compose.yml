@@ -1,7 +1,7 @@
 services:
   jellyfin-newsletter:
     container_name: jellyfin-newsletter
-    image: 'ghcr.io/seaweedbraincy/jellyfin-newsletter:v0.8.2'
+    image: 'ghcr.io/seaweedbraincy/jellyfin-newsletter:v0.9.0'
     environment:
       USER_UID: 1000
       USER_GID: 1000
