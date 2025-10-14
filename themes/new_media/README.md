@@ -44,7 +44,7 @@ Templates must have the following structure:
     - `${movie_poster}`: The TMDB URL of the movie poster.
 
 - Create a `tv.html` file for the HTML structure of a single series. This file will be used to generate the HTML code for each new series. The final computed HTML code, concatenation of every `tv.html` filled structure, will be inserted in place of the `${tvs}` placeholder in the `main.html` file. It can contain the following placeholders:
-    - `${tv_name}`: The name of the series.
+    - `${tv_title}`: The name of item, with the series name and the season/episode number (e.g. "Breaking Bad - Season 1, 2 & 3").
     - `${tv_overview}`: The description of the series.
     - `${tv_overview_style}`: Must be used in the `style` attribute of the description container. It will be replaced with `display:block;` or `display:none;` depending on whether the description should be included or not (this is decided by the user in the config file).
     - `${tv_added_on}`: The release date of the series.
