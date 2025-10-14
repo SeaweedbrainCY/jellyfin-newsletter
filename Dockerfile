@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 # Set environment variables
 ENV LANG=en_US.UTF-8 \
@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && echo "fr_FR.UTF-8 UTF-8" >> /etc/locale.gen \
     && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "he_IL.UTF-8 UTF-8" >> /etc/locale.gen \
     && locale-gen \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean

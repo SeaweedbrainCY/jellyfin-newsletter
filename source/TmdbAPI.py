@@ -10,11 +10,13 @@ def get_media_detail_from_title(title, type, year=None):
     if type not in ["movie", "tv"]:
         logging.error(f"Error while retrieving a media from TMDB. Type must be 'movie' or 'tv'. Got {type}")
         return None
-    lang = "en-us" 
-    if configuration.conf.email_template.language == "fr":
-        lang = "fr-fr"
-    else:
-        lang = "en-us"
+    # Map app languages to TMDB locales
+    lang_map = {
+        "en": "en-US",
+        "fr": "fr-FR",
+        "he": "he-IL",
+    }
+    lang = lang_map.get(configuration.conf.email_template.language, "en-US")
     url = f"https://api.themoviedb.org/3/search/{type}?query={title}&language={lang}{year_query}"
 
     headers = {
@@ -47,11 +49,12 @@ def get_media_detail_from_id(id, type):
     if type not in ["movie", "tv"]:
         logging.error(f"Error while retrieving a media from TMDB. Type must be 'movie' or 'tv'. Got {type}")
         return None
-    lang = "en-us" 
-    if configuration.conf.email_template.language == "fr":
-        lang = "fr-fr"
-    else:
-        lang = "en-us"
+    lang_map = {
+        "en": "en-US",
+        "fr": "fr-FR",
+        "he": "he-IL",
+    }
+    lang = lang_map.get(configuration.conf.email_template.language, "en-US")
     url= f"https://api.themoviedb.org/3/{type}/{id}?language={lang}"
     headers = {
         "accept": "application/json",

@@ -37,7 +37,7 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 - Group TV shows by seasons
 - Fully customizable and responsive email template
 - Easy to maintain, extend, setup and run
-- Support for English and French
+- Support for English, French, and Hebrew (RTL-aware template)
 - Configure the list of recipients
 - Configure specific folders to watch for new items
 
@@ -100,7 +100,7 @@ curl -o config/config.yml https://raw.githubusercontent.com/SeaweedbrainCY/jelly
 ```bash
 docker run --rm \
     -v ./config:/app/config \
-    ghcr.io/seaweedbraincy/jellyfin-newsletter:v0.8.2
+    ghcr.io/seaweedbraincy/jellyfin-newsletter:v0.9.0
 ```
 > [!note]
 > Note: It is recommended to use a static version instead of `latest`, and manually upgrade. [Last version](https://github.com/SeaweedbrainCY/jellyfin-newsletter/releases)
@@ -110,7 +110,7 @@ docker run --rm \
 # Unix :
 crontab -e
 # Add the following line to run the script every 1st of the month at 8am
-0 8 1 * * root docker run --rm -v PATH_TO_CONFIG_FOLDER/config:/app/config/ ghcr.io/seaweedbraincy/jellyfin-newsletter:v0.8.2
+0 8 1 * * root docker run --rm -v PATH_TO_CONFIG_FOLDER/config:/app/config/ ghcr.io/seaweedbraincy/jellyfin-newsletter:v0.9.0
 ```
 
 
@@ -118,7 +118,7 @@ crontab -e
 
 
 ## Current limitations
-- Only supports English and French languages for the email template
+- Email template translations are available for English, French, and Hebrew
 - Only supports TLS for the SMTP server
 - Only supports movies and TV shows for now
 - Not available as a Jellyfin plugin yet 

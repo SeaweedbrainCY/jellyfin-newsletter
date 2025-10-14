@@ -30,7 +30,7 @@ Jellyfin-Newsletter is an open-source project that aims to provide a comprehensi
 Before you start contributing, make sure to fork the Jellyfin-Newsletter repository to your GitHub account. You will be working on your forked repository and submitting pull requests from there.
 
 ### Requirements
-- Python 3.9+ 
+- Python 3.9+ (preferably 3.13)
 - Jellyfin API key - [How to generate an API key](https://github.com/SeaweedbrainCY/jellyfin-newsletter?tab=readme-ov-file#how-to-generate-a-jellyfin-api-key)
 - A TMDB API key (free) - [How to generate a TMDB API key](https://github.com/SeaweedbrainCY/jellyfin-newsletter?tab=readme-ov-file#how-to-generate-a-tmdb-api-key)
 - A SMTP server 
@@ -49,77 +49,12 @@ python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 ```
-2.  Copy the `config/config-example.yml` to `./config/config.yml` ([direct download](https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/config/config-example.yml)) and fill in the required fields. **All fields are required**.
-```yaml
-jellyfin:
-    # URL of your jellyfin server
-    url: "" 
-
-    # API token of your jellyfin server, see requirements for more info
-    api_token: ""
-
-    # List of folders to watch for new movies 
-    # You can find them in your Jellyfin Dashboard -> Libraries -> Select a library -> Folder **WITHOUT THE TRAILING /**
-    watched_film_folders:
-        - ""
-        # example for /movies folder add "movies"
-
-
-    # List of folders to watch for new shows
-    # You can find them in your Jellyfin Dashboard -> Libraries -> Select a library -> Folder **WITHOUT THE TRAILING /**
-    watched_tv_folders:
-        - ""
-        # example for /tv folder add "tv"
-  
-  # Number of days to look back for new items
-  observed_period_days: 30
-
-tmdb:
-    # TMDB API key, see requirements for more info
-    api_key: ""
-
-# Email template to use for the newsletter
-# You can use placeholders to dynamically insert values. See available placeholders here : https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/How-to-use-placeholder
-email_template:
-    # Language of the email, supported languages are "en" and "fr"
-    language: "en"
-    # Subject of the email
-    subject: ""
-    # Title of the email
-    title: ""
-    # Subtitle of the email
-    subtitle: ""
-    # Will be used to redirect the user to your Jellyfin instance
-    jellyfin_url: ""
-    # For the legal notice in the footer
-    unsubscribe_email: ""
-    # Used in the footer
-    jellyfin_owner_name: ""
-
-# SMTP server configuration, TLS is required for now
-# Check your email provider for more information
-email:
-    # Example: GMail: smtp.gmail.com
-    smtp_server: ""
-    # Usually 587
-    smtp_port: 
-    # The username of your SMTP account
-    smtp_username: ""
-    # The password of your SMTP account
-    smtp_password: ""
-    # Example: "jellyfin@example.com" or to set display username "Jellyfin <jellyfin@example.com>"
-    smtp_sender_email: ""
-
-
-# List of users to send the newsletter to
-recipients:
-  - ""
-  # Example: "name@example.com" or to set username "Name <name@example.com>"
-```
+2.  Copy the `config/config-example.yml` to `./config/config.yml` ([direct download](https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/config/config-example.yml)) and fill in the required fields. 
 
 3. Make sure to support the following locales:
 - `en_US.UTF-8 UTF-8` 
 - `fr_FR.UTF-8 UTF-8`
+- `he_IL.UTF-8 UTF-8`
 
 On debian based systems, you can edit `/etc/locale.gen` and uncomment the lines for the locales listed above, then run:
 ```bash

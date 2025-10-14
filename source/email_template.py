@@ -14,6 +14,8 @@ translation = {
         "episodes": "Episodes",
          "episode": "Episode",
          "new_episodes": "new episodes",
+         "footer_project_open_source": "is an open source project.",
+         "footer_developed_by": "Developed with ❤️ by",
     },
     "fr":{
         "discover_now": "Découvrir maintenant",
@@ -26,7 +28,25 @@ translation = {
         "added_on": "Ajouté le",
         "episodes": "Épisodes",
         "episode": "Épisode",
-        "new_episodes": "nouveaux épisodes",
+    "new_episodes": "nouveaux épisodes",
+    "footer_project_open_source": "est un projet open source.",
+    "footer_developed_by": "Développé avec ❤️ par",
+    },
+    "he":{
+        "discover_now": "גלה עכשיו",
+        "new_film": "סרטים חדשים:\u200f",
+        "new_tvs": "סדרות חדשות:\u200f",
+        # Add RLM (\u200f) after colon to keep it properly positioned in RTL text
+        "currently_available": "זמין כעת בג'ליפין:\u200f",
+        "movies_label": "סרטים",
+        "episodes_label": "פרקים",
+        "footer_label":"אתם מקבלים מייל זה משום שאתם משתמשים בשרת ג'ליפין של ${jellyfin_owner_name}. כדי להפסיק לקבל מיילים אלה, ניתן לבקש להסיר ב־${unsubscribe_email}.",
+        "added_on": "נוסף בתאריך",
+        "episodes": "פרקים",
+        "episode": "פרק",
+        "new_episodes": "פרקים חדשים",
+        "footer_project_open_source": "הוא פרויקט קוד פתוח.",
+        "footer_developed_by": "פותח באהבה על ידי",
     }
 }
 
@@ -44,7 +64,7 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
     with open(f"./themes/new_media/{configuration.conf.email_template.theme}/main.html", encoding='utf-8') as template_file:
         template = template_file.read()
         
-        if configuration.conf.email_template.language in ["fr", "en"]:
+        if configuration.conf.email_template.language in ["fr", "en", "he"]:
             for key in translation[configuration.conf.email_template.language]:
                 template = re.sub(
                     r"\${" + key + "}", 
@@ -52,14 +72,29 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     template
                 )
         else:
-            raise Exception(f"[FATAL] Language {configuration.conf.email_template.language} not supported. Supported languages are fr and en")
+            raise Exception(f"[FATAL] Language {configuration.conf.email_template.language} not supported. Supported languages are fr, en and he")
+
+        # lang/dir for the root HTML tag
+        html_lang = configuration.conf.email_template.language if configuration.conf.email_template.language in ["en","fr","he"] else "en"
+        text_dir = "rtl" if configuration.conf.email_template.language == "he" else "ltr"
+
+        # Wrap English link texts in <bdi> for Hebrew to preserve word order
+        project_text = "Jellyfin Newsletter"
+        developer_text = "Seaweedbrain"
+        if configuration.conf.email_template.language == "he":
+            project_text = f"<bdi>{project_text}</bdi>"
+            developer_text = f"<bdi>{developer_text}</bdi>"
 
         custom_keys = [
             {"key": "title", "value": configuration.conf.email_template.title.format_map(context.placeholders)}, 
             {"key": "subtitle", "value": configuration.conf.email_template.subtitle.format_map(context.placeholders)},
             {"key": "jellyfin_url", "value": configuration.conf.email_template.jellyfin_url},
             {"key": "jellyfin_owner_name", "value": configuration.conf.email_template.jellyfin_owner_name.format_map(context.placeholders)},
-            {"key": "unsubscribe_email", "value": configuration.conf.email_template.unsubscribe_email.format_map(context.placeholders)}
+            {"key": "unsubscribe_email", "value": configuration.conf.email_template.unsubscribe_email.format_map(context.placeholders)},
+            {"key": "html_lang", "value": html_lang},
+            {"key": "dir", "value": text_dir},
+            {"key": "project_link_text", "value": project_text},
+            {"key": "developer_link_text", "value": developer_text},
         ]
         
         for key in custom_keys:
@@ -69,8 +104,17 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         if movies:
             template = re.sub(r"\${display_movies}", "", template)
             movies_html = ""
-            
-            for movie_id, movie_data in movies.items():
+            sort_mode = getattr(configuration.conf.email_template, "sort_mode", "date_asc")
+            if sort_mode == "name_asc":
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["name"].casefold())
+            elif sort_mode == "name_desc":
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["name"].casefold(), reverse=True)
+            elif sort_mode == "date_desc":
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["created_on"] or "", reverse=True)
+            else:  # date_asc
+                movie_items_sorted = sorted(movies.items(), key=lambda kv: kv[1]["created_on"] or "")
+
+            for movie_id, movie_data in movie_items_sorted:
                 added_date = movie_data["created_on"].split("T")[0]
                 added_date_html = f"<bdi>{added_date}</bdi>"
                 movie_overview_style = "display: none;"
@@ -95,8 +139,17 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         if series:
             template = re.sub(r"\${display_tv}", "", template)
             series_html = ""
-            
-            for serie_id, serie_data in series.items():
+            sort_mode = getattr(configuration.conf.email_template, "sort_mode", "date_asc")
+            if sort_mode == "name_asc":
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["series_name"].casefold())
+            elif sort_mode == "name_desc":
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["series_name"].casefold(), reverse=True)
+            elif sort_mode == "date_desc":
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["created_on"] or "", reverse=True)
+            else:  # date_asc
+                series_items_sorted = sorted(series.items(), key=lambda kv: kv[1]["created_on"] or "")
+
+            for serie_id, serie_data in series_items_sorted:
                 added_date = serie_data["created_on"].split("T")[0]
                 added_date_html = f"<bdi>{added_date}</bdi>"
                 if len(serie_data["seasons"]) == 1 :
@@ -134,8 +187,10 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
         else:
             template = re.sub(r"\${display_tv}", "display:none", template)
 
-        # Statistics section
-        template = re.sub(r"\${series_count}", str(total_tv), template)
-        template = re.sub(r"\${movies_count}", str(total_movie), template)
-        
+        # Always use BDI for numbers to ensure proper display in mixed-direction content
+        series_count_value = f"<bdi>{total_tv}</bdi>"
+        movies_count_value = f"<bdi>{total_movie}</bdi>"
+        template = re.sub(r"\${series_count}", series_count_value, template)
+        template = re.sub(r"\${movies_count}", movies_count_value, template)
+
         return template

@@ -46,7 +46,7 @@ tmdb:
 email_template:
     # See https://github.com/SeaweedbrainCY/jellyfin-newsletter/tree/main/themes/new_media for available themes
     theme: "classic"
-    # Language of the email, supported languages are "en" and "fr"
+    # Language of the email, supported languages are "en", "fr", and "he"
     language: "en"
     # Subject of the email
     subject: ""
@@ -66,6 +66,15 @@ email_template:
     # Always show summaries : set to 0
     # Always hide summaries : set to -1
     #display_overview_max_items: 10
+    
+    # OPTIONAL: Sorting mode for items in the email
+    # Allowed values: "date_asc" (default), "date_desc", "name_asc", "name_desc"
+    # - date_asc: sort by date (oldest first)
+    # - date_desc: sort by date (newest first)
+    # - name_asc: sort entirely by name (A->Z), ignore date
+    # - name_desc: sort entirely by name (Z->A), ignore date
+    #sort_mode: "date_asc"
+
 
 # SMTP server configuration, TLS is required for now
 # Check your email provider for more information

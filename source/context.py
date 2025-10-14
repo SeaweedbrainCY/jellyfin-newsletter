@@ -19,6 +19,8 @@ class SafeFormatDict(dict):
 # Set locale to the user's locale
 if configuration.conf.email_template.language == "fr":
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+elif configuration.conf.email_template.language == "he":
+    locale.setlocale(locale.LC_TIME, 'he_IL.UTF-8')
 else:
     locale.setlocale(locale.LC_TIME, 'en_US.UTF-8')
 
