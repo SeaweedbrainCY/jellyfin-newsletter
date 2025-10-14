@@ -83,7 +83,7 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     movie_template = re.sub(r"\${movie_name}", movie_data['name'], movie_template)
                     movie_template = re.sub(r"\${movie_added_on_label}", translation[configuration.conf.email_template.language]['added_on'], movie_template)
                     movie_template = re.sub(r"\${movie_added_on}", added_date_html, movie_template)
-                    movie_template = re.sub(r"\${movie_overview}", movie_data['overview'], movie_template)
+                    movie_template = re.sub(r"\${movie_overview}", movie_data['description'], movie_template)
                     movies_html += movie_template
 
                 
@@ -114,14 +114,14 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     serie_data["seasons"].sort()
                     added_items_str = ", ".join(serie_data["seasons"])
 
-                tv_title = f"<bdi>{serie_data['series_name']: added_items_str}</bdi>"
+                tv_title = f"<bdi>{serie_data['series_name']}: {added_items_str}</bdi>"
                 tv_overview_style = "display: none;"
                 if include_overview:
                     tv_overview_style = "display: block;"
                 added_items_html = f"<bdi>{added_items_str}</bdi>"
                 with open(f"./themes/new_media/{configuration.conf.email_template.theme}/tv.html", encoding='utf-8') as movie_template_file:
                     tv_template = movie_template_file.read()
-                    tv_template = re.sub(r"\${tv_title}", serie_data['name'], tv_template)
+                    tv_template = re.sub(r"\${tv_title}", serie_data['series_name'], tv_template)
                     tv_template = re.sub(r"\${tv_overview_style}", tv_overview_style, tv_template)
                     tv_template = re.sub(r"\${tv_overview}", serie_data['description'], tv_template)
                     tv_template = re.sub(r"\${tv_added_on}", added_date_html, tv_template)
