@@ -72,12 +72,12 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
             
             for movie_id, movie_data in movies.items():
                 added_date = movie_data["created_on"].split("T")[0]
-                tv_overview_style = "display: none;"
+                movie_overview_style = "display: none;"
                 if include_overview:
-                    tv_overview_style = "display: block;"
+                    movie_overview_style = "display: block;"
                 with open(f"./themes/new_media/{configuration.conf.email_template.theme}/main.html", encoding='utf-8') as movie_template_file:
                     movie_template = movie_template_file.read()
-                    movie_template = re.sub(r"\${movie_overview_style}", tv_overview_style, movie_template)
+                    movie_template = re.sub(r"\${movie_overview_style}", movie_overview_style, movie_template)
                 movies_html += 
                 
             template = re.sub(r"\${films}", movies_html, template)
@@ -108,33 +108,8 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
 
                 item_overview_html = ""
                 if include_overview:
-                    item_overview_html = f"""
-<div class="movie-description" style="color: #dddddd !important; font-size: 14px !important; line-height: 1.4 !important;">
-                                            {serie_data['description']}
-                                        </div>
-"""
-                series_html += f"""
-                <div class="movie_container" style="margin-bottom: 15px;">
-                    <div class="movie_bg" style="background: url('{serie_data['poster']}') no-repeat center center; background-size: cover; border-radius: 10px;">
-                        <table class="movie" width="100%" role="presentation" cellpadding="0" cellspacing="0" style="background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;">
-                            <tr>
-                                <td class="movie-image" valign="middle" style="padding: 15px; text-align: center; width: 120px;">
-                                    <img src="{serie_data['poster']}" alt="{serie_data['series_name']}" style="max-width: 100px; height: auto; display: block; margin: 0 auto;">
-                                </td>
-                                <td class="movie-content-cell" valign="middle" style="padding: 15px;">
-                                    <div class="mobile-text-container">
-                                        <h3 class="movie-title" style="color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;">{serie_data['series_name']}: {added_items_str}</h3>
-                                        <div class="movie-date" style="color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;">
-                                            {translation[configuration.conf.email_template.language]['added_on']} {added_date}
-                                        </div>
-                                        {item_overview_html}
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                """
+
+                
                 
             template = re.sub(r"\${tvs}", series_html, template)
         else:
