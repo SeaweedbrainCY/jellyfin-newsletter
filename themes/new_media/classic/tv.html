@@ -1,0 +1,29 @@
+<div class="movie_container" style="margin-bottom: 15px;">
+    <div class="movie_bg"
+        style="background: url('${tv_poster}') no-repeat center center; background-size: cover; border-radius: 10px;">
+        <table class="movie" width="100%" role="presentation" cellpadding="0" cellspacing="0"
+            style="background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;">
+            <tr>
+                <td class="movie-image" valign="middle" style="padding: 15px; text-align: center; width: 120px;">
+                    <img src="${tv_poster}" alt="${tv_title}"
+                        style="max-width: 100px; height: auto; display: block; margin: 0 auto;">
+                </td>
+                <td class="movie-content-cell" valign="middle" style="padding: 15px;">
+                    <div class="mobile-text-container">
+                        <h3 class="movie-title"
+                            style="color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;">
+                            ${tv_title}</h3>
+                        <div class="movie-date"
+                            style="color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;">
+                            ${tv_added_on_label} ${tv_added_on}
+                        </div>
+                        <div class="movie-description"
+                            style="color: #dddddd !important; font-size: 14px !important; line-height: 1.4 !important; ${tv_overview_style}">
+                            ${tv_overview}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

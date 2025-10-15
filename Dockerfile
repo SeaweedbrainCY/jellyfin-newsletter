@@ -33,7 +33,7 @@ RUN mkdir -p /app/config
 # Copy application code
 COPY source /app/source
 COPY main.py /app
-COPY template /app/template
+COPY themes /app/themes
 COPY assets /app/assets
 COPY entrypoint.sh /app/entrypoint.sh
 COPY VERSION /app

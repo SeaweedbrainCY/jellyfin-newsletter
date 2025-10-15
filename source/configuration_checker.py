@@ -35,6 +35,10 @@ def check_tmdb_configuration():
 
 
 def email_template_configuration():
+    # Theme
+    assert isinstance(conf.email_template.theme, str), "[FATAL] Invalid email template theme. The theme must be a string. Please check the configuration."
+    assert conf.email_template.theme in ['classic'], "[FATAL] Invalid email template theme. The theme must be 'classic'. Please check the configuration."
+
     # Language
     assert isinstance(conf.email_template.language, str), "[FATAL] Invalid email template language. The language must be a string. Please check the configuration."
     assert conf.email_template.language in ['en', 'fr', 'he'], "[FATAL] Invalid email template language. The language must be 'en', 'fr' or 'he'. Please check the configuration."

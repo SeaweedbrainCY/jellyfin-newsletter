@@ -1,0 +1,22 @@
+<div class="movie_container" style="margin-bottom: 15px;">
+    <div class="movie_bg" style="background: url('${movie_poster}') no-repeat center center; background-size: cover; border-radius: 10px;">
+        <table class="movie" width="100%" role="presentation" cellpadding="0" cellspacing="0" style="background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;">
+            <tr>
+                <td class="movie-image" valign="middle" style="padding: 15px; text-align: center; width: 120px;">
+                    <img src="${movie_poster}" alt="${movie_name}" style="max-width: 100px; height: auto; display: block; margin: 0 auto;">
+                </td>
+                <td class="movie-content-cell" valign="middle" style="padding: 15px;">
+                    <div class="mobile-text-container">
+                        <h3 class="movie-title" style="color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;">${movie_name}</h3>
+                        <div class="movie-date" style="color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;">
+                                          ${movie_added_on_label}  ${movie_added_on}
+                        </div>
+                        <div class="movie-description" style="color: #dddddd !important; font-size: 14px !important; line-height: 1.4 !important; ${movie_overview_style} ">
+                                           ${movie_overview}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -67,7 +67,7 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
     elif len(movies) + len(series) > configuration.conf.email_template.display_overview_max_items :
         include_overview = False
         configuration.logging.info(f"There are more than {configuration.conf.email_template.display_overview_max_items} new items, overview will not be included in the email template to avoid too much content.")
-    with open("./template/new_media_notification.html", encoding='utf-8') as template_file:
+    with open(f"./themes/new_media/{configuration.conf.email_template.theme}/main.html", encoding='utf-8') as template_file:
         template = template_file.read()
         
         if configuration.conf.email_template.language in ["fr", "en", "he"]:
@@ -119,43 +119,20 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
 
             for movie_id, movie_data in movie_items_sorted:
                 added_date = movie_data["created_on"].split("T")[0]
-                # Always use BDI for dates to ensure proper display in mixed-direction content
                 added_date_html = f"<bdi>{added_date}</bdi>"
-                item_overview_html = ""
+                movie_overview_style = "display: none;"
                 if include_overview:
-                    item_overview_html = f"""
-<div class="movie-description" style="color: #dddddd !important; font-size: 14px !important; line-height: 1.4 !important;">
-                                            {movie_data['description']}
-</div>
-"""
-                image_cell = f"""
-                                <td class=\"movie-image\" valign=\"middle\" style=\"padding: 15px; text-align: center; width: 120px;\"> 
-                                    <img src=\"{movie_data['poster']}\" alt=\"{movie_data['name']}\" style=\"max-width: 100px; height: auto; display: block; margin: 0 auto;\">
-                                </td>
-                """
-                content_cell = f"""
-                                <td class=\"movie-content-cell\" valign=\"middle\" style=\"padding: 15px;\">
-                                    <div class=\"mobile-text-container\">
-                                        <h3 class=\"movie-title\" style=\"color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;\">{movie_data['name']}</h3>
-                                        <div class=\"movie-date\" style=\"color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;\">
-                                            {translation[configuration.conf.email_template.language]['added_on']} {added_date_html}
-                                        </div>
-                                        {item_overview_html}
-                                    </div>
-                                </td>
-                """
-                movies_html += f"""
-                <div class=\"movie_container\" style=\"margin-bottom: 15px;\">
-                    <div class=\"movie_bg\" style=\"background: url('{movie_data['poster']}') no-repeat center center; background-size: cover; border-radius: 10px;\">
-                        <table class=\"movie\" width=\"100%\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;\">
-                            <tr class=\"movie-row\">
-{image_cell}
-{content_cell}
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                """
+                    movie_overview_style = "display: block;"
+                with open(f"./themes/new_media/{configuration.conf.email_template.theme}/movie.html", encoding='utf-8') as movie_template_file:
+                    movie_template = movie_template_file.read()
+                    movie_template = re.sub(r"\${movie_overview_style}", movie_overview_style, movie_template)
+                    movie_template = re.sub(r"\${movie_poster}", movie_data['poster'], movie_template)
+                    movie_template = re.sub(r"\${movie_name}", movie_data['name'], movie_template)
+                    movie_template = re.sub(r"\${movie_added_on_label}", translation[configuration.conf.email_template.language]['added_on'], movie_template)
+                    movie_template = re.sub(r"\${movie_added_on}", added_date_html, movie_template)
+                    movie_template = re.sub(r"\${movie_overview}", movie_data['description'], movie_template)
+                    movies_html += movie_template
+
                 
             template = re.sub(r"\${films}", movies_html, template)
         else:
@@ -177,7 +154,6 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
 
             for serie_id, serie_data in series_items_sorted:
                 added_date = serie_data["created_on"].split("T")[0]
-                # Always use BDI for dates to ensure proper display in mixed-direction content
                 added_date_html = f"<bdi>{added_date}</bdi>"
                 if len(serie_data["seasons"]) == 1 :
                     if len(serie_data["episodes"]) == 1:
@@ -194,44 +170,21 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     serie_data["seasons"].sort()
                     added_items_str = ", ".join(serie_data["seasons"])
 
-                # Always use BDI for mixed-direction content
-                added_items_str_display = f"<bdi>{added_items_str}</bdi>"
-
-                item_overview_html = ""
+                tv_title = f"<bdi>{serie_data['series_name']}: {added_items_str}</bdi>"
+                tv_overview_style = "display: none;"
                 if include_overview:
-                    item_overview_html = f"""
-<div class="movie-description" style="color: #dddddd !important; font-size: 14px !important; line-height: 1.4 !important;">
-                                            {serie_data['description']}
-                                        </div>
-"""
-                s_image_cell = f"""
-                                <td class=\"movie-image\" valign=\"middle\" style=\"padding: 15px; text-align: center; width: 120px;\">
-                                    <img src=\"{serie_data['poster']}\" alt=\"{serie_data['series_name']}\" style=\"max-width: 100px; height: auto; display: block; margin: 0 auto;\">
-                                </td>
-                """
-                s_content_cell = f"""
-                                <td class=\"movie-content-cell\" valign=\"middle\" style=\"padding: 15px;\">
-                                    <div class=\"mobile-text-container\"> 
-                                        <h3 class=\"movie-title\" style=\"color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;\">{serie_data['series_name']}: {added_items_str_display}</h3>
-                                        <div class=\"movie-date\" style=\"color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;\">
-                                            {translation[configuration.conf.email_template.language]['added_on']} {added_date_html}
-                                        </div>
-                                        {item_overview_html}
-                                    </div>
-                                </td>
-                """
-                series_html += f"""
-                <div class=\"movie_container\" style=\"margin-bottom: 15px;\">
-                    <div class=\"movie_bg\" style=\"background: url('{serie_data['poster']}') no-repeat center center; background-size: cover; border-radius: 10px;\">
-                        <table class=\"movie\" width=\"100%\" role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;\">
-                            <tr class=\"movie-row\">
-{s_image_cell}
-{s_content_cell}
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                """
+                    tv_overview_style = "display: block;"
+                added_items_html = f"<bdi>{added_items_str}</bdi>"
+                with open(f"./themes/new_media/{configuration.conf.email_template.theme}/tv.html", encoding='utf-8') as movie_template_file:
+                    tv_template = movie_template_file.read()
+                    tv_template = re.sub(r"\${tv_title}", serie_data['series_name'], tv_template)
+                    tv_template = re.sub(r"\${tv_overview_style}", tv_overview_style, tv_template)
+                    tv_template = re.sub(r"\${tv_overview}", serie_data['description'], tv_template)
+                    tv_template = re.sub(r"\${tv_added_on}", added_date_html, tv_template)
+                    tv_template = re.sub(r"\${tv_added_on_label}", translation[configuration.conf.email_template.language]['added_on'], tv_template)
+                    tv_template = re.sub(r"\${tv_poster}", serie_data['poster'], tv_template)
+                    series_html += tv_template
+                
                 
             template = re.sub(r"\${tvs}", series_html, template)
         else:
