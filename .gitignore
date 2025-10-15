@@ -2,6 +2,7 @@ config/config.yml
 config/LAST_NEWSLETTER.txt
 template/new_media_notification_preview.html
 
+data/
 
 # Used for development purposes, contains local settings and other files that should not be committed
 dev/
