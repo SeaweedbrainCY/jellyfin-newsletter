@@ -227,7 +227,8 @@ def send_newsletter():
 ##############################################
 Newsletter sent. 
 Thanks for using Jellyfin Newsletter!
-Developed by Seaweedbrain, under MIT License.""")
+Copyright (C) 2025 Nathan Stchepinsky (seaweedbrain)
+Licensed under the AGPLv3.0""")
 
 
 

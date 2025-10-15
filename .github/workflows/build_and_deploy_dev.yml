@@ -73,7 +73,7 @@ jobs:
               org.opencontainers.image.authors=SeaweedbrainCY <contact@seaweedbrain.xyz>
               org.opencontainers.image.url=https://github.com/seaweedbraincy/jellyfin-newsletter
               org.opencontainers.image.source=https://github.com/seaweedbraincy/jellyfin-newsletter
-              org.opencontainers.image.licenses=MIT
+              org.opencontainers.image.licenses=AGPL-3.0-or-later	
               org.opencontainers.image.documentation=https://github.com/seaweedbraincy/jellyfin-newsletter#readme
             annotations: |
               org.opencontainers.image.description=The development version of the Jellyfin Newsletter Docker image, used for testing and development purposes.

@@ -352,13 +352,19 @@
                     <!-- Footer -->
                     <footer>
                         ${footer_label}
-                        <br>
-                        <p>
+                        <br><br><br>
+
+                         <!--
+                            BEFORE EDITING ANYTHING BELOW THIS LINE, PLEASE READ THE FOLLOWING:
+                            While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due.
+
+                            Thanks !
+                        -->
                             <a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter" class="footer-link">${project_link_text}</a> 
                             ${footer_project_open_source} 
-                            ${footer_developed_by} 
-                            <a href="https://github.com/SeaweedbrainCY/" class="footer-link">${developer_link_text}</a>
-                        </p>
+                            <bdi>${footer_developed_by}</bdi>
+                            <br>
+                            ${license_and_copyright}
                     </footer>
                 </td>
             </tr>
