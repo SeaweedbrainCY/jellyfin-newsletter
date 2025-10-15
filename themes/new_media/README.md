@@ -21,6 +21,8 @@ HTML templates can omit information, but cannot add new information. For example
 Templates must have the following structure:
 - A folder named after the template (e.g. `modern`, `classic`, etc.)
 - Inside the folder, create a `main.html` file for the HTML version of the email. This file will be the structure for the email file. It must contain the CSS styles and the HTML structure. The available placeholders are : 
+    - `${html_lang}`: The language of the HTML document. Should be used in the `<html>` tag.
+    - `${text_direction}`: The text direction of the HTML document. Should be used in the `<html>` tag. Will be replaced with `ltr` or `rtl` depending on the language.
     - `${title}`: The title of the newsletter. Defined in the config file. 
     - `${subtitle}`: The subtitle of the newsletter. Defined in the config file. 
     - `${jellyfin_url}`: The URL of the Jellyfin server. Defined in the config file.
