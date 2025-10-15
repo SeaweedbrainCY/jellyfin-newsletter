@@ -15,7 +15,9 @@ translation = {
          "episode": "Episode",
          "new_episodes": "new episodes",
          "footer_project_open_source": "is an open source project.",
-         "footer_developed_by": "Developed with ❤️ by",
+         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
+         "footer_developed_by": 'Developed with ❤️ by <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> and  <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">contributors</a>.',
+         "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3."
     },
     "fr":{
         "discover_now": "Découvrir maintenant",
@@ -30,7 +32,9 @@ translation = {
         "episode": "Épisode",
     "new_episodes": "nouveaux épisodes",
     "footer_project_open_source": "est un projet open source.",
-    "footer_developed_by": "Développé avec ❤️ par",
+    # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
+    "footer_developed_by": 'Développé avec ❤️ par <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> et <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">les contributeurs</a>.',
+    "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, sous licence AGPLv3."
     },
     "he":{
         "discover_now": "גלה עכשיו",
@@ -46,7 +50,9 @@ translation = {
         "episode": "פרק",
         "new_episodes": "פרקים חדשים",
         "footer_project_open_source": "הוא פרויקט קוד פתוח.",
-        "footer_developed_by": "פותח באהבה על ידי",
+        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
+        "footer_developed_by": 'פותח באהבה ❤️ על ידי <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> ו<a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">תורמים</a>.',
+        "license_and_copyright": "זכויות יוצרים © 2025 Nathan Stchepinsky, ברישיון AGPLv3.", 
     }
 }
 
@@ -80,10 +86,8 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
 
         # Wrap English link texts in <bdi> for Hebrew to preserve word order
         project_text = "Jellyfin Newsletter"
-        developer_text = "Seaweedbrain"
         if configuration.conf.email_template.language == "he":
             project_text = f"<bdi>{project_text}</bdi>"
-            developer_text = f"<bdi>{developer_text}</bdi>"
 
         custom_keys = [
             {"key": "title", "value": configuration.conf.email_template.title.format_map(context.placeholders)}, 
@@ -94,7 +98,6 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
             {"key": "html_lang", "value": html_lang},
             {"key": "dir", "value": text_dir},
             {"key": "project_link_text", "value": project_text},
-            {"key": "developer_link_text", "value": developer_text},
         ]
         
         for key in custom_keys:

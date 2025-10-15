@@ -125,7 +125,7 @@ crontab -e
 - Must be run manually or scheduled
 
 ## License
-This project is licensed under the MIT License—see the [LICENSE](LICENSE) file for details.
+This project is licensed under the AGPLv3 License—see the [LICENSE](LICENSE) file for details.
 
 ## Contribution
 Feel free to contribute to this project by opening an issue or a pull request.

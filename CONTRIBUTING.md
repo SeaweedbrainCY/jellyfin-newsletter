@@ -122,7 +122,9 @@ We appreciate all contributions to Jellyfin-Newsletter, and we recognize and ack
 
 ## License
 
-By contributing to Jellyfin-Newsletter, you agree that your contributions will be licensed under the [GPL-3.0 license](https://github.com/Jellyfin-Newsletter/Jellyfin-Newsletter/blob/main/LICENSE).
+Jellyfin-Newsletter is licensed under the AGPLv3 License. By contributing to this project, you agree that your contributions will be licensed under the same license.
+
+Please read the [LICENSE](LICENSE) file for more details. All contributions must comply with the terms of the AGPLv3 License.
 
 ---
 
