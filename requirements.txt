@@ -1,4 +1,4 @@
-APScheduler==3.11.0
+APScheduler==3.11.1
 certifi==2025.8.3
 charset-normalizer==3.4.3
 idna==3.10
