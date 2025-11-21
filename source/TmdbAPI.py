@@ -44,25 +44,28 @@ def get_media_detail_from_title(title, type, year=None):
         logging.error(f"Error, no result found for the title {title}.")
         return None
 
-
 def get_media_detail_from_id(id, type):
     if type not in ["movie", "tv"]:
         logging.error(f"Error while retrieving a media from TMDB. Type must be 'movie' or 'tv'. Got {type}")
         return None
+
     lang_map = {
         "en": "en-US",
         "fr": "fr-FR",
         "he": "he-IL",
     }
     lang = lang_map.get(configuration.conf.email_template.language, "en-US")
-    url= f"https://api.themoviedb.org/3/{type}/{id}?language={lang}"
+
+    url = f"https://api.themoviedb.org/3/{type}/{id}?api_key={configuration.conf.tmdb.api_key}&language={lang}"
+
     headers = {
-        "accept": "application/json",
-        "Authorization": f"Bearer {configuration.conf.tmdb.api_key}"
+        "accept": "application/json"
     }
 
     response = requests.get(url, headers=headers)
+
     if response.status_code != 200:
         logging.error(f"Error while getting media detail from id, status code: {response.status_code}.")
         raise Exception(f"Error while getting media detail from id, status code: {response.status_code}. Answer: {response.text}.")
+
     return response.json()
