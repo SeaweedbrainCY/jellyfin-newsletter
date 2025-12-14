@@ -180,6 +180,9 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     TRANSLATIONS[configuration.conf.email_template.language][key], 
                     template
                 )
+            missing = re.findall(r"\${([^}]+)}", template)
+            if missing:
+                configuration.logging.debug(f"Missing translations for language {configuration.conf.email_template.language}: {', '.join(set(missing))} ")
         else:
             raise Exception(f"[FATAL] Language {configuration.conf.email_template.language} not supported. Supported languages are {', '.join(configuration.conf.email_template.available_lang)}.")
 
