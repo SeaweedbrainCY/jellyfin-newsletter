@@ -1,7 +1,7 @@
 from source import configuration, context, utils
 import re
 
-translation = {
+TRANSLATIONS = {
     "en":{
         "discover_now": "Discover now",
         "new_film": "New movies:",
@@ -121,18 +121,18 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
     with open(f"./themes/new_media/{configuration.conf.email_template.theme}/main.html", encoding='utf-8') as template_file:
         template = template_file.read()
         
-        if configuration.conf.email_template.language in ["fr", "en", "he"]:
-            for key in translation[configuration.conf.email_template.language]:
+        if configuration.conf.email_template.language in configuration.conf.email_template.available_lang:
+            for key in TRANSLATIONS[configuration.conf.email_template.language]:
                 template = re.sub(
                     r"\${" + key + "}", 
-                    translation[configuration.conf.email_template.language][key], 
+                    TRANSLATIONS[configuration.conf.email_template.language][key], 
                     template
                 )
         else:
-            raise Exception(f"[FATAL] Language {configuration.conf.email_template.language} not supported. Supported languages are fr, en and he")
+            raise Exception(f"[FATAL] Language {configuration.conf.email_template.language} not supported. Supported languages are {', '.join(configuration.conf.email_template.available_lang)}.")
 
         # lang/dir for the root HTML tag
-        html_lang = configuration.conf.email_template.language if configuration.conf.email_template.language in ["en","fr","he"] else "en"
+        html_lang = configuration.conf.email_template.language if configuration.conf.email_template.language in configuration.conf.email_template.available_lang else "en"
         text_dir = "rtl" if configuration.conf.email_template.language == "he" else "ltr"
 
         # Wrap English link texts in <bdi> for Hebrew to preserve word order
@@ -179,7 +179,7 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     movie_template = re.sub(r"\${movie_overview_style}", movie_overview_style, movie_template)
                     movie_template = re.sub(r"\${movie_poster}", movie_data['poster'], movie_template)
                     movie_template = re.sub(r"\${movie_name}", movie_data['name'], movie_template)
-                    movie_template = re.sub(r"\${movie_added_on_label}", translation[configuration.conf.email_template.language]['added_on'], movie_template)
+                    movie_template = re.sub(r"\${movie_added_on_label}", TRANSLATIONS[configuration.conf.email_template.language]['added_on'], movie_template)
                     movie_template = re.sub(r"\${movie_added_on}", added_date_html, movie_template)
                     movie_template = re.sub(r"\${movie_overview}", movie_data['description'], movie_template)
                     movies_html += movie_template
@@ -208,15 +208,15 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                 added_date_html = f"<bdi>{added_date}</bdi>"
                 if len(serie_data["seasons"]) == 1 :
                     if len(serie_data["episodes"]) == 1:
-                        added_items_str = f"{serie_data['seasons'][0]}, {translation[configuration.conf.email_template.language]['episode']} {serie_data['episodes'][0]}"
+                        added_items_str = f"{serie_data['seasons'][0]}, {TRANSLATIONS[configuration.conf.email_template.language]['episode']} {serie_data['episodes'][0]}"
                     else:
                         episodes_ranges = utils.summarize_ranges(serie_data["episodes"])
                         if episodes_ranges is None:
-                            added_items_str = f"{serie_data['seasons'][0]}, {translation[configuration.conf.email_template.language]['new_episodes']}."
+                            added_items_str = f"{serie_data['seasons'][0]}, {TRANSLATIONS[configuration.conf.email_template.language]['new_episodes']}."
                         if len(episodes_ranges) == 1:
-                            added_items_str = f"{serie_data['seasons'][0]}, {translation[configuration.conf.email_template.language]['episodes']} {episodes_ranges[0]}"
+                            added_items_str = f"{serie_data['seasons'][0]}, {TRANSLATIONS[configuration.conf.email_template.language]['episodes']} {episodes_ranges[0]}"
                         else:
-                            added_items_str = f"{serie_data['seasons'][0]}, {translation[configuration.conf.email_template.language]['episodes']} {', '.join(episodes_ranges[:-1])} & {episodes_ranges[-1]}"
+                            added_items_str = f"{serie_data['seasons'][0]}, {TRANSLATIONS[configuration.conf.email_template.language]['episodes']} {', '.join(episodes_ranges[:-1])} & {episodes_ranges[-1]}"
                 else:
                     serie_data["seasons"].sort()
                     added_items_str = ", ".join(serie_data["seasons"])
@@ -232,7 +232,7 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     tv_template = re.sub(r"\${tv_overview_style}", tv_overview_style, tv_template)
                     tv_template = re.sub(r"\${tv_overview}", serie_data['description'], tv_template)
                     tv_template = re.sub(r"\${tv_added_on}", added_date_html, tv_template)
-                    tv_template = re.sub(r"\${tv_added_on_label}", translation[configuration.conf.email_template.language]['added_on'], tv_template)
+                    tv_template = re.sub(r"\${tv_added_on_label}", TRANSLATIONS[configuration.conf.email_template.language]['added_on'], tv_template)
                     tv_template = re.sub(r"\${tv_poster}", serie_data['poster'], tv_template)
                     series_html += tv_template
                 

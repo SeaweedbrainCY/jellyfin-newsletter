@@ -3,20 +3,22 @@ from source import configuration
 import json
 from source.configuration import logging
 
-
+LANG_MAP = {
+    "en": "en-US",
+    "fr": "fr-FR",
+    "he": "he-IL",
+    "ca": "ca-ES",
+    "es": "es-ES",
+    "it": "it-IT",
+}
 
 def get_media_detail_from_title(title, type, year=None):
     year_query = f"&year={year}" if year else ""
     if type not in ["movie", "tv"]:
         logging.error(f"Error while retrieving a media from TMDB. Type must be 'movie' or 'tv'. Got {type}")
         return None
-    # Map app languages to TMDB locales
-    lang_map = {
-        "en": "en-US",
-        "fr": "fr-FR",
-        "he": "he-IL",
-    }
-    lang = lang_map.get(configuration.conf.email_template.language, "en-US")
+    
+    lang = LANG_MAP.get(configuration.conf.email_template.language, "en-US")
     url = f"https://api.themoviedb.org/3/search/{type}?query={title}&language={lang}{year_query}"
 
     headers = {
@@ -49,12 +51,7 @@ def get_media_detail_from_id(id, type):
     if type not in ["movie", "tv"]:
         logging.error(f"Error while retrieving a media from TMDB. Type must be 'movie' or 'tv'. Got {type}")
         return None
-    lang_map = {
-        "en": "en-US",
-        "fr": "fr-FR",
-        "he": "he-IL",
-    }
-    lang = lang_map.get(configuration.conf.email_template.language, "en-US")
+    lang = LANG_MAP.get(configuration.conf.email_template.language, "en-US")
     url= f"https://api.themoviedb.org/3/{type}/{id}?language={lang}"
     headers = {
         "accept": "application/json",

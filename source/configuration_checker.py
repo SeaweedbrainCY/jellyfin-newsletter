@@ -41,7 +41,7 @@ def email_template_configuration():
 
     # Language
     assert isinstance(conf.email_template.language, str), "[FATAL] Invalid email template language. The language must be a string. Please check the configuration."
-    assert conf.email_template.language in ['en', 'fr', 'he'], "[FATAL] Invalid email template language. The language must be 'en', 'fr' or 'he'. Please check the configuration."
+    assert conf.email_template.language in conf.email_template.available_lang, f"[FATAL] Invalid email template language. Available lang are {', '.join(conf.email_template.available_lang)} . Please check the configuration."
 
     # Subject
     assert isinstance(conf.email_template.subject, str), "[FATAL] Invalid email template subject. The subject must be a string. Please check the configuration."

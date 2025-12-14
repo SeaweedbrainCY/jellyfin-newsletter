@@ -65,6 +65,7 @@ class EmailTemplate:
         self.jellyfin_owner_name = data["jellyfin_owner_name"]
         self.display_overview_max_items = data.get("display_overview_max_items", 10)
         self.sort_mode = data.get("sort_mode") or "date_asc"
+        self.available_lang = ["en", "fr", "he", "ca", "es", "it"]
 
 
 class Email:
