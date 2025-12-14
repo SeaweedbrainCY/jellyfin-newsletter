@@ -1,7 +1,42 @@
 from source import configuration, context, utils
 import re
 
+# While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
 TRANSLATIONS = {
+    "ca": {
+        "discover_now": "Descobreix ara",
+        "new_film": "Pel·lícules noves:",
+        "new_tvs": "Sèries noves:",
+        "currently_available": "Disponible actualment a Jellyfin:",
+        "movies_label": "Pel·lícules",
+        "episodes_label": "Episodis",
+        "footer_label": "Rebeu aquest correu electrònic perquè utilitzeu el servidor Jellyfin de ${jellyfin_owner_name}. Si no voleu rebre més aquests correus, podeu donar-vos de baixa notificant-ho a ${unsubscribe_email}.",
+        "added_on": "Afegit el",
+        "episodes": "Episodis",
+        "episode": "Episodi",
+        "new_episodes": "episodis nous",
+        "footer_project_open_source": "és un projecte de codi obert.",        
+        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
+        "footer_developed_by": 'Desenvolupat amb ❤️ per <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> i <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">els col·laboradors</a>.',
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, amb llicència AGPLv3."
+    },
+    "de": {
+        "discover_now": "Jetzt entdecken",
+        "new_film": "Neue Filme:",
+        "new_tvs": "Neue Serien:",
+        "currently_available": "Derzeit verfügbar in Jellyfin:",
+        "movies_label": "Filme",
+        "episodes_label": "Episoden",
+        "footer_label": "Sie erhalten diese E-Mail, da Sie den Jellyfin-Server von ${jellyfin_owner_name} nutzen. Wenn Sie diese E-Mails nicht mehr erhalten möchten, können Sie sich abmelden, indem Sie ${unsubscribe_email} benachrichtigen.",
+        "added_on": "Hinzugefügt am",
+        "episodes": "Episoden",
+        "episode": "Episode",
+        "new_episodes": "neue Episoden",
+        "footer_project_open_source": "ist ein Open-Source-Projekt.",
+        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
+        "footer_developed_by": 'Entwickelt mit ❤️ von <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> und <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">Mitwirkenden</a>.',
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, lizenziert unter AGPLv3."
+    },
     "en":{
         "discover_now": "Discover now",
         "new_film": "New movies:",
@@ -18,6 +53,40 @@ TRANSLATIONS = {
          # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
          "footer_developed_by": 'Developed with ❤️ by <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> and  <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">contributors</a>.',
          "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3."
+    },
+    "es": {
+        "discover_now": "Descubrir ahora",
+        "new_film": "Nuevas películas:",
+        "new_tvs": "Nuevas series:",
+        "currently_available": "Disponible actualmente en Jellyfin:",
+        "movies_label": "Películas",
+        "episodes_label": "Episodios",
+        "footer_label": "Recibes este correo electrónico porque utilizas el servidor Jellyfin de ${jellyfin_owner_name}. Si no deseas seguir recibiendo estos correos, puedes darte de baja notificándolo a ${unsubscribe_email}.",
+        "added_on": "Añadido el",
+        "episodes": "Episodios",
+        "episode": "Episodio",
+        "new_episodes": "nuevos episodios",
+        "footer_project_open_source": "es un proyecto de código abierto.",
+        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
+        "footer_developed_by": 'Desarrollado con ❤️ por <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> y <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">los colaboradores</a>.',
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, bajo licencia AGPLv3."
+    },
+    "fi": {
+        "discover_now": "Tutustu nyt",
+        "new_film": "Uudet elokuvat:",
+        "new_tvs": "Uudet sarjat:",
+        "currently_available": "Tällä hetkellä saatavilla Jellyfinissä:",
+        "movies_label": "Elokuvat",
+        "episodes_label": "Jaksot",
+        "footer_label": "Saat tämän sähköpostin, koska käytät ${jellyfin_owner_name}:n Jellyfin-palvelinta. Jos haluat lopettaa näiden sähköpostien vastaanottamisen, voit peruuttaa tilauksen ilmoittamalla osoitteeseen ${unsubscribe_email}.",
+        "added_on": "Lisätty",
+        "episodes": "Jaksot",
+        "episode": "Jakso",
+        "new_episodes": "uudet jaksot",
+        "footer_project_open_source": "on avoimen lähdekoodin projekti.",
+        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
+        "footer_developed_by": 'Kehitetty ❤️:lla <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> ja <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">yhteistyökumppanit</a>.',
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, lisensoitu AGPLv3-lisenssillä."
     },
     "fr":{
         "discover_now": "Découvrir maintenant",
@@ -54,40 +123,6 @@ TRANSLATIONS = {
         "footer_developed_by": 'פותח באהבה ❤️ על ידי <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> ו<a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">תורמים</a>.',
         "license_and_copyright": "זכויות יוצרים © 2025 Nathan Stchepinsky, ברישיון AGPLv3.", 
     },
-    "ca": {
-        "discover_now": "Descobreix ara",
-        "new_film": "Pel·lícules noves:",
-        "new_tvs": "Sèries noves:",
-        "currently_available": "Disponible actualment a Jellyfin:",
-        "movies_label": "Pel·lícules",
-        "episodes_label": "Episodis",
-        "footer_label": "Rebeu aquest correu electrònic perquè utilitzeu el servidor Jellyfin de ${jellyfin_owner_name}. Si no voleu rebre més aquests correus, podeu donar-vos de baixa notificant-ho a ${unsubscribe_email}.",
-        "added_on": "Afegit el",
-        "episodes": "Episodis",
-        "episode": "Episodi",
-        "new_episodes": "episodis nous",
-        "footer_project_open_source": "és un projecte de codi obert.",        
-        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-        "footer_developed_by": 'Desenvolupat amb ❤️ per <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> i <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">els col·laboradors</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, amb llicència AGPLv3."
-    },
-    "es": {
-        "discover_now": "Descubrir ahora",
-        "new_film": "Nuevas películas:",
-        "new_tvs": "Nuevas series:",
-        "currently_available": "Disponible actualmente en Jellyfin:",
-        "movies_label": "Películas",
-        "episodes_label": "Episodios",
-        "footer_label": "Recibes este correo electrónico porque utilizas el servidor Jellyfin de ${jellyfin_owner_name}. Si no deseas seguir recibiendo estos correos, puedes darte de baja notificándolo a ${unsubscribe_email}.",
-        "added_on": "Añadido el",
-        "episodes": "Episodios",
-        "episode": "Episodio",
-        "new_episodes": "nuevos episodios",
-        "footer_project_open_source": "es un proyecto de código abierto.",
-        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-        "footer_developed_by": 'Desarrollado con ❤️ por <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> y <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">los colaboradores</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, bajo licencia AGPLv3."
-    },
     "it": {
         "discover_now": "Scopri ora",
         "new_film": "Nuovi film:",
@@ -104,6 +139,23 @@ TRANSLATIONS = {
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
         "footer_developed_by": 'Sviluppato con ❤️ da <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> e <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">i collaboratori</a>.',
         "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, con licenza AGPLv3."
+    },   
+    "pt": {
+        "discover_now": "Descubra agora",
+        "new_film": "Novos filmes:",
+        "new_tvs": "Novas séries:",
+        "currently_available": "Atualmente disponível no Jellyfin:",
+        "movies_label": "Filmes",
+        "episodes_label": "Episódios",
+        "footer_label": "Você está recebendo este e-mail porque está usando o servidor Jellyfin de ${jellyfin_owner_name}. Se quiser parar de receber esses e-mails, você pode cancelar a inscrição notificando ${unsubscribe_email}.",
+        "added_on": "Adicionado em",
+        "episodes": "Episódios",
+        "episode": "Episódio",
+        "new_episodes": "novos episódios",
+        "footer_project_open_source": "é um projeto de código aberto.",
+        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
+        "footer_developed_by": 'Desenvolvido com ❤️ por <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> e <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">colaboradores</a>.',
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licenciado sob AGPLv3."
     },
 }
 
