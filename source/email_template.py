@@ -18,7 +18,7 @@ TRANSLATIONS = {
         "footer_project_open_source": "és un projecte de codi obert.",        
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
         "footer_developed_by": 'Desenvolupat amb ❤️ per <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> i <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">els col·laboradors</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, amb llicència AGPLv3."
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, amb llicència AGPLv3.",
     },
     "de": {
         "discover_now": "Jetzt entdecken",
@@ -35,7 +35,7 @@ TRANSLATIONS = {
         "footer_project_open_source": "ist ein Open-Source-Projekt.",
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
         "footer_developed_by": 'Entwickelt mit ❤️ von <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> und <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">Mitwirkenden</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, lizenziert unter AGPLv3."
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, lizenziert unter AGPLv3.",
     },
     "en":{
         "discover_now": "Discover now",
@@ -52,7 +52,7 @@ TRANSLATIONS = {
          "footer_project_open_source": "is an open source project.",
          # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
          "footer_developed_by": 'Developed with ❤️ by <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> and  <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">contributors</a>.',
-         "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3."
+         "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3.",
     },
     "es": {
         "discover_now": "Descubrir ahora",
@@ -69,7 +69,7 @@ TRANSLATIONS = {
         "footer_project_open_source": "es un proyecto de código abierto.",
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
         "footer_developed_by": 'Desarrollado con ❤️ por <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> y <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">los colaboradores</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, bajo licencia AGPLv3."
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, bajo licencia AGPLv3.",
     },
     "fi": {
         "discover_now": "Tutustu nyt",
@@ -86,7 +86,7 @@ TRANSLATIONS = {
         "footer_project_open_source": "on avoimen lähdekoodin projekti.",
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
         "footer_developed_by": 'Kehitetty ❤️:lla <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> ja <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">yhteistyökumppanit</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, lisensoitu AGPLv3-lisenssillä."
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, lisensoitu AGPLv3-lisenssillä.",
     },
     "fr":{
         "discover_now": "Découvrir maintenant",
@@ -103,7 +103,7 @@ TRANSLATIONS = {
         "footer_project_open_source": "est un projet open source.",
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
         "footer_developed_by": 'Développé avec ❤️ par <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> et <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">les contributeurs</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, sous licence AGPLv3."
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, sous licence AGPLv3.",
     },
     "he":{
         "discover_now": "גלה עכשיו",
@@ -138,7 +138,7 @@ TRANSLATIONS = {
         "footer_project_open_source": "è un progetto open source.",
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
         "footer_developed_by": 'Sviluppato con ❤️ da <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> e <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">i collaboratori</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, con licenza AGPLv3."
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, con licenza AGPLv3.",
     },   
     "pt": {
         "discover_now": "Descubra agora",
@@ -155,7 +155,7 @@ TRANSLATIONS = {
         "footer_project_open_source": "é um projeto de código aberto.",
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
         "footer_developed_by": 'Desenvolvido com ❤️ por <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> e <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">colaboradores</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licenciado sob AGPLv3."
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licenciado sob AGPLv3.",
     },
 }
 
