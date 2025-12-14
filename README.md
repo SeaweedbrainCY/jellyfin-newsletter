@@ -41,6 +41,9 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 - Configure the list of recipients
 - Configure specific folders to watch for new items
 
+A Go implementation is being developed in parallel.
+Python remains the stable reference.
+
 ## Recommended installation: Docker
 ### Requirements
 
