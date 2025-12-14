@@ -1,5 +1,6 @@
 import yaml
 import logging
+from source.language_utils import TRANSLATIONS
 
 class Scheduler:
     def __init__(self, data):
@@ -61,7 +62,7 @@ class EmailTemplate:
         self.jellyfin_owner_name = data["jellyfin_owner_name"]
         self.display_overview_max_items = data.get("display_overview_max_items", 10)
         self.sort_mode = data.get("sort_mode") or "date_asc"
-        self.available_lang = ["ca", "de", "en", "es", "fi", "fr", "he", "it", "pt"]
+        self.available_lang = list(TRANSLATIONS.keys()) # Gets the actual available languages keys from the translations
 
 class Email:
     required_keys=["smtp_server", "smtp_port", "smtp_username", "smtp_password", "smtp_sender_email"]

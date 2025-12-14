@@ -2,18 +2,7 @@ import requests
 from source import configuration 
 import json
 from source.configuration import logging
-
-LANG_MAP = {
-    "ca": "ca-ES",
-    "de": "de-DE",
-    "en": "en-US",
-    "es": "es-ES",
-    "fi": "fi-FI",
-    "fr": "fr-FR",
-    "he": "he-IL",
-    "it": "it-IT",
-    "pt": "pt-PT",
-}
+from source.language_utils import LANG_MAP
 
 def get_media_detail_from_title(title, type, year=None):
     year_query = f"&year={year}" if year else ""
