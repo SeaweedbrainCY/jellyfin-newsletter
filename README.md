@@ -37,7 +37,7 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 - Group TV shows by seasons
 - Fully customizable and responsive email template
 - Easy to maintain, extend, setup and run
-- Support for English, French, and Hebrew (RTL-aware template)
+- Support for English, French, Spanish, Catalan, Italian and Hebrew (RTL-aware template)
 - Configure the list of recipients
 - Configure specific folders to watch for new items
 

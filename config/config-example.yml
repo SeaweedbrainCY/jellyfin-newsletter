@@ -46,7 +46,7 @@ tmdb:
 email_template:
     # See https://github.com/SeaweedbrainCY/jellyfin-newsletter/tree/main/themes/new_media for available themes
     theme: "classic"
-    # Language of the email, supported languages are "en", "fr", and "he"
+    # Language of the email, supported languages are "en", "fr", "ca", "es", "it" and "he"
     language: "en"
     # Subject of the email
     subject: ""
