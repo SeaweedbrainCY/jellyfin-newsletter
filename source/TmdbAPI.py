@@ -4,12 +4,15 @@ import json
 from source.configuration import logging
 
 LANG_MAP = {
+    "ca": "ca-ES",
+    "de": "de-DE",
     "en": "en-US",
+    "es": "es-ES",
+    "fi": "fi-FI",
     "fr": "fr-FR",
     "he": "he-IL",
-    "ca": "ca-ES",
-    "es": "es-ES",
     "it": "it-IT",
+    "pt": "pt-PT",
 }
 
 def get_media_detail_from_title(title, type, year=None):
@@ -18,7 +21,7 @@ def get_media_detail_from_title(title, type, year=None):
         logging.error(f"Error while retrieving a media from TMDB. Type must be 'movie' or 'tv'. Got {type}")
         return None
     
-    lang = LANG_MAP.get(configuration.conf.email_template.language, "en-US")
+    lang = LANG_MAP.get(configuration.conf.email_template.language, LANG_MAP["en"])
     url = f"https://api.themoviedb.org/3/search/{type}?query={title}&language={lang}{year_query}"
 
     headers = {

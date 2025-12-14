@@ -1,9 +1,6 @@
 import yaml
 import logging
 
-
-
-
 class Scheduler:
     def __init__(self, data):
         if data is None or "cron" not in data:
@@ -25,7 +22,6 @@ class Scheduler:
             except:
                 pass
             
-
 class Jellyfin:
     required_keys = ["url", "api_token",  "watched_film_folders", "watched_tv_folders", "observed_period_days"]
     def __init__(self, data):
@@ -65,8 +61,7 @@ class EmailTemplate:
         self.jellyfin_owner_name = data["jellyfin_owner_name"]
         self.display_overview_max_items = data.get("display_overview_max_items", 10)
         self.sort_mode = data.get("sort_mode") or "date_asc"
-        self.available_lang = ["en", "fr", "he", "ca", "es", "it"]
-
+        self.available_lang = ["ca", "de", "en", "es", "fi", "fr", "he", "it", "pt"]
 
 class Email:
     required_keys=["smtp_server", "smtp_port", "smtp_username", "smtp_password", "smtp_sender_email"]
@@ -81,7 +76,6 @@ class Email:
         self.smtp_sender_email = data["smtp_sender_email"]
         self.smtp_tls_type = data.get("smtp_tls_type") or "STARTTLS" # Fallback to STARTTLS if not specified
 
-
 class DryRunConfig:
     def __init__(self, data):
         self.enabled = data.get("enabled", False)
@@ -90,8 +84,6 @@ class DryRunConfig:
         self.output_filename = data.get("output_filename", "newsletter_{date}_{time}.html")
         self.include_metadata = data.get("include_metadata", True)
         self.save_email_data = data.get("save_email_data", True)
-
-        
 
 class Config:
     required_keys = ["jellyfin", "tmdb", "email_template", "email", "recipients"]
@@ -117,10 +109,6 @@ class Config:
         self.scheduler = Scheduler(data["scheduler"]) if "scheduler" in data else Scheduler([])
         self.dry_run = DryRunConfig(data.get("dry-run", {}))
     
-    
-
-
-
 try:
     with open("./config/config.yml", encoding='utf-8') as config_yml:
         try:
