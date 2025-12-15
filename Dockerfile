@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 # Install Python dependencies
-COPY requirements.txt /app/requirements.txt
+COPY engine-python/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip \
  && pip install --no-cache-dir --no-compile -r /app/requirements.txt
 
@@ -31,8 +31,8 @@ RUN pip install --no-cache-dir --upgrade pip \
 RUN mkdir -p /app/config
 
 # Copy application code
-COPY source /app/source
-COPY main.py /app
+COPY engine-python/source /app/source
+COPY engine-python/main.py /app
 COPY themes /app/themes
 COPY assets /app/assets
 COPY entrypoint.sh /app/entrypoint.sh
