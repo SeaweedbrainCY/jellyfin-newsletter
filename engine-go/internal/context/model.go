@@ -1,15 +1,20 @@
-package config
+package context
 
 import (
 	"go.uber.org/zap"
 )
 
-type schedulerConfig struct {
+type LogConfig struct {
+	Level  string
+	Format string
+}
+
+type SchedulerConfig struct {
 	Enabled  bool
 	CronExpr string
 }
 
-type jellyfinConfig struct {
+type JellyfinConfig struct {
 	Url                                 string
 	ApiKey                              string
 	WatchedFilmFolders                  []string
@@ -18,11 +23,11 @@ type jellyfinConfig struct {
 	IgnoreItemsAddedAfterLastNewsletter bool
 }
 
-type tmdbConfig struct {
+type TmdbConfig struct {
 	ApiKey string
 }
 
-type emailTemplateConfig struct {
+type EmailTemplateConfig struct {
 	Theme                   string
 	Language                string
 	Subject                 string
@@ -36,7 +41,7 @@ type emailTemplateConfig struct {
 	AvailableLanguages      []string
 }
 
-type smtpConfig struct {
+type SmtpConfig struct {
 	Host       string
 	Port       int
 	Username   string
@@ -45,7 +50,7 @@ type smtpConfig struct {
 	TlsType    string
 }
 
-type dryRunConfig struct {
+type DryRunConfig struct {
 	Enabled            bool
 	TestSTMPConnection bool
 	OutputDirectory    string
@@ -55,19 +60,26 @@ type dryRunConfig struct {
 }
 
 type Configuration struct {
-	Debug           bool
+	Log             LogConfig
 	EmailRecipients []string
-	Scheduler       schedulerConfig
-	Jellyfin        jellyfinConfig
-	Tmdb            tmdbConfig
-	EmailTemplate   emailTemplateConfig
-	SMTP            smtpConfig
-	DryRun          dryRunConfig
-	Logger          *zap.Logger
+	Scheduler       SchedulerConfig
+	Jellyfin        JellyfinConfig
+	Tmdb            TmdbConfig
+	EmailTemplate   EmailTemplateConfig
+	SMTP            SmtpConfig
+	DryRun          DryRunConfig
+}
+
+type Context struct {
+	Config *Configuration
+	Logger *zap.Logger
 }
 
 type yamlConfiguration struct {
-	Debug     *bool `yaml:"debug,omitempty"`
+	Log *struct {
+		Level  string `yaml:"level,omitempty"`
+		Format string `yaml:"format, omitempty"`
+	} `yaml:"log,omitempty"`
 	Scheduler *struct {
 		Cron string `yaml:"cron"`
 	} `yaml:"scheduler,omitempty"`

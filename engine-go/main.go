@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
-	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/context"
 	"go.uber.org/zap"
 )
 
@@ -12,16 +13,12 @@ var version = "dev" // Will be set during build time
 
 func main() {
 	flag.Parse()
-	logger, _ := zap.NewProduction()
-	defer logger.Sync()
 
-	logger.Info("Jellyfin Newsletter is starting ...", zap.String("version", version))
-	logger.Info("Loading configuration", zap.String("configPath", *configPath))
-	_, err := config.LoadConfiguration(*configPath, logger)
+	context, err := context.LoadContext(*configPath)
 	if err != nil {
-		logger.Fatal("Failed to load configuration", zap.Error(err))
-		return
+		panic(fmt.Sprintf("Failed to load configuration: %v", err))
 	}
-	logger.Info("Configuration loaded successfully")
+	context.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
+	context.Logger.Info("Configuration loaded successfully")
 
 }

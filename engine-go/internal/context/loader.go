@@ -1,35 +1,44 @@
-package config
+package context
 
 import (
 	"os"
 
 	"github.com/goccy/go-yaml"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-func LoadConfiguration(configPath string, logger *zap.Logger) (*Configuration, error) {
-
+func LoadContext(configPath string) (*Context, error) {
 	file, err := os.ReadFile(configPath)
 	if err != nil {
-		logger.Fatal("Failed to read configuration file", zap.Error(err))
-		return nil, err
+		panic("Failed to read configuration file" + err.Error())
 	}
 
 	yamlParsedConfig := &yamlConfiguration{}
 	err = yaml.Unmarshal(file, yamlParsedConfig)
 	if err != nil {
-		logger.Fatal("Failed to parse configuration", zap.Error(err))
-		return nil, err
+		yaml.FormatError(err, true, true)
+		panic("Failed to parse configuration" + err.Error())
 	}
 
+	context := &Context{}
 	config := &Configuration{}
-	config.Logger = logger
 
-	isDebug := false
-	if yamlParsedConfig.Debug != nil && *yamlParsedConfig.Debug {
-		isDebug = true
+	config.Log = LogConfig{
+		Level:  "INFO",
+		Format: "console",
 	}
-	config.Debug = isDebug
+
+	if yamlParsedConfig.Log != nil {
+		if yamlParsedConfig.Log.Format != "" {
+			config.Log.Format = yamlParsedConfig.Log.Format
+		}
+		if yamlParsedConfig.Log.Level != "" {
+			config.Log.Level = yamlParsedConfig.Log.Level
+		}
+	}
+
+	context.Logger = initializeLogger(&config.Log)
 
 	if yamlParsedConfig.Scheduler != nil {
 		config.Scheduler.Enabled = true
@@ -38,7 +47,7 @@ func LoadConfiguration(configPath string, logger *zap.Logger) (*Configuration, e
 		config.Scheduler.Enabled = false
 	}
 
-	config.Jellyfin = jellyfinConfig{
+	config.Jellyfin = JellyfinConfig{
 		Url:                                 yamlParsedConfig.Jellyfin.Url,
 		ApiKey:                              yamlParsedConfig.Jellyfin.ApiKey,
 		WatchedFilmFolders:                  yamlParsedConfig.Jellyfin.WatchedFilmFolders,
@@ -46,13 +55,14 @@ func LoadConfiguration(configPath string, logger *zap.Logger) (*Configuration, e
 		ObservedPeriodDays:                  yamlParsedConfig.Jellyfin.ObservedPeriodDays,
 		IgnoreItemsAddedAfterLastNewsletter: false,
 	}
+	context.Logger.Info("Jellyfin URL", zap.String("url", config.Jellyfin.Url))
 	if yamlParsedConfig.Jellyfin.IgnoreItemsAddedAfterLastNewsletter != nil && *yamlParsedConfig.Jellyfin.IgnoreItemsAddedAfterLastNewsletter {
 		config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter = true
 	}
 
 	config.Tmdb.ApiKey = yamlParsedConfig.Tmdb.ApiKey
 
-	config.EmailTemplate = emailTemplateConfig{
+	config.EmailTemplate = EmailTemplateConfig{
 		Language:                yamlParsedConfig.EmailTemplate.Language,
 		Subject:                 yamlParsedConfig.EmailTemplate.Subject,
 		Title:                   yamlParsedConfig.EmailTemplate.Title,
@@ -75,7 +85,7 @@ func LoadConfiguration(configPath string, logger *zap.Logger) (*Configuration, e
 		config.EmailTemplate.SortMode = yamlParsedConfig.EmailTemplate.SortMode
 	}
 
-	config.SMTP = smtpConfig{
+	config.SMTP = SmtpConfig{
 		Host:       yamlParsedConfig.SMTP.Host,
 		Port:       yamlParsedConfig.SMTP.Port,
 		Username:   yamlParsedConfig.SMTP.Username,
@@ -90,7 +100,7 @@ func LoadConfiguration(configPath string, logger *zap.Logger) (*Configuration, e
 
 	config.DryRun.Enabled = false
 	if yamlParsedConfig.DryRun != nil && yamlParsedConfig.DryRun.Enabled {
-		config.DryRun = dryRunConfig{
+		config.DryRun = DryRunConfig{
 			Enabled:            true,
 			TestSTMPConnection: false,
 			OutputDirectory:    "./previews/",
@@ -115,6 +125,46 @@ func LoadConfiguration(configPath string, logger *zap.Logger) (*Configuration, e
 		}
 	}
 	config.EmailRecipients = yamlParsedConfig.Recipients
+	context.Config = config
+	return context, nil
+}
 
-	return config, nil
+func initializeLogger(logConfiguration *LogConfig) *zap.Logger {
+	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+
+	logFormat := "console"
+
+	if logConfiguration.Format == "json" || logConfiguration.Format == "console" {
+		logFormat = logConfiguration.Format
+	}
+
+	var logLevel zap.AtomicLevel
+	switch logConfiguration.Level {
+	case "DEBUG":
+		logLevel = zap.NewAtomicLevelAt(zapcore.DebugLevel)
+	case "INFO":
+		logLevel = zap.NewAtomicLevelAt(zapcore.InfoLevel)
+	case "WARN":
+		logLevel = zap.NewAtomicLevelAt(zapcore.WarnLevel)
+	case "ERROR":
+		logLevel = zap.NewAtomicLevelAt(zapcore.ErrorLevel)
+	default:
+		logLevel = zap.NewAtomicLevelAt(zapcore.InfoLevel)
+	}
+
+	config := zap.Config{
+		Level:            logLevel,
+		Development:      false,
+		Encoding:         logFormat,
+		EncoderConfig:    encoderConfig,
+		OutputPaths:      []string{"stdout"},
+		ErrorOutputPaths: []string{"stderr"},
+	}
+	logger, err := config.Build()
+	if err != nil {
+		panic("Failed to initialize logger: " + err.Error())
+	}
+	return logger
+
 }
