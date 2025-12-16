@@ -14,12 +14,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locales \
     gosu \
     ca-certificates \
-    && echo "fr_FR.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "he_IL.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "es_ES.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "it_IT.UTF-8 UTF-8" >> /etc/locale.gen \
     && echo "ca_ES.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "es_ES.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "fi_FI.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "fr_FR.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "he_IL.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "it_IT.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "pt_PT.UTF-8 UTF-8" >> /etc/locale.gen \
     && locale-gen \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean

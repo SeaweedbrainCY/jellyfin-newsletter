@@ -155,14 +155,14 @@ TRANSLATIONS = {
         "currently_available": "Atualmente disponível no Jellyfin:",
         "movies_label": "Filmes",
         "episodes_label": "Episódios",
-        "footer_label": "Você está recebendo este e-mail porque está usando o servidor Jellyfin de ${jellyfin_owner_name}. Se quiser parar de receber esses e-mails, você pode cancelar a inscrição notificando ${unsubscribe_email}.",
+        "footer_label": "Está a receber este e-mail por estar a usar o servidor Jellyfin de ${jellyfin_owner_name}. Se quiser parar de receber esses e-mails, pode cancelar a inscrição contactando ${unsubscribe_email}.",
         "added_on": "Adicionado em",
         "episodes": "Episódios",
         "episode": "Episódio",
         "new_episodes": "novos episódios",
         "footer_project_open_source": "é um projeto de código aberto.",
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-        "footer_developed_by": 'Desenvolvido com ❤️ por <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> e <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">colaboradores</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licenciado sob AGPLv3.",
-    },
+        "footer_developed_by": 'Desenvolvido com ❤ por <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> e <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">colaboradores</a>.',
+        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licenciado sob AGPLv3.",
+    },
 }
