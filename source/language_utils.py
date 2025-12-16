@@ -42,7 +42,7 @@ TRANSLATIONS = {
         "new_episodes": "neue Episoden",
         "footer_project_open_source": "ist ein Open-Source-Projekt.",
         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-        "footer_developed_by": 'Entwickelt mit ❤️ von <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> und <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">Mitwirkenden</a>.',
+        "footer_developed_by": 'Entwickelt mit ❤️ von <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> und <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">Mitwirkende</a>.',
         "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, lizenziert unter AGPLv3.",
     },
     "en":{
