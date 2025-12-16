@@ -6,6 +6,7 @@ Here are defined all placeholders the user can use in custom string to customize
 
 import datetime as dt 
 from source import configuration
+from source.language_utils import LANG_MAP
 import locale
 
 class SafeFormatDict(dict):
@@ -17,18 +18,11 @@ class SafeFormatDict(dict):
         return key.join("{}")
 
 # Set locale to the user's locale
-if configuration.conf.email_template.language == "fr":
-    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
-elif configuration.conf.email_template.language == "he":
-    locale.setlocale(locale.LC_TIME, 'he_IL.UTF-8')
-elif configuration.conf.email_template.language == "ca":
-    locale.setlocale(locale.LC_TIME, 'ca_ES.UTF-8')
-elif configuration.conf.email_template.language == "es":
-    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
-elif configuration.conf.email_template.language == "it":
-    locale.setlocale(locale.LC_TIME, 'it_IT.UTF-8')
-else:
-    locale.setlocale(locale.LC_TIME, 'en_US.UTF-8')
+lang = configuration.conf.email_template.language
+#Map it to a locale string, default to en_US.UTF-8 if not found
+locale_str = f"{LANG_MAP.get(lang, 'en-US')}.UTF-8"
+#Set the locale
+locale.setlocale(locale.LC_TIME, locale_str)
 
 placeholders = SafeFormatDict({
     "date": dt.datetime.now().strftime("%Y-%m-%d"),

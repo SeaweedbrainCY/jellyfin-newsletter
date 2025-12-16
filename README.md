@@ -121,7 +121,7 @@ crontab -e
 
 
 ## Current limitations
-- Email template translations are available for English, French, and Hebrew
+- Email template translations are available for Catalan, German, English (default), Spanish, Finnish, French, Hebrew, Italian, and Portuguese
 - Only supports TLS for the SMTP server
 - Only supports movies and TV shows for now
 - Not available as a Jellyfin plugin yet 

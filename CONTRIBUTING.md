@@ -52,9 +52,16 @@ pip install -r requirements.txt
 2.  Copy the `config/config-example.yml` to `./config/config.yml` ([direct download](https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/config/config-example.yml)) and fill in the required fields. 
 
 3. Make sure to support the following locales:
-- `en_US.UTF-8 UTF-8` 
+- `ca_ES.UTF-8 UTF-8`
+- `de_DE.UTF-8 UTF-8`
+- `en_US.UTF-8 UTF-8`
+- `es_ES.UTF-8 UTF-8`
+- `fi_FI.UTF-8 UTF-8`
 - `fr_FR.UTF-8 UTF-8`
 - `he_IL.UTF-8 UTF-8`
+- `it_IT.UTF-8 UTF-8`
+- `pt_PT.UTF-8 UTF-8`
+
 
 On debian based systems, you can edit `/etc/locale.gen` and uncomment the lines for the locales listed above, then run:
 ```bash

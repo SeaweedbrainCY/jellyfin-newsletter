@@ -1,111 +1,6 @@
 from source import configuration, context, utils
+from source.language_utils import TRANSLATIONS
 import re
-
-TRANSLATIONS = {
-    "en":{
-        "discover_now": "Discover now",
-        "new_film": "New movies:",
-        "new_tvs": "New shows:",
-        "currently_available": "Currently available in Jellyfin:",
-        "movies_label": "Movies",
-        "episodes_label": "Episodes",
-        "footer_label":"You are recieving this email because you are using ${jellyfin_owner_name}'s Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying ${unsubscribe_email}.",
-        "added_on": "Added on",
-        "episodes": "Episodes",
-         "episode": "Episode",
-         "new_episodes": "new episodes",
-         "footer_project_open_source": "is an open source project.",
-         # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-         "footer_developed_by": 'Developed with ❤️ by <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> and  <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">contributors</a>.',
-         "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3."
-    },
-    "fr":{
-        "discover_now": "Découvrir maintenant",
-        "new_film": "Nouveaux films :",
-        "new_tvs": "Nouvelles séries :",
-        "currently_available": "Actuellement disponible sur Jellyfin :",
-        "movies_label": "Films",
-        "episodes_label": "Épisodes",
-        "footer_label":"Vous recevez cet email car vous utilisez le serveur Jellyfin de ${jellyfin_owner_name}. Si vous ne souhaitez plus recevoir ces emails, vous pouvez vous désinscrire en notifiant ${unsubscribe_email}.",
-        "added_on": "Ajouté le",
-        "episodes": "Épisodes",
-        "episode": "Épisode",
-        "new_episodes": "nouveaux épisodes",
-        "footer_project_open_source": "est un projet open source.",
-        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-        "footer_developed_by": 'Développé avec ❤️ par <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> et <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">les contributeurs</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, sous licence AGPLv3."
-    },
-    "he":{
-        "discover_now": "גלה עכשיו",
-        "new_film": "סרטים חדשים:\u200f",
-        "new_tvs": "סדרות חדשות:\u200f",
-        # Add RLM (\u200f) after colon to keep it properly positioned in RTL text
-        "currently_available": "זמין כעת בג'ליפין:\u200f",
-        "movies_label": "סרטים",
-        "episodes_label": "פרקים",
-        "footer_label":"אתם מקבלים מייל זה משום שאתם משתמשים בשרת ג'ליפין של ${jellyfin_owner_name}. כדי להפסיק לקבל מיילים אלה, ניתן לבקש להסיר ב־${unsubscribe_email}.",
-        "added_on": "נוסף בתאריך",
-        "episodes": "פרקים",
-        "episode": "פרק",
-        "new_episodes": "פרקים חדשים",
-        "footer_project_open_source": "הוא פרויקט קוד פתוח.",
-        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-        "footer_developed_by": 'פותח באהבה ❤️ על ידי <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> ו<a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">תורמים</a>.',
-        "license_and_copyright": "זכויות יוצרים © 2025 Nathan Stchepinsky, ברישיון AGPLv3.", 
-    },
-    "ca": {
-        "discover_now": "Descobreix ara",
-        "new_film": "Pel·lícules noves:",
-        "new_tvs": "Sèries noves:",
-        "currently_available": "Disponible actualment a Jellyfin:",
-        "movies_label": "Pel·lícules",
-        "episodes_label": "Episodis",
-        "footer_label": "Rebeu aquest correu electrònic perquè utilitzeu el servidor Jellyfin de ${jellyfin_owner_name}. Si no voleu rebre més aquests correus, podeu donar-vos de baixa notificant-ho a ${unsubscribe_email}.",
-        "added_on": "Afegit el",
-        "episodes": "Episodis",
-        "episode": "Episodi",
-        "new_episodes": "episodis nous",
-        "footer_project_open_source": "és un projecte de codi obert.",        
-        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-        "footer_developed_by": 'Desenvolupat amb ❤️ per <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> i <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">els col·laboradors</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, amb llicència AGPLv3."
-    },
-    "es": {
-        "discover_now": "Descubrir ahora",
-        "new_film": "Nuevas películas:",
-        "new_tvs": "Nuevas series:",
-        "currently_available": "Disponible actualmente en Jellyfin:",
-        "movies_label": "Películas",
-        "episodes_label": "Episodios",
-        "footer_label": "Recibes este correo electrónico porque utilizas el servidor Jellyfin de ${jellyfin_owner_name}. Si no deseas seguir recibiendo estos correos, puedes darte de baja notificándolo a ${unsubscribe_email}.",
-        "added_on": "Añadido el",
-        "episodes": "Episodios",
-        "episode": "Episodio",
-        "new_episodes": "nuevos episodios",
-        "footer_project_open_source": "es un proyecto de código abierto.",
-        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-        "footer_developed_by": 'Desarrollado con ❤️ por <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> y <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">los colaboradores</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, bajo licencia AGPLv3."
-    },
-    "it": {
-        "discover_now": "Scopri ora",
-        "new_film": "Nuovi film:",
-        "new_tvs": "Nuove serie:",
-        "currently_available": "Attualmente disponibile su Jellyfin:",
-        "movies_label": "Film",
-        "episodes_label": "Episodi",
-        "footer_label": "Ricevi questa email perché utilizzi il server Jellyfin di ${jellyfin_owner_name}. Se non desideri più ricevere queste email, puoi annullare l'iscrizione notificandolo a ${unsubscribe_email}.",
-        "added_on": "Aggiunto il",
-        "episodes": "Episodi",
-        "episode": "Episodio",
-        "new_episodes": "nuovi episodi",
-        "footer_project_open_source": "è un progetto open source.",
-        # While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due. Thanks !
-        "footer_developed_by": 'Sviluppato con ❤️ da <a href="https://github.com/SeaweedbrainCY/" class="footer-link">SeaweedbrainCY</a> e <a href="https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors" class="footer-link">i collaboratori</a>.',
-        "license_and_copyright": "Copyright © 2025 Nathan Stchepinsky, con licenza AGPLv3."
-    },
-}
 
 def populate_email_template(movies, series, total_tv, total_movie) -> str:
     include_overview = True
@@ -128,6 +23,9 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                     TRANSLATIONS[configuration.conf.email_template.language][key], 
                     template
                 )
+            missing = re.findall(r"\${([^}]+)}", template)
+            if missing:
+                configuration.logging.info(f"Missing translations for language {configuration.conf.email_template.language}: {', '.join(set(missing))} ")
         else:
             raise Exception(f"[FATAL] Language {configuration.conf.email_template.language} not supported. Supported languages are {', '.join(configuration.conf.email_template.available_lang)}.")
 
