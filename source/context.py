@@ -6,6 +6,7 @@ Here are defined all placeholders the user can use in custom string to customize
 
 import datetime as dt 
 from source import configuration
+from source.language_utils import LANG_MAP
 import locale
 
 class SafeFormatDict(dict):
