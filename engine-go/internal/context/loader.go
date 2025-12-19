@@ -1,24 +1,36 @@
 package context
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/goccy/go-yaml"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 func LoadContext(configPath string) (*Context, error) {
-	file, err := os.ReadFile(configPath)
+	file, err := os.Open(configPath)
 	if err != nil {
 		panic("Failed to read configuration file" + err.Error())
 	}
 
 	yamlParsedConfig := &yamlConfiguration{}
-	err = yaml.Unmarshal(file, yamlParsedConfig)
+
+	validate := validator.New()
+
+	decoder := yaml.NewDecoder(
+		file,
+		yaml.Validator(validate),
+		yaml.Strict(),
+	)
+
+	err = decoder.Decode(yamlParsedConfig)
 	if err != nil {
 		yaml.FormatError(err, true, true)
-		panic("Failed to parse configuration" + err.Error())
+		fmt.Println("FATAL ERROR. " + err.Error())
+		os.Exit(1)
 	}
 
 	context := &Context{}

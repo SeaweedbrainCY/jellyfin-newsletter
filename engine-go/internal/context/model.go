@@ -77,30 +77,30 @@ type Context struct {
 
 type yamlConfiguration struct {
 	Log *struct {
-		Level  string `yaml:"level,omitempty"`
-		Format string `yaml:"format, omitempty"`
+		Level  string `yaml:"level,omitempty" validate:"omitempty,oneof=DEBUG INFO WARN ERROR"`
+		Format string `yaml:"format, omitempty" validate:"omitempty,oneof=json console"`
 	} `yaml:"log,omitempty"`
 	Scheduler *struct {
 		Cron string `yaml:"cron"`
 	} `yaml:"scheduler,omitempty"`
 	Jellyfin struct {
-		Url                                 string   `yaml:"url"`
-		ApiKey                              string   `yaml:"api_token"`
-		WatchedFilmFolders                  []string `yaml:"watched_film_folders"`
-		WatchedSeriesFolders                []string `yaml:"watched_tv_folders"`
-		ObservedPeriodDays                  int      `yaml:"observed_period_days"`
-		IgnoreItemsAddedAfterLastNewsletter *bool    `yaml:"ignore_item_added_before_last_newsletter,omitempty"`
-	} `yaml:"jellyfin"`
+		Url                                 string   `yaml:"url" validate:"required,http_url"`
+		ApiKey                              string   `yaml:"api_token" validate:"required"`
+		WatchedFilmFolders                  []string `yaml:"watched_film_folders" validate:"required"`
+		WatchedSeriesFolders                []string `yaml:"watched_tv_folders" validate:"required"`
+		ObservedPeriodDays                  int      `yaml:"observed_period_days" validate:"required,numeric"`
+		IgnoreItemsAddedAfterLastNewsletter *bool    `yaml:"ignore_item_added_before_last_newsletter,omitempty" validate:"boolean"`
+	} `yaml:"jellyfin" validate:"required"`
 	Tmdb struct {
-		ApiKey string `yaml:"api_key"`
-	} `yaml:"tmdb"`
+		ApiKey string `yaml:"api_key" validate:"required,jwt"`
+	} `yaml:"tmdb" validate:"required"`
 	EmailTemplate struct {
 		Theme                   string `yaml:"theme,omitempty"`
-		Language                string `yaml:"language,"`
-		Subject                 string `yaml:"subject"`
-		Title                   string `yaml:"title"`
-		Subtitle                string `yaml:"subtitle"`
-		JellyfinURL             string `yaml:"jellyfin_url,omitempty"`
+		Language                string `yaml:"language" validate:"required,alpha"`
+		Subject                 string `yaml:"subject"  validate:"required"`
+		Title                   string `yaml:"title"   validate:"required"`
+		Subtitle                string `yaml:"subtitle"   validate:"required"`
+		JellyfinURL             string `yaml:"jellyfin_url,omitempty" validate:"url"`
 		UnsubscribeEmail        string `yaml:"unsubscribe_email,omitempty"`
 		JellyfinOwnerName       string `yaml:"jellyfin_owner_name,omitempty"`
 		DisplayOverviewMaxItems *int   `yaml:"display_overview_max_items,omitempty"`
