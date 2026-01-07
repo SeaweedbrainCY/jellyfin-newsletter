@@ -61,7 +61,7 @@ func LoadContext(configPath string) (*Context, error) {
 
 	config.Jellyfin = JellyfinConfig{
 		Url:                                 yamlParsedConfig.Jellyfin.Url,
-		ApiKey:                              yamlParsedConfig.Jellyfin.ApiKey,
+		ApiKey:                              yamlParsedConfig.Jellyfin.ApiToken,
 		WatchedFilmFolders:                  yamlParsedConfig.Jellyfin.WatchedFilmFolders,
 		WatchedSeriesFolders:                yamlParsedConfig.Jellyfin.WatchedSeriesFolders,
 		ObservedPeriodDays:                  yamlParsedConfig.Jellyfin.ObservedPeriodDays,
@@ -98,16 +98,16 @@ func LoadContext(configPath string) (*Context, error) {
 	}
 
 	config.SMTP = SmtpConfig{
-		Host:       yamlParsedConfig.SMTP.Host,
-		Port:       yamlParsedConfig.SMTP.Port,
-		Username:   yamlParsedConfig.SMTP.Username,
-		Password:   yamlParsedConfig.SMTP.Password,
-		SenderName: yamlParsedConfig.SMTP.SenderName,
+		Host:       yamlParsedConfig.Email.SmtpServer,
+		Port:       yamlParsedConfig.Email.SmtpPort,
+		Username:   yamlParsedConfig.Email.SmtpUsername,
+		Password:   yamlParsedConfig.Email.SmtpPassword,
+		SenderName: yamlParsedConfig.Email.SmtpSenderName,
 		TlsType:    "STARTTLS",
 	}
 
-	if yamlParsedConfig.SMTP.TlsType != "" {
-		config.SMTP.TlsType = yamlParsedConfig.SMTP.TlsType
+	if yamlParsedConfig.Email.SmtpTlsType != "" {
+		config.SMTP.TlsType = yamlParsedConfig.Email.SmtpTlsType
 	}
 
 	config.DryRun.Enabled = false
