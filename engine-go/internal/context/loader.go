@@ -2,6 +2,7 @@ package context
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/go-playground/validator/v10"
@@ -10,27 +11,21 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func LoadContext(configPath string) (*Context, error) {
-	file, err := os.Open(configPath)
-	if err != nil {
-		panic("Failed to read configuration file" + err.Error())
-	}
-
-	yamlParsedConfig := &yamlConfiguration{}
+func loadContextFromReader(r io.Reader) (*Context, error) {
+yamlParsedConfig := &yamlConfiguration{}
 
 	validate := validator.New()
 
 	decoder := yaml.NewDecoder(
-		file,
+		r,
 		yaml.Validator(validate),
 		yaml.Strict(),
 	)
 
-	err = decoder.Decode(yamlParsedConfig)
+	err := decoder.Decode(yamlParsedConfig)
 	if err != nil {
 		yaml.FormatError(err, true, true)
-		fmt.Println("FATAL ERROR. " + err.Error())
-		os.Exit(1)
+		return nil, fmt.Errorf("Failed to decode configuration file: %w", err)
 	}
 
 	context := &Context{}
@@ -50,7 +45,10 @@ func LoadContext(configPath string) (*Context, error) {
 		}
 	}
 
-	context.Logger = initializeLogger(&config.Log)
+	context.Logger, err = initializeLogger(&config.Log)
+	if err != nil {
+		return nil, err
+	}
 
 	if yamlParsedConfig.Scheduler != nil {
 		config.Scheduler.Enabled = true
@@ -141,7 +139,16 @@ func LoadContext(configPath string) (*Context, error) {
 	return context, nil
 }
 
-func initializeLogger(logConfiguration *LogConfig) *zap.Logger {
+func LoadContext(configPath string) (*Context, error) {
+	file, err := os.Open(configPath)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read configuration file: %w", err)
+	}
+	return loadContextFromReader(file)
+	
+}
+
+func initializeLogger(logConfiguration *LogConfig) (*zap.Logger, error) {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 
@@ -175,8 +182,8 @@ func initializeLogger(logConfiguration *LogConfig) *zap.Logger {
 	}
 	logger, err := config.Build()
 	if err != nil {
-		panic("Failed to initialize logger: " + err.Error())
+		return nil, fmt.Errorf("Error while building logger: %w", err)
 	}
-	return logger
+	return logger, nil
 
 }
