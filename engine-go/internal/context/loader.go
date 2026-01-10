@@ -12,7 +12,7 @@ import (
 )
 
 func loadContextFromReader(r io.Reader) (*Context, error) {
-yamlParsedConfig := &yamlConfiguration{}
+	yamlParsedConfig := &yamlConfiguration{}
 
 	validate := validator.New()
 
@@ -112,14 +112,14 @@ yamlParsedConfig := &yamlConfiguration{}
 	if yamlParsedConfig.DryRun != nil && yamlParsedConfig.DryRun.Enabled {
 		config.DryRun = DryRunConfig{
 			Enabled:            true,
-			TestSTMPConnection: false,
+			TestSMTPConnection: false,
 			OutputDirectory:    "./previews/",
 			OutputFilename:     "newsletter_{date}_{time}.html",
 			IncludeMetadata:    true,
 			SaveEmailData:      true,
 		}
-		if yamlParsedConfig.DryRun.TestSTMPConnection != nil && *yamlParsedConfig.DryRun.TestSTMPConnection {
-			config.DryRun.TestSTMPConnection = true
+		if yamlParsedConfig.DryRun.TestSMTPConnection != nil && *yamlParsedConfig.DryRun.TestSMTPConnection {
+			config.DryRun.TestSMTPConnection = true
 		}
 		if yamlParsedConfig.DryRun.OutputDirectory != "" {
 			config.DryRun.OutputDirectory = yamlParsedConfig.DryRun.OutputDirectory
@@ -145,7 +145,7 @@ func LoadContext(configPath string) (*Context, error) {
 		return nil, fmt.Errorf("Failed to read configuration file: %w", err)
 	}
 	return loadContextFromReader(file)
-	
+
 }
 
 func initializeLogger(logConfiguration *LogConfig) (*zap.Logger, error) {
