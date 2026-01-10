@@ -52,7 +52,7 @@ type SmtpConfig struct {
 
 type DryRunConfig struct {
 	Enabled            bool
-	TestSTMPConnection bool
+	TestSMTPConnection bool
 	OutputDirectory    string
 	OutputFilename     string
 	IncludeMetadata    bool
@@ -116,11 +116,11 @@ type yamlConfiguration struct {
 	} `yaml:"email" validate:"required"`
 	DryRun *struct {
 		Enabled            bool   `yaml:"enabled" validate:"boolean"`
-		TestSTMPConnection *bool  `yaml:"test_smtp_connection,omitempty" validate:"omitempty,boolean"`
-		OutputDirectory    string `yaml:"output_directory,omitempty" validate:"omitempty,dir"`
+		TestSMTPConnection *bool  `yaml:"test_smtp_connection,omitempty" validate:"omitempty,boolean"`
+		OutputDirectory    string `yaml:"output_directory,omitempty" validate:"omitempty,dirpath"`
 		OutputFilename     string `yaml:"output_filename,omitempty" `
 		IncludeMetadata    *bool  `yaml:"include_metadata,omitempty" validate:"omitempty,boolean"`
 		SaveEmailData      *bool  `yaml:"save_email_data,omitempty" validate:"omitempty,boolean"`
-	} `yaml:"dry_run,omitempty"`
+	} `yaml:"dry-run,omitempty"`
 	Recipients []string `yaml:"recipients" validate:"required"`
 }
