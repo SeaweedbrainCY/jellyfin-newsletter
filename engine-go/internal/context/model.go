@@ -90,10 +90,10 @@ type yamlConfiguration struct {
 		WatchedSeriesFolders                []string `yaml:"watched_tv_folders" validate:"required"`
 		ObservedPeriodDays                  int      `yaml:"observed_period_days" validate:"required,numeric"`
 		IgnoreItemsAddedAfterLastNewsletter *bool    `yaml:"ignore_item_added_before_last_newsletter,omitempty" validate:"omitempty,boolean"`
-	} `yaml:"jellyfin" validate:"required"`
+	} `yaml:"jellyfin"            validate:"required"`
 	Tmdb struct {
 		ApiKey string `yaml:"api_key" validate:"required,jwt"`
-	} `yaml:"tmdb" validate:"required"`
+	} `yaml:"tmdb"                validate:"required"`
 	EmailTemplate struct {
 		Theme                   string `yaml:"theme,omitempty" validate:"omitempty,oneof=classic"`
 		Language                string `yaml:"language" validate:"required,alpha"`
@@ -105,7 +105,7 @@ type yamlConfiguration struct {
 		JellyfinOwnerName       string `yaml:"jellyfin_owner_name,omitempty"`
 		DisplayOverviewMaxItems *int   `yaml:"display_overview_max_items,omitempty" validate:"omitempty,numeric,min=-1"`
 		SortMode                string `yaml:"sort_mode,omitempty" validate:"omitempty,oneof=date_desc date_asc name_asc name_desc"`
-	} `yaml:"email_template" validate:"required"`
+	} `yaml:"email_template"      validate:"required"`
 	Email struct {
 		SmtpServer     string `yaml:"smtp_server" validate:"required,hostname|ip"`
 		SmtpPort       int    `yaml:"smtp_port" validate:"required,numeric,min=1,max=65535"`
@@ -113,7 +113,7 @@ type yamlConfiguration struct {
 		SmtpPassword   string `yaml:"smtp_password" validate:"required"`
 		SmtpSenderName string `yaml:"smtp_sender_email" validate:"required"`
 		SmtpTlsType    string `yaml:"smtp_tls_type,omitempty" validate:"omitempty,oneof=TLS STARTTLS"`
-	} `yaml:"email" validate:"required"`
+	} `yaml:"email"               validate:"required"`
 	DryRun *struct {
 		Enabled            bool   `yaml:"enabled" validate:"boolean"`
 		TestSMTPConnection *bool  `yaml:"test_smtp_connection,omitempty" validate:"omitempty,boolean"`
@@ -122,5 +122,5 @@ type yamlConfiguration struct {
 		IncludeMetadata    *bool  `yaml:"include_metadata,omitempty" validate:"omitempty,boolean"`
 		SaveEmailData      *bool  `yaml:"save_email_data,omitempty" validate:"omitempty,boolean"`
 	} `yaml:"dry-run,omitempty"`
-	Recipients []string `yaml:"recipients" validate:"required"`
+	Recipients []string `yaml:"recipients"          validate:"required"`
 }
