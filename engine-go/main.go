@@ -8,12 +8,11 @@ import (
 	"go.uber.org/zap"
 )
 
-var configPath = flag.String("config", "./config/config.yml", "path to config file")
 var version = "dev" // Will be set during build time
 
 func main() {
 	flag.Parse()
-
+	var configPath = flag.String("config", "./config/config.yml", "path to config file")
 	context, err := context.LoadContext(*configPath)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to load configuration: %v", err))
