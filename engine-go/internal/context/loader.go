@@ -25,7 +25,7 @@ func loadContextFromReader(r io.Reader) (*Context, error) {
 	err := decoder.Decode(yamlParsedConfig)
 	if err != nil {
 		yaml.FormatError(err, true, true)
-		return nil, fmt.Errorf("Failed to decode configuration file: %w", err)
+		return nil, fmt.Errorf("failed to decode configuration file: %w", err)
 	}
 
 	context := &Context{}
@@ -142,7 +142,7 @@ func loadContextFromReader(r io.Reader) (*Context, error) {
 func LoadContext(configPath string) (*Context, error) {
 	file, err := os.Open(configPath)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to read configuration file: %w", err)
+		return nil, fmt.Errorf("failed to read configuration file: %w", err)
 	}
 	return loadContextFromReader(file)
 
@@ -182,7 +182,7 @@ func initializeLogger(logConfiguration *LogConfig) (*zap.Logger, error) {
 	}
 	logger, err := config.Build()
 	if err != nil {
-		return nil, fmt.Errorf("Error while building logger: %w", err)
+		return nil, fmt.Errorf("error while building logger: %w", err)
 	}
 	return logger, nil
 
