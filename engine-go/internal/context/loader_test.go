@@ -71,7 +71,14 @@ recipients:
 //   - fieldLocation represents the dot notation of the field/section to remove. For example jellyfin or jellyfin.url
 //   - indentationLevelToDelete tells if the current line should be deleted because it has the indentation of a to be deleted section
 //   - ignoreIndentationLevel tells if we should be looking at the field in a section with this identation level or wait to go down to search pattern again. For example, if we are exploring email section, ignoreIndentationLevel will be equaled to 1 and search will be paused until ignoreIndentationLevel goes down to 0 again. If equaled to 0, this is ignored
-func computeNewYamlAfterPartRemoval(newYaml *string, baseYamlLines *[]string, linePositionToParse int, fieldPath *[]string, indentationLevelToDelete int, ignoreIndentationLevel int) bool {
+func computeNewYamlAfterPartRemoval(
+	newYaml *string,
+	baseYamlLines *[]string,
+	linePositionToParse int,
+	fieldPath *[]string,
+	indentationLevelToDelete int,
+	ignoreIndentationLevel int,
+) bool {
 	if linePositionToParse == len(*baseYamlLines) {
 		return true
 	} else {
@@ -79,14 +86,35 @@ func computeNewYamlAfterPartRemoval(newYaml *string, baseYamlLines *[]string, li
 		lineTrimmed := strings.TrimLeft(line, " ")
 		currentIdentNumber := (len(line) - len(lineTrimmed)) / 2 // 1 indent = 2 spaces
 		if currentIdentNumber >= indentationLevelToDelete && indentationLevelToDelete != 0 {
-			return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, indentationLevelToDelete, 0)
+			return computeNewYamlAfterPartRemoval(
+				newYaml,
+				baseYamlLines,
+				linePositionToParse+1,
+				fieldPath,
+				indentationLevelToDelete,
+				0,
+			)
 		} else if currentIdentNumber >= ignoreIndentationLevel && ignoreIndentationLevel != 0 {
 			*newYaml = *newYaml + "\n" + line
-			return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, 0, ignoreIndentationLevel)
+			return computeNewYamlAfterPartRemoval(
+				newYaml,
+				baseYamlLines,
+				linePositionToParse+1,
+				fieldPath,
+				0,
+				ignoreIndentationLevel,
+			)
 		} else if currentIdentNumber > len(*fieldPath)-1 {
 			// We are too high in indent, can be ignored
 			*newYaml = *newYaml + "\n" + line
-			return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, 0, ignoreIndentationLevel)
+			return computeNewYamlAfterPartRemoval(
+				newYaml,
+				baseYamlLines,
+				linePositionToParse+1,
+				fieldPath,
+				0,
+				ignoreIndentationLevel,
+			)
 		} else {
 			// We are in an interesting identation level
 
@@ -94,11 +122,25 @@ func computeNewYamlAfterPartRemoval(newYaml *string, baseYamlLines *[]string, li
 				if currentIdentNumber == len(*fieldPath)-1 {
 					// We found the field or section.
 					// Not adding this line to final yaml and setting is deleting this level of identation to true
-					return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, currentIdentNumber+1, 0)
+					return computeNewYamlAfterPartRemoval(
+						newYaml,
+						baseYamlLines,
+						linePositionToParse+1,
+						fieldPath,
+						currentIdentNumber+1,
+						0,
+					)
 				} else {
 					// We are moving up in the fieldPath but not there yet
 					*newYaml = *newYaml + "\n" + line
-					return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, 0, 0)
+					return computeNewYamlAfterPartRemoval(
+						newYaml,
+						baseYamlLines,
+						linePositionToParse+1,
+						fieldPath,
+						0,
+						0,
+					)
 				}
 			} else {
 				// We are in a section not interesting
@@ -143,7 +185,11 @@ func TestLoadContext_ValidConfig(t *testing.T) {
 	assert.Equal(t, []string{"/series"}, ctx.Config.Jellyfin.WatchedSeriesFolders)
 	assert.Equal(t, 30, ctx.Config.Jellyfin.ObservedPeriodDays)
 	assert.Equal(t, false, ctx.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter)
-	assert.Equal(t, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30", ctx.Config.Tmdb.ApiKey)
+	assert.Equal(
+		t,
+		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30",
+		ctx.Config.Tmdb.ApiKey,
+	)
 	assert.Equal(t, "smtp.example.com", ctx.Config.SMTP.Host)
 	assert.Equal(t, 587, ctx.Config.SMTP.Port)
 	assert.Equal(t, "user", ctx.Config.SMTP.Username)
