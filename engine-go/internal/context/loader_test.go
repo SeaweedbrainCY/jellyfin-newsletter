@@ -71,9 +71,9 @@ recipients:
 //   - fieldLocation represents the dot notation of the field/section to remove. For example jellyfin or jellyfin.url
 //   - indentationLevelToDelete tells if the current line should be deleted because it has the indentation of a to be deleted section
 //   - ignoreIndentationLevel tells if we should be looking at the field in a section with this identation level or wait to go down to search pattern again. For example, if we are exploring email section, ignoreIndentationLevel will be equaled to 1 and search will be paused until ignoreIndentationLevel goes down to 0 again. If equaled to 0, this is ignored
-func computeNewYamlAfterPartRemoval(newYaml *string, baseYamlLines *[]string, linePositionToParse int, fieldPath *[]string, indentationLevelToDelete int, ignoreIndentationLevel int) error {
+func computeNewYamlAfterPartRemoval(newYaml *string, baseYamlLines *[]string, linePositionToParse int, fieldPath *[]string, indentationLevelToDelete int, ignoreIndentationLevel int) bool {
 	if linePositionToParse == len(*baseYamlLines) {
-		return nil
+		return true
 	} else {
 		line := (*baseYamlLines)[linePositionToParse]
 		lineTrimmed := strings.TrimLeft(line, " ")
