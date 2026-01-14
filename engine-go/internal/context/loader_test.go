@@ -178,7 +178,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing jellyfin URL",
 			yamlKeyToRemove: "jellyfin.url",
-			expectedError: `Failed to decode configuration file: [10:9] Key: 'Url' Error:Field validation for 'Url' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [10:9] Key: 'Url' Error:Field validation for 'Url' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
    9 | 
@@ -193,7 +193,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing jellyfin api token",
 			yamlKeyToRemove: "jellyfin.api_token",
-			expectedError: `Failed to decode configuration file: [10:9] Key: 'ApiToken' Error:Field validation for 'ApiToken' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [10:9] Key: 'ApiToken' Error:Field validation for 'ApiToken' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
    9 | 
@@ -208,7 +208,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing jellyfin watched_film_folders",
 			yamlKeyToRemove: "jellyfin.watched_film_folders",
-			expectedError: `Failed to decode configuration file: [10:9] Key: 'WatchedFilmFolders' Error:Field validation for 'WatchedFilmFolders' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [10:9] Key: 'WatchedFilmFolders' Error:Field validation for 'WatchedFilmFolders' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
    9 | 
@@ -222,7 +222,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing jellyfin watched_tv_folders",
 			yamlKeyToRemove: "jellyfin.watched_tv_folders",
-			expectedError: `Failed to decode configuration file: [10:9] Key: 'WatchedSeriesFolders' Error:Field validation for 'WatchedSeriesFolders' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [10:9] Key: 'WatchedSeriesFolders' Error:Field validation for 'WatchedSeriesFolders' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
    9 | 
@@ -236,7 +236,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing observed_period_days",
 			yamlKeyToRemove: "jellyfin.observed_period_days",
-			expectedError: `Failed to decode configuration file: [10:9] Key: 'ObservedPeriodDays' Error:Field validation for 'ObservedPeriodDays' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [10:9] Key: 'ObservedPeriodDays' Error:Field validation for 'ObservedPeriodDays' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
    9 | 
@@ -250,13 +250,13 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing TMDB api key",
 			yamlKeyToRemove: "tmdb.api_key",
-			expectedError:   `Failed to decode configuration file: Key: 'yamlConfiguration.Tmdb.ApiKey' Error:Field validation for 'ApiKey' failed on the 'required' tag`,
+			expectedError:   `failed to decode configuration file: Key: 'yamlConfiguration.Tmdb.ApiKey' Error:Field validation for 'ApiKey' failed on the 'required' tag`,
 		},
 
 		{
 			name:            "Missing email_template lang",
 			yamlKeyToRemove: "email_template.language",
-			expectedError: `Failed to decode configuration file: [31:15] Key: 'Language' Error:Field validation for 'Language' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [31:15] Key: 'Language' Error:Field validation for 'Language' failed on the 'required' tag
   28 |   smtp_sender_email: Jellyfin
   29 |   smtp_tls_type: "TLS"
   30 | 
@@ -271,7 +271,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email_template subject",
 			yamlKeyToRemove: "email_template.subject",
-			expectedError: `Failed to decode configuration file: [31:15] Key: 'Subject' Error:Field validation for 'Subject' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [31:15] Key: 'Subject' Error:Field validation for 'Subject' failed on the 'required' tag
   28 |   smtp_sender_email: Jellyfin
   29 |   smtp_tls_type: "TLS"
   30 | 
@@ -286,7 +286,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email_template title",
 			yamlKeyToRemove: "email_template.title",
-			expectedError: `Failed to decode configuration file: [31:15] Key: 'Title' Error:Field validation for 'Title' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [31:15] Key: 'Title' Error:Field validation for 'Title' failed on the 'required' tag
   28 |   smtp_sender_email: Jellyfin
   29 |   smtp_tls_type: "TLS"
   30 | 
@@ -301,7 +301,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email_template subtitle",
 			yamlKeyToRemove: "email_template.subtitle",
-			expectedError: `Failed to decode configuration file: [31:15] Key: 'Subtitle' Error:Field validation for 'Subtitle' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [31:15] Key: 'Subtitle' Error:Field validation for 'Subtitle' failed on the 'required' tag
   28 |   smtp_sender_email: Jellyfin
   29 |   smtp_tls_type: "TLS"
   30 | 
@@ -316,7 +316,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email smtp_server",
 			yamlKeyToRemove: "email.smtp_server",
-			expectedError: `Failed to decode configuration file: [23:6] Key: 'SmtpServer' Error:Field validation for 'SmtpServer' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [23:6] Key: 'SmtpServer' Error:Field validation for 'SmtpServer' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
   22 | 
@@ -331,7 +331,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email smtp_port",
 			yamlKeyToRemove: "email.smtp_port",
-			expectedError: `Failed to decode configuration file: [23:6] Key: 'SmtpPort' Error:Field validation for 'SmtpPort' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [23:6] Key: 'SmtpPort' Error:Field validation for 'SmtpPort' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
   22 | 
@@ -346,7 +346,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email smtp_username",
 			yamlKeyToRemove: "email.smtp_username",
-			expectedError: `Failed to decode configuration file: [23:6] Key: 'SmtpUsername' Error:Field validation for 'SmtpUsername' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [23:6] Key: 'SmtpUsername' Error:Field validation for 'SmtpUsername' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
   22 | 
@@ -361,7 +361,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email smtp_password",
 			yamlKeyToRemove: "email.smtp_password",
-			expectedError: `Failed to decode configuration file: [23:6] Key: 'SmtpPassword' Error:Field validation for 'SmtpPassword' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [23:6] Key: 'SmtpPassword' Error:Field validation for 'SmtpPassword' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
   22 | 
@@ -376,7 +376,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email smtp_sender_email",
 			yamlKeyToRemove: "email.smtp_sender_email",
-			expectedError: `Failed to decode configuration file: [23:6] Key: 'SmtpSenderName' Error:Field validation for 'SmtpSenderName' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [23:6] Key: 'SmtpSenderName' Error:Field validation for 'SmtpSenderName' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
   22 | 
@@ -391,7 +391,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing recipients",
 			yamlKeyToRemove: "recipients",
-			expectedError:   `Failed to decode configuration file: Key: 'yamlConfiguration.Recipients' Error:Field validation for 'Recipients' failed on the 'required' tag`,
+			expectedError:   `failed to decode configuration file: Key: 'yamlConfiguration.Recipients' Error:Field validation for 'Recipients' failed on the 'required' tag`,
 		},
 	}
 
