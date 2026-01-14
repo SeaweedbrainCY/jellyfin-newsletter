@@ -17,7 +17,6 @@ func LoadContext(configPath string) (*Context, error) {
 		return nil, fmt.Errorf("failed to read configuration file: %w", err)
 	}
 	return loadContextFromReader(file)
-
 }
 
 func loadContextFromReader(r io.Reader) (*Context, error) {
@@ -87,7 +86,6 @@ func initializeLogger(logConfiguration *LogConfig) (*zap.Logger, error) {
 		return nil, fmt.Errorf("error while building logger: %w", err)
 	}
 	return logger, nil
-
 }
 
 func parseYaml(r io.Reader, yamlParsedConfig *yamlConfiguration) error {
@@ -177,7 +175,6 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration, config *Confi
 	if yamlParsedConfig.EmailTemplate.SortMode != "" {
 		config.EmailTemplate.SortMode = yamlParsedConfig.EmailTemplate.SortMode
 	}
-
 }
 
 func buildSMTPConfig(yamlParsedConfig *yamlConfiguration, config *Configuration) {

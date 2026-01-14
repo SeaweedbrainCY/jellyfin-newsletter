@@ -19,5 +19,4 @@ func main() {
 	}
 	context.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
 	context.Logger.Info("Configuration loaded successfully")
-
 }

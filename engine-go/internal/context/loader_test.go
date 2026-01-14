@@ -148,10 +148,8 @@ func computeNewYamlAfterPartRemoval(
 				*newYaml = *newYaml + "\n" + line
 				return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, 0, 0)
 			}
-
 		}
 	}
-
 }
 
 // Removes a field or section from a yaml file given as a string
@@ -445,7 +443,6 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			badYamlConfig := RemoveYamlPartHelper(validConfigYAML, tt.yamlKeyToRemove)
 			ctx, err := loadContextFromReader(strings.NewReader(badYamlConfig))
 
@@ -456,5 +453,4 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			finalTests = finalTests + "\n{\n name: \"" + tt.name + "\",\nyamlKeyToRemove: \"" + tt.yamlKeyToRemove + "\"\n expectedError: `" + err.Error() + "`,\n},\n"
 		})
 	}
-	//fmt.Println(finalTests)
 }
