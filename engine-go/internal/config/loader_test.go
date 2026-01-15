@@ -1,4 +1,4 @@
-package context
+package config
 
 import (
 	"strings"
@@ -81,75 +81,73 @@ func computeNewYamlAfterPartRemoval(
 ) bool {
 	if linePositionToParse == len(*baseYamlLines) {
 		return true
-	} else {
-		line := (*baseYamlLines)[linePositionToParse]
-		lineTrimmed := strings.TrimLeft(line, " ")
-		currentIdentNumber := (len(line) - len(lineTrimmed)) / 2 // 1 indent = 2 spaces
-		switch {
-		case currentIdentNumber >= indentationLevelToDelete && indentationLevelToDelete != 0:
-			return computeNewYamlAfterPartRemoval(
-				newYaml,
-				baseYamlLines,
-				linePositionToParse+1,
-				fieldPath,
-				indentationLevelToDelete,
-				0,
-			)
-		case currentIdentNumber >= ignoreIndentationLevel && ignoreIndentationLevel != 0:
-			*newYaml = *newYaml + "\n" + line
-			return computeNewYamlAfterPartRemoval(
-				newYaml,
-				baseYamlLines,
-				linePositionToParse+1,
-				fieldPath,
-				0,
-				ignoreIndentationLevel,
-			)
-		case currentIdentNumber > len(*fieldPath)-1:
-			// We are too high in indent, can be ignored
-			*newYaml = *newYaml + "\n" + line
-			return computeNewYamlAfterPartRemoval(
-				newYaml,
-				baseYamlLines,
-				linePositionToParse+1,
-				fieldPath,
-				0,
-				ignoreIndentationLevel,
-			)
-		}
-
-		// We are in an interesting identation level
-
-		if strings.HasPrefix(lineTrimmed, (*fieldPath)[currentIdentNumber]+":") {
-			// We are in a section not interesting
-			// If we are at root, search will continue
-			*newYaml = *newYaml + "\n" + line
-			return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, 0, 0)
-		}
-		if currentIdentNumber == len(*fieldPath)-1 {
-			// We found the field or section.
-			// Not adding this line to final yaml and setting is deleting this level of identation to true
-			return computeNewYamlAfterPartRemoval(
-				newYaml,
-				baseYamlLines,
-				linePositionToParse+1,
-				fieldPath,
-				currentIdentNumber+1,
-				0,
-			)
-		} else {
-			// We are moving up in the fieldPath but not there yet
-			*newYaml = *newYaml + "\n" + line
-			return computeNewYamlAfterPartRemoval(
-				newYaml,
-				baseYamlLines,
-				linePositionToParse+1,
-				fieldPath,
-				0,
-				0,
-			)
-		}
 	}
+	line := (*baseYamlLines)[linePositionToParse]
+	lineTrimmed := strings.TrimLeft(line, " ")
+	currentIdentNumber := (len(line) - len(lineTrimmed)) / 2 // 1 indent = 2 spaces
+	switch {
+	case currentIdentNumber >= indentationLevelToDelete && indentationLevelToDelete != 0:
+		return computeNewYamlAfterPartRemoval(
+			newYaml,
+			baseYamlLines,
+			linePositionToParse+1,
+			fieldPath,
+			indentationLevelToDelete,
+			0,
+		)
+	case currentIdentNumber >= ignoreIndentationLevel && ignoreIndentationLevel != 0:
+		*newYaml = *newYaml + "\n" + line
+		return computeNewYamlAfterPartRemoval(
+			newYaml,
+			baseYamlLines,
+			linePositionToParse+1,
+			fieldPath,
+			0,
+			ignoreIndentationLevel,
+		)
+	case currentIdentNumber > len(*fieldPath)-1:
+		// We are too high in indent, can be ignored
+		*newYaml = *newYaml + "\n" + line
+		return computeNewYamlAfterPartRemoval(
+			newYaml,
+			baseYamlLines,
+			linePositionToParse+1,
+			fieldPath,
+			0,
+			ignoreIndentationLevel,
+		)
+	}
+
+	// We are in an interesting identation level
+
+	if strings.HasPrefix(lineTrimmed, (*fieldPath)[currentIdentNumber]+":") {
+		// We are in a section not interesting
+		// If we are at root, search will continue
+		*newYaml = *newYaml + "\n" + line
+		return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, 0, 0)
+	}
+	if currentIdentNumber == len(*fieldPath)-1 {
+		// We found the field or section.
+		// Not adding this line to final yaml and setting is deleting this level of identation to true
+		return computeNewYamlAfterPartRemoval(
+			newYaml,
+			baseYamlLines,
+			linePositionToParse+1,
+			fieldPath,
+			currentIdentNumber+1,
+			0,
+		)
+	}
+	// We are moving up in the fieldPath but not there yet
+	*newYaml = *newYaml + "\n" + line
+	return computeNewYamlAfterPartRemoval(
+		newYaml,
+		baseYamlLines,
+		linePositionToParse+1,
+		fieldPath,
+		0,
+		0,
+	)
 }
 
 // Removes a field or section from a yaml file given as a string
@@ -165,52 +163,50 @@ func RemoveYamlPartHelper(yaml string, fieldDotNotation string) string {
 	return newYaml
 }
 
-func TestLoadContext_ValidConfig(t *testing.T) {
-	ctx, err := loadContextFromReader(strings.NewReader(validConfigYAML))
+func TestLoadConfig_ValidConfig(t *testing.T) {
+	config, err := loadConfigFromReader(strings.NewReader(validConfigYAML))
 
 	require.NoError(t, err)
-	require.NotNil(t, ctx)
-	require.NotNil(t, ctx.Config)
-	require.NotNil(t, ctx.Logger)
+	require.NotNil(t, config)
 
-	assert.Equal(t, "0 8 1 * *", ctx.Config.Scheduler.CronExpr)
-	assert.True(t, ctx.Config.Scheduler.Enabled)
-	assert.Equal(t, "INFO", ctx.Config.Log.Level)
-	assert.Equal(t, "console", ctx.Config.Log.Format)
-	assert.Equal(t, "http://localhost:8096", ctx.Config.Jellyfin.Url)
-	assert.Equal(t, "secret", ctx.Config.Jellyfin.ApiKey)
-	assert.Equal(t, []string{"/movies"}, ctx.Config.Jellyfin.WatchedFilmFolders)
-	assert.Equal(t, []string{"/series"}, ctx.Config.Jellyfin.WatchedSeriesFolders)
-	assert.Equal(t, 30, ctx.Config.Jellyfin.ObservedPeriodDays)
-	assert.Equal(t, false, ctx.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter)
+	assert.Equal(t, "0 8 1 * *", config.Scheduler.CronExpr)
+	assert.True(t, config.Scheduler.Enabled)
+	assert.Equal(t, "INFO", config.Log.Level)
+	assert.Equal(t, "console", config.Log.Format)
+	assert.Equal(t, "http://localhost:8096", config.Jellyfin.Url)
+	assert.Equal(t, "secret", config.Jellyfin.ApiKey)
+	assert.Equal(t, []string{"/movies"}, config.Jellyfin.WatchedFilmFolders)
+	assert.Equal(t, []string{"/series"}, config.Jellyfin.WatchedSeriesFolders)
+	assert.Equal(t, 30, config.Jellyfin.ObservedPeriodDays)
+	assert.Equal(t, false, config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter)
 	assert.Equal(
 		t,
 		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30",
-		ctx.Config.Tmdb.ApiKey,
+		config.Tmdb.ApiKey,
 	)
-	assert.Equal(t, "smtp.example.com", ctx.Config.SMTP.Host)
-	assert.Equal(t, 587, ctx.Config.SMTP.Port)
-	assert.Equal(t, "user", ctx.Config.SMTP.Username)
-	assert.Equal(t, "pass", ctx.Config.SMTP.Password)
-	assert.Equal(t, "Jellyfin", ctx.Config.SMTP.SenderName)
-	assert.Equal(t, "classic", ctx.Config.EmailTemplate.Theme)
-	assert.Equal(t, "en", ctx.Config.EmailTemplate.Language)
-	assert.Equal(t, "New releases", ctx.Config.EmailTemplate.Subject)
-	assert.Equal(t, "Newsletter", ctx.Config.EmailTemplate.Title)
-	assert.Equal(t, "This week", ctx.Config.EmailTemplate.Subtitle)
-	assert.Equal(t, "http://localhost:8096", ctx.Config.EmailTemplate.JellyfinURL)
-	assert.Equal(t, "unsub@example.com", ctx.Config.EmailTemplate.UnsubscribeEmail)
-	assert.Equal(t, "Admin", ctx.Config.EmailTemplate.JellyfinOwnerName)
-	assert.Equal(t, "date_asc", ctx.Config.EmailTemplate.SortMode)
-	assert.Equal(t, 10, ctx.Config.EmailTemplate.DisplayOverviewMaxItems)
-	assert.Equal(t, true, ctx.Config.DryRun.Enabled)
-	assert.Equal(t, false, ctx.Config.DryRun.TestSMTPConnection)
-	assert.Equal(t, "/app/config/previews/", ctx.Config.DryRun.OutputDirectory)
-	assert.Equal(t, "newsletter_{date}.html", ctx.Config.DryRun.OutputFilename)
-	assert.Equal(t, true, ctx.Config.DryRun.IncludeMetadata)
-	assert.Equal(t, true, ctx.Config.DryRun.SaveEmailData)
-	assert.Equal(t, ctx.Config.EmailRecipients[0], "user1@example.com")
-	assert.Equal(t, ctx.Config.EmailRecipients[1], "user2@example.com")
+	assert.Equal(t, "smtp.example.com", config.SMTP.Host)
+	assert.Equal(t, 587, config.SMTP.Port)
+	assert.Equal(t, "user", config.SMTP.Username)
+	assert.Equal(t, "pass", config.SMTP.Password)
+	assert.Equal(t, "Jellyfin", config.SMTP.SenderName)
+	assert.Equal(t, "classic", config.EmailTemplate.Theme)
+	assert.Equal(t, "en", config.EmailTemplate.Language)
+	assert.Equal(t, "New releases", config.EmailTemplate.Subject)
+	assert.Equal(t, "Newsletter", config.EmailTemplate.Title)
+	assert.Equal(t, "This week", config.EmailTemplate.Subtitle)
+	assert.Equal(t, "http://localhost:8096", config.EmailTemplate.JellyfinURL)
+	assert.Equal(t, "unsub@example.com", config.EmailTemplate.UnsubscribeEmail)
+	assert.Equal(t, "Admin", config.EmailTemplate.JellyfinOwnerName)
+	assert.Equal(t, "date_asc", config.EmailTemplate.SortMode)
+	assert.Equal(t, 10, config.EmailTemplate.DisplayOverviewMaxItems)
+	assert.Equal(t, true, config.DryRun.Enabled)
+	assert.Equal(t, false, config.DryRun.TestSMTPConnection)
+	assert.Equal(t, "/app/config/previews/", config.DryRun.OutputDirectory)
+	assert.Equal(t, "newsletter_{date}.html", config.DryRun.OutputFilename)
+	assert.Equal(t, true, config.DryRun.IncludeMetadata)
+	assert.Equal(t, true, config.DryRun.SaveEmailData)
+	assert.Equal(t, config.EmailRecipients[0], "user1@example.com")
+	assert.Equal(t, config.EmailRecipients[1], "user2@example.com")
 }
 
 func TestLoadContext_MissingRequiredField(t *testing.T) {
@@ -444,7 +440,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			badYamlConfig := RemoveYamlPartHelper(validConfigYAML, tt.yamlKeyToRemove)
-			ctx, err := loadContextFromReader(strings.NewReader(badYamlConfig))
+			ctx, err := loadConfigFromReader(strings.NewReader(badYamlConfig))
 
 			require.NotNil(t, err)
 

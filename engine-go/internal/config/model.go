@@ -1,8 +1,4 @@
-package context
-
-import (
-	"go.uber.org/zap"
-)
+package config
 
 type LogConfig struct {
 	Level  string
@@ -68,11 +64,6 @@ type Configuration struct {
 	EmailTemplate   EmailTemplateConfig
 	SMTP            SmtpConfig
 	DryRun          DryRunConfig
-}
-
-type Context struct {
-	Config *Configuration
-	Logger *zap.Logger
 }
 
 type yamlConfiguration struct {
