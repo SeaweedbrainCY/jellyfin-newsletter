@@ -150,6 +150,7 @@ func buildTMDBConfig(yamlParsedConfig *yamlConfiguration, config *Configuration)
 }
 
 func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration, config *Configuration) {
+	const defaultDisplayOverviewMaxItem int = 10
 	config.EmailTemplate = EmailTemplateConfig{
 		Language:                yamlParsedConfig.EmailTemplate.Language,
 		Subject:                 yamlParsedConfig.EmailTemplate.Subject,
@@ -159,7 +160,7 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration, config *Confi
 		UnsubscribeEmail:        yamlParsedConfig.EmailTemplate.UnsubscribeEmail,
 		JellyfinOwnerName:       yamlParsedConfig.EmailTemplate.JellyfinOwnerName,
 		Theme:                   "classic",
-		DisplayOverviewMaxItems: 10,
+		DisplayOverviewMaxItems: defaultDisplayOverviewMaxItem,
 		SortMode:                "date_desc",
 		AvailableLanguages:      []string{"en", "fr", "he", "ca", "es", "it"},
 	}
@@ -196,16 +197,13 @@ func buildDryRunConfig(yamlParsedConfig *yamlConfiguration, config *Configuratio
 	config.DryRun.Enabled = false
 	if yamlParsedConfig.DryRun != nil && yamlParsedConfig.DryRun.Enabled {
 		config.DryRun = DryRunConfig{
-			Enabled:            true,
-			TestSMTPConnection: false,
-			OutputDirectory:    "./previews/",
-			OutputFilename:     "newsletter_{date}_{time}.html",
-			IncludeMetadata:    true,
-			SaveEmailData:      true,
-		}
-
-		if yamlParsedConfig.DryRun.TestSMTPConnection != nil && *yamlParsedConfig.DryRun.TestSMTPConnection {
-			config.DryRun.TestSMTPConnection = true
+			Enabled: true,
+			TestSMTPConnection: yamlParsedConfig.DryRun.TestSMTPConnection != nil &&
+				*yamlParsedConfig.DryRun.TestSMTPConnection,
+			OutputDirectory: "./previews/",
+			OutputFilename:  "newsletter_{date}_{time}.html",
+			IncludeMetadata: yamlParsedConfig.DryRun.IncludeMetadata != nil && *yamlParsedConfig.DryRun.IncludeMetadata,
+			SaveEmailData:   yamlParsedConfig.DryRun.SaveEmailData != nil && *yamlParsedConfig.DryRun.SaveEmailData,
 		}
 
 		if yamlParsedConfig.DryRun.OutputDirectory != "" {
@@ -214,14 +212,6 @@ func buildDryRunConfig(yamlParsedConfig *yamlConfiguration, config *Configuratio
 
 		if yamlParsedConfig.DryRun.OutputFilename != "" {
 			config.DryRun.OutputFilename = yamlParsedConfig.DryRun.OutputFilename
-		}
-
-		if yamlParsedConfig.DryRun.IncludeMetadata != nil && *yamlParsedConfig.DryRun.IncludeMetadata {
-			config.DryRun.IncludeMetadata = true
-		}
-
-		if yamlParsedConfig.DryRun.SaveEmailData != nil && *yamlParsedConfig.DryRun.SaveEmailData {
-			config.DryRun.SaveEmailData = true
 		}
 	}
 }
