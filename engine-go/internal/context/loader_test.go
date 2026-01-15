@@ -85,7 +85,8 @@ func computeNewYamlAfterPartRemoval(
 		line := (*baseYamlLines)[linePositionToParse]
 		lineTrimmed := strings.TrimLeft(line, " ")
 		currentIdentNumber := (len(line) - len(lineTrimmed)) / 2 // 1 indent = 2 spaces
-		if currentIdentNumber >= indentationLevelToDelete && indentationLevelToDelete != 0 {
+		switch {
+		case currentIdentNumber >= indentationLevelToDelete && indentationLevelToDelete != 0:
 			return computeNewYamlAfterPartRemoval(
 				newYaml,
 				baseYamlLines,
@@ -94,7 +95,7 @@ func computeNewYamlAfterPartRemoval(
 				indentationLevelToDelete,
 				0,
 			)
-		} else if currentIdentNumber >= ignoreIndentationLevel && ignoreIndentationLevel != 0 {
+		case currentIdentNumber >= ignoreIndentationLevel && ignoreIndentationLevel != 0:
 			*newYaml = *newYaml + "\n" + line
 			return computeNewYamlAfterPartRemoval(
 				newYaml,
@@ -104,7 +105,7 @@ func computeNewYamlAfterPartRemoval(
 				0,
 				ignoreIndentationLevel,
 			)
-		} else if currentIdentNumber > len(*fieldPath)-1 {
+		case currentIdentNumber > len(*fieldPath)-1:
 			// We are too high in indent, can be ignored
 			*newYaml = *newYaml + "\n" + line
 			return computeNewYamlAfterPartRemoval(
@@ -115,39 +116,38 @@ func computeNewYamlAfterPartRemoval(
 				0,
 				ignoreIndentationLevel,
 			)
-		} else {
-			// We are in an interesting identation level
+		}
 
-			if strings.HasPrefix(lineTrimmed, (*fieldPath)[currentIdentNumber]+":") {
-				if currentIdentNumber == len(*fieldPath)-1 {
-					// We found the field or section.
-					// Not adding this line to final yaml and setting is deleting this level of identation to true
-					return computeNewYamlAfterPartRemoval(
-						newYaml,
-						baseYamlLines,
-						linePositionToParse+1,
-						fieldPath,
-						currentIdentNumber+1,
-						0,
-					)
-				} else {
-					// We are moving up in the fieldPath but not there yet
-					*newYaml = *newYaml + "\n" + line
-					return computeNewYamlAfterPartRemoval(
-						newYaml,
-						baseYamlLines,
-						linePositionToParse+1,
-						fieldPath,
-						0,
-						0,
-					)
-				}
-			} else {
-				// We are in a section not interesting
-				// If we are at root, search will continue
-				*newYaml = *newYaml + "\n" + line
-				return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, 0, 0)
-			}
+		// We are in an interesting identation level
+
+		if strings.HasPrefix(lineTrimmed, (*fieldPath)[currentIdentNumber]+":") {
+			// We are in a section not interesting
+			// If we are at root, search will continue
+			*newYaml = *newYaml + "\n" + line
+			return computeNewYamlAfterPartRemoval(newYaml, baseYamlLines, linePositionToParse+1, fieldPath, 0, 0)
+		}
+		if currentIdentNumber == len(*fieldPath)-1 {
+			// We found the field or section.
+			// Not adding this line to final yaml and setting is deleting this level of identation to true
+			return computeNewYamlAfterPartRemoval(
+				newYaml,
+				baseYamlLines,
+				linePositionToParse+1,
+				fieldPath,
+				currentIdentNumber+1,
+				0,
+			)
+		} else {
+			// We are moving up in the fieldPath but not there yet
+			*newYaml = *newYaml + "\n" + line
+			return computeNewYamlAfterPartRemoval(
+				newYaml,
+				baseYamlLines,
+				linePositionToParse+1,
+				fieldPath,
+				0,
+				0,
+			)
 		}
 	}
 }
