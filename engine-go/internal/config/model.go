@@ -11,16 +11,16 @@ type SchedulerConfig struct {
 }
 
 type JellyfinConfig struct {
-	Url                                 string
-	ApiKey                              string
+	URL                                 string
+	APIKey                              string
 	WatchedFilmFolders                  []string
 	WatchedSeriesFolders                []string
 	ObservedPeriodDays                  int
 	IgnoreItemsAddedAfterLastNewsletter bool
 }
 
-type TmdbConfig struct {
-	ApiKey string
+type TMDBConfig struct {
+	APIKey string
 }
 
 type EmailTemplateConfig struct {
@@ -37,13 +37,13 @@ type EmailTemplateConfig struct {
 	AvailableLanguages      []string
 }
 
-type SmtpConfig struct {
+type SMTPConfig struct {
 	Host       string
 	Port       int
 	Username   string
 	Password   string
 	SenderName string
-	TlsType    string
+	TLSType    string
 }
 
 type DryRunConfig struct {
@@ -60,9 +60,9 @@ type Configuration struct {
 	EmailRecipients []string
 	Scheduler       SchedulerConfig
 	Jellyfin        JellyfinConfig
-	Tmdb            TmdbConfig
+	TMDB            TMDBConfig
 	EmailTemplate   EmailTemplateConfig
-	SMTP            SmtpConfig
+	SMTP            SMTPConfig
 	DryRun          DryRunConfig
 }
 
@@ -75,15 +75,15 @@ type yamlConfiguration struct {
 		Cron string `yaml:"cron" validate:"cron"`
 	} `yaml:"scheduler,omitempty"`
 	Jellyfin struct {
-		Url                                 string   `yaml:"url" validate:"required,http_url"`
-		ApiToken                            string   `yaml:"api_token" validate:"required"`
+		URL                                 string   `yaml:"url" validate:"required,http_url"`
+		APIToken                            string   `yaml:"api_token" validate:"required"`
 		WatchedFilmFolders                  []string `yaml:"watched_film_folders" validate:"required"`
 		WatchedSeriesFolders                []string `yaml:"watched_tv_folders" validate:"required"`
 		ObservedPeriodDays                  int      `yaml:"observed_period_days" validate:"required,numeric"`
 		IgnoreItemsAddedAfterLastNewsletter *bool    `yaml:"ignore_item_added_before_last_newsletter,omitempty" validate:"omitempty,boolean"`
 	} `yaml:"jellyfin"            validate:"required"`
-	Tmdb struct {
-		ApiKey string `yaml:"api_key" validate:"required,jwt"`
+	TMDB struct {
+		APIKey string `yaml:"api_key" validate:"required,jwt"`
 	} `yaml:"tmdb"                validate:"required"`
 	EmailTemplate struct {
 		Theme                   string `yaml:"theme,omitempty" validate:"omitempty,oneof=classic"`
@@ -98,12 +98,12 @@ type yamlConfiguration struct {
 		SortMode                string `yaml:"sort_mode,omitempty" validate:"omitempty,oneof=date_desc date_asc name_asc name_desc"`
 	} `yaml:"email_template"      validate:"required"`
 	Email struct {
-		SmtpServer     string `yaml:"smtp_server" validate:"required,hostname|ip"`
-		SmtpPort       int    `yaml:"smtp_port" validate:"required,numeric,min=1,max=65535"`
-		SmtpUsername   string `yaml:"smtp_username" validate:"required"`
-		SmtpPassword   string `yaml:"smtp_password" validate:"required"`
-		SmtpSenderName string `yaml:"smtp_sender_email" validate:"required"`
-		SmtpTlsType    string `yaml:"smtp_tls_type,omitempty" validate:"omitempty,oneof=TLS STARTTLS"`
+		SMTPServer     string `yaml:"smtp_server" validate:"required,hostname|ip"`
+		SMTPPort       int    `yaml:"smtp_port" validate:"required,numeric,min=1,max=65535"`
+		SMTPUsername   string `yaml:"smtp_username" validate:"required"`
+		SMTPPassword   string `yaml:"smtp_password" validate:"required"`
+		SMTPSenderName string `yaml:"smtp_sender_email" validate:"required"`
+		SMTPTlsType    string `yaml:"smtp_tls_type,omitempty" validate:"omitempty,oneof=TLS STARTTLS"`
 	} `yaml:"email"               validate:"required"`
 	DryRun *struct {
 		Enabled            bool   `yaml:"enabled" validate:"boolean"`

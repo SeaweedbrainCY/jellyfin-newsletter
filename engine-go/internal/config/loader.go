@@ -29,7 +29,7 @@ func loadConfigFromReader(r io.Reader) (*Configuration, error) {
 	config.Log = buildLogConfig(yamlParsedConfig)
 	config.Scheduler = buildSchedulerConfig(yamlParsedConfig)
 	config.Jellyfin = buildJellyfinConfig(yamlParsedConfig)
-	config.Tmdb = buildTMDBConfig(yamlParsedConfig)
+	config.TMDB = buildTMDBConfig(yamlParsedConfig)
 	config.EmailTemplate = buildEmailTemplateConfig(yamlParsedConfig)
 	config.SMTP = buildSMTPConfig(yamlParsedConfig)
 	config.DryRun = buildDryRunConfig(yamlParsedConfig)
@@ -85,8 +85,8 @@ func buildSchedulerConfig(yamlParsedConfig *yamlConfiguration) SchedulerConfig {
 
 func buildJellyfinConfig(yamlParsedConfig *yamlConfiguration) JellyfinConfig {
 	jellyfinConfig := JellyfinConfig{
-		Url:                                 yamlParsedConfig.Jellyfin.Url,
-		ApiKey:                              yamlParsedConfig.Jellyfin.ApiToken,
+		URL:                                 yamlParsedConfig.Jellyfin.URL,
+		APIKey:                              yamlParsedConfig.Jellyfin.APIToken,
 		WatchedFilmFolders:                  yamlParsedConfig.Jellyfin.WatchedFilmFolders,
 		WatchedSeriesFolders:                yamlParsedConfig.Jellyfin.WatchedSeriesFolders,
 		ObservedPeriodDays:                  yamlParsedConfig.Jellyfin.ObservedPeriodDays,
@@ -99,9 +99,9 @@ func buildJellyfinConfig(yamlParsedConfig *yamlConfiguration) JellyfinConfig {
 	return jellyfinConfig
 }
 
-func buildTMDBConfig(yamlParsedConfig *yamlConfiguration) TmdbConfig {
-	return TmdbConfig{
-		ApiKey: yamlParsedConfig.Tmdb.ApiKey,
+func buildTMDBConfig(yamlParsedConfig *yamlConfiguration) TMDBConfig {
+	return TMDBConfig{
+		APIKey: yamlParsedConfig.TMDB.APIKey,
 	}
 }
 
@@ -136,18 +136,18 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplate
 	return emailTemplateConfig
 }
 
-func buildSMTPConfig(yamlParsedConfig *yamlConfiguration) SmtpConfig {
-	smtpConfig := SmtpConfig{
-		Host:       yamlParsedConfig.Email.SmtpServer,
-		Port:       yamlParsedConfig.Email.SmtpPort,
-		Username:   yamlParsedConfig.Email.SmtpUsername,
-		Password:   yamlParsedConfig.Email.SmtpPassword,
-		SenderName: yamlParsedConfig.Email.SmtpSenderName,
-		TlsType:    "STARTTLS",
+func buildSMTPConfig(yamlParsedConfig *yamlConfiguration) SMTPConfig {
+	smtpConfig := SMTPConfig{
+		Host:       yamlParsedConfig.Email.SMTPServer,
+		Port:       yamlParsedConfig.Email.SMTPPort,
+		Username:   yamlParsedConfig.Email.SMTPUsername,
+		Password:   yamlParsedConfig.Email.SMTPPassword,
+		SenderName: yamlParsedConfig.Email.SMTPSenderName,
+		TLSType:    "STARTTLS",
 	}
 
-	if yamlParsedConfig.Email.SmtpTlsType != "" {
-		smtpConfig.TlsType = yamlParsedConfig.Email.SmtpTlsType
+	if yamlParsedConfig.Email.SMTPTlsType != "" {
+		smtpConfig.TLSType = yamlParsedConfig.Email.SMTPTlsType
 	}
 
 	return smtpConfig

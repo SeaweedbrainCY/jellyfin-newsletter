@@ -13,8 +13,8 @@ import (
 var version = "dev" // Will be set during build time
 
 func main() {
-	flag.Parse()
 	var configPath = flag.String("config", "./config/config.yml", "path to config file")
+	flag.Parse()
 
 	config, err := config.LoadConfig(*configPath)
 	if err != nil {
