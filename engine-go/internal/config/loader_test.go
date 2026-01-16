@@ -179,7 +179,7 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(t, []string{"/movies"}, config.Jellyfin.WatchedFilmFolders)
 	assert.Equal(t, []string{"/series"}, config.Jellyfin.WatchedSeriesFolders)
 	assert.Equal(t, 30, config.Jellyfin.ObservedPeriodDays)
-	assert.Equal(t, false, config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter)
+	assert.False(t, config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter)
 	assert.Equal(
 		t,
 		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30",
@@ -200,14 +200,14 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(t, "Admin", config.EmailTemplate.JellyfinOwnerName)
 	assert.Equal(t, "date_asc", config.EmailTemplate.SortMode)
 	assert.Equal(t, 10, config.EmailTemplate.DisplayOverviewMaxItems)
-	assert.Equal(t, true, config.DryRun.Enabled)
-	assert.Equal(t, false, config.DryRun.TestSMTPConnection)
+	assert.True(t, config.DryRun.Enabled)
+	assert.False(t, config.DryRun.TestSMTPConnection)
 	assert.Equal(t, "/app/config/previews/", config.DryRun.OutputDirectory)
 	assert.Equal(t, "newsletter_{date}.html", config.DryRun.OutputFilename)
-	assert.Equal(t, true, config.DryRun.IncludeMetadata)
-	assert.Equal(t, true, config.DryRun.SaveEmailData)
-	assert.Equal(t, config.EmailRecipients[0], "user1@example.com")
-	assert.Equal(t, config.EmailRecipients[1], "user2@example.com")
+	assert.True(t, config.DryRun.IncludeMetadata)
+	assert.True(t, config.DryRun.SaveEmailData)
+	assert.Equal(t, "user1@example.com", config.EmailRecipients[0])
+	assert.Equal(t, "user2@example.com", config.EmailRecipients[1])
 }
 
 func TestLoadContext_MissingRequiredField(t *testing.T) {
@@ -443,7 +443,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			badYamlConfig := RemoveYamlPartHelper(validConfigYAML, tt.yamlKeyToRemove)
 			ctx, err := loadConfigFromReader(strings.NewReader(badYamlConfig))
 
-			require.NotNil(t, err)
+			require.Error(t, err)
 
 			assert.Nil(t, ctx)
 			assert.Equal(t, tt.expectedError, err.Error())
