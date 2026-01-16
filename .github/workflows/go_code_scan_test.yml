@@ -1,0 +1,67 @@
+name: GO code testing and, security and quality scanning 
+
+on: 
+  workflow_call:
+  push:
+    branches:
+      - '*'
+      - '**'
+      - '*/*'
+      - '**/**'
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+    semgrep_scan:
+        name: Semgrep scan
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./engine-go
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+        
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: 3.x
+        
+        - name: Install semgrep
+          run: python3 -m pip install semgrep
+        
+        - name: Run semgrep
+          run:  semgrep scan --error 
+    
+    golangci:
+      name: Go lint
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v5
+        - uses: actions/setup-go@v6
+          with:
+            go-version: '1.25.x'
+        - name: golangci-lint
+          uses: golangci/golangci-lint-action@v9
+          with:
+            version: v2.8
+            working-directory: ./engine-go
+
+    go_test:
+      name: "Go test"
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v5
+        - uses: actions/setup-go@v6
+          with:
+            go-version: '1.25.x'
+        - name: "Run go test"
+          working-directory: ./engine-go
+          run: go test ./...
+        
+
+
+    
