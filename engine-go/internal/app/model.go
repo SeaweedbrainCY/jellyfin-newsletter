@@ -1,11 +1,11 @@
-package ctx
+package app
 
 import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
 	"go.uber.org/zap"
 )
 
-type Context struct {
+type ApplicationContext struct {
 	Config *config.Configuration
 	Logger *zap.Logger
 }

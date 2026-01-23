@@ -4,8 +4,8 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
-	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/ctx"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
 	"go.uber.org/zap"
 )
@@ -26,7 +26,7 @@ func main() {
 		panic("an error occured while loading logger : " + err.Error())
 	}
 
-	context := ctx.InitContext(config, logger)
+	context := app.InitApplicationContext(config, logger)
 
 	context.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
 	context.Logger.Info("Configuration loaded successfully")
