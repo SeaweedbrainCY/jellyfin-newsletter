@@ -9,19 +9,19 @@ import (
 )
 
 func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
-	ping_answer, r, err := client.SystemAPI.PostPingSystem(context.Background()).Execute()
+	pingAnswer, r, err := client.SystemAPI.PostPingSystem(context.Background()).Execute()
 	if err != nil {
 		app.Logger.Error(
 			"Ping to Jellyfin API failed. Check for network issues.",
 			zap.Int("ping_HTTP_status", r.StatusCode),
-			zap.String("response", ping_answer),
+			zap.String("response", pingAnswer),
 		)
 		return err
 	}
 	app.Logger.Debug(
 		"Successfully pinged the Jellyfin API",
 		zap.Int("ping_HTTP_status", r.StatusCode),
-		zap.String("response", ping_answer),
+		zap.String("response", pingAnswer),
 	)
 
 	systemInfo, r, err := client.SystemAPI.GetSystemInfo(context.Background()).Execute()
