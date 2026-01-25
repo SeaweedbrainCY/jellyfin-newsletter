@@ -6,6 +6,7 @@ import (
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
 	"go.uber.org/zap"
 )
@@ -26,8 +27,17 @@ func main() {
 		panic("an error occured while loading logger : " + err.Error())
 	}
 
-	context := app.InitApplicationContext(config, logger)
+	app := app.InitApplicationContext(config, logger)
 
-	context.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
-	context.Logger.Info("Configuration loaded successfully")
+	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
+	app.Logger.Info("Configuration loaded successfully")
+	app.Logger.Error("coucou")
+
+	jellyfinAPIClient := jellyfin.GetJellyfinAPIClient(app)
+
+	err = jellyfinAPIClient.TestConnection(app)
+	if err != nil {
+		app.Logger.Debug("An error occurred while connecting to Jellyfin.", zap.Error(err))
+		app.Logger.Fatal("Jellyfin newsletter startup failed. Switch to debug to display Go error message")
+	}
 }
