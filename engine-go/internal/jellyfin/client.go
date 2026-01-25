@@ -10,7 +10,7 @@ type APIClient struct {
 }
 
 func GetJellyfinAPIClient(app *app.ApplicationContext) *APIClient {
-	headerToken := "`MediaBrowser Token=\"" + app.Config.Jellyfin.APIKey + "\"`"
+	headerToken := "MediaBrowser Token=\"" + app.Config.Jellyfin.APIKey + "\""
 	config := &jellyfinAPI.Configuration{
 		Servers:       jellyfinAPI.ServerConfigurations{{URL: app.Config.Jellyfin.URL}},
 		DefaultHeader: map[string]string{"Authorization": headerToken},
