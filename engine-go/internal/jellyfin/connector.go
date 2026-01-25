@@ -9,26 +9,26 @@ import (
 )
 
 func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
-	pingAnswer, r, err := client.SystemAPI.PostPingSystem(context.Background()).Execute()
+	pingAnswer, pingHTTPReponse, err := client.SystemAPI.PostPingSystem(context.Background()).Execute()
 	if err != nil {
 		app.Logger.Error(
 			"Ping to Jellyfin API failed. Check for network issues.",
-			zap.Int("ping_HTTP_status", r.StatusCode),
+			zap.Int("ping_HTTP_status", pingHTTPReponse.StatusCode),
 			zap.String("response", pingAnswer),
 		)
 		return err
 	}
 	app.Logger.Debug(
 		"Successfully pinged the Jellyfin API",
-		zap.Int("ping_HTTP_status", r.StatusCode),
+		zap.Int("ping_HTTP_status", pingHTTPReponse.StatusCode),
 		zap.String("response", pingAnswer),
 	)
 
-	systemInfo, r, err := client.SystemAPI.GetSystemInfo(context.Background()).Execute()
+	systemInfo, systemInfoHTTPReponse, err := client.SystemAPI.GetSystemInfo(context.Background()).Execute()
 	if err != nil {
 		app.Logger.Error(
 			"Failed to connect to the Jellyfin API",
-			zap.Int("http_status", r.StatusCode),
+			zap.Int("http_status", systemInfoHTTPReponse.StatusCode),
 		)
 		return err
 	}
@@ -44,7 +44,7 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 
 	app.Logger.Info(
 		"Successfully connected to Jellyfin",
-		zap.Int("http_status", r.StatusCode),
+		zap.Int("http_status", systemInfoHTTPReponse.StatusCode),
 		zap.String("apiVersion", apiVersion),
 		zap.String("serverName", serverName),
 	)
