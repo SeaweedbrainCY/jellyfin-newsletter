@@ -14,6 +14,7 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 	statusCode := 0
 	if pingHTTPReponse != nil {
 		statusCode = pingHTTPReponse.StatusCode
+		defer pingHTTPReponse.Body.Close()
 	}
 	if err != nil {
 		app.Logger.Error(
@@ -31,9 +32,11 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 	)
 
 	systemInfo, systemInfoHTTPReponse, err := client.SystemAPI.GetSystemInfo(context.Background()).Execute()
+
 	statusCode = 0
 	if pingHTTPReponse != nil {
 		statusCode = systemInfoHTTPReponse.StatusCode
+		defer systemInfoHTTPReponse.Body.Close()
 	}
 	if err != nil {
 		app.Logger.Error(
@@ -63,10 +66,11 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 	return err
 }
 
-func logHttpResponseError(HTTPResponse *http.Response, err error, app *app.ApplicationContext) {
+func logHTTPResponseError(httpResponse *http.Response, err error, app *app.ApplicationContext) {
 	statusCode := 0
-	if HTTPResponse != nil {
-		statusCode = HTTPResponse.StatusCode
+	if httpResponse != nil {
+		statusCode = httpResponse.StatusCode
+		defer httpResponse.Body.Close()
 	}
 	app.Logger.Error("Getting root Items failed.", zap.Int("httpStatusCode", statusCode), zap.Error(err))
 }

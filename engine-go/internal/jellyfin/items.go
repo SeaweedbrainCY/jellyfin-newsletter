@@ -8,15 +8,16 @@ import (
 	"go.uber.org/zap"
 )
 
-func (client *APIClient) GetRootFolderIdByName(folderName string, app *app.ApplicationContext) (string, error) {
+func (client *APIClient) GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error) {
 	foldersItems, httpResponse, err := client.ItemsAPI.GetItems(context.Background()).
 		Recursive(false).
 		LocationTypes([]api.LocationType{api.LOCATIONTYPE_FILE_SYSTEM}).
 		Execute()
 	if err != nil {
-		logHttpResponseError(httpResponse, err, app)
+		logHTTPResponseError(httpResponse, err, app)
 		return "", err
 	}
+	defer httpResponse.Body.Close()
 	if !foldersItems.HasItems() {
 		app.Logger.Warn(
 			"No folders found. This could happen if Jellyfin has no collection or folder at all. Media should belong in folders but none are found.",

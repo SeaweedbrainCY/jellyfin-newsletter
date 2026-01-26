@@ -39,4 +39,7 @@ func main() {
 		app.Logger.Debug("An error occurred while connecting to Jellyfin.", zap.Error(err))
 		app.Logger.Fatal("Jellyfin newsletter startup failed. Switch to debug to display Go error message")
 	}
+
+	recentlyAddedMovies := jellyfinAPIClient.GetRecentlyAddedMovies(app)
+	app.Logger.Info("movies", zap.Any("movies", recentlyAddedMovies))
 }
