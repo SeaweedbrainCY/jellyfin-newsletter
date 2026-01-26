@@ -2,6 +2,7 @@ package jellyfin
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/sj14/jellyfin-go/api"
@@ -60,4 +61,12 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 	)
 
 	return err
+}
+
+func logHttpResponseError(HTTPResponse *http.Response, err error, app *app.ApplicationContext) {
+	statusCode := 0
+	if HTTPResponse != nil {
+		statusCode = HTTPResponse.StatusCode
+	}
+	app.Logger.Error("Getting root Items failed.", zap.Int("httpStatusCode", statusCode), zap.Error(err))
 }
