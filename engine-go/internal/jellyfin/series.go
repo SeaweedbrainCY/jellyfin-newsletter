@@ -60,7 +60,7 @@ func (client *APIClient) getAllJellyfinItemsFromFolder(
 	return &items.Items, nil
 }
 
-func parseSeriesItems(jellyfinItems *[]api.BaseItemDto, app *app.ApplicationContext) map[string]SeriesItem {
+func parseSeriesItems(jellyfinItems *[]api.BaseItemDto) map[string]SeriesItem {
 	seriesItems := map[string]SeriesItem{}
 	for _, item := range *jellyfinItems {
 		if *item.Type == api.BASEITEMKIND_SERIES {
@@ -174,7 +174,7 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 		return nil, err
 	}
 
-	seriesItem := parseSeriesItems(jellyfinItems, app)
+	seriesItem := parseSeriesItems(jellyfinItems)
 	updateSeriesWithSeasons(jellyfinItems, seriesItem, app)
 	updateSeriesWithEpisode(jellyfinItems, seriesItem, app)
 
