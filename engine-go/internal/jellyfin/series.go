@@ -9,10 +9,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const ITEM_TYPE_SEASON = "season"
-const ITEM_TYPE_SERIES = "series"
-const ITEM_TYPE_EPISODE = "episode"
-
 type EpisodeItem struct {
 	Name           string
 	AdditionDate   time.Time
