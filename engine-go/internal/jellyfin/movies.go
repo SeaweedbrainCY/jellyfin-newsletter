@@ -59,7 +59,6 @@ func (client *APIClient) getRecentlyAddedMoviesByFolder(
 	var items = []MovieItem{}
 	for _, movie := range movies.Items {
 		name := OrDefault(movie.Name, "Unknown Movie Name")
-		tmdbID := 0
 		productionYear := OrDefault(movie.ProductionYear, 0)
 
 		if !movie.DateCreated.IsSet() {
@@ -71,7 +70,7 @@ func (client *APIClient) getRecentlyAddedMoviesByFolder(
 			continue
 		}
 
-		tmdbID = getTMDBIDIfExist(&movie)
+		tmdbID := getTMDBIDIfExist(&movie)
 
 		if movie.DateCreated.Get().After(minimumAdditionDate) {
 			items = append(items, MovieItem{
