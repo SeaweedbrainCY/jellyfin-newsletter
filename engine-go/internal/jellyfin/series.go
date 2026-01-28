@@ -183,7 +183,6 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 	updateSeriesWithEpisode(jellyfinItems, seriesItem, app)
 
 	var newlyAddedSeries = []NewlyAddedSeriesItem{}
-	//app.Logger.Info("debug", zap.Any("series", seriesItem))
 	for seriesID, series := range seriesItem {
 		newSeries := NewlyAddedSeriesItem{
 			SeriesName:     series.Name,
