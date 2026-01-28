@@ -1,6 +1,6 @@
 module github.com/SeaweedbrainCY/jellyfin-newsletter
 
-go 1.24.4
+go 1.25.6
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
