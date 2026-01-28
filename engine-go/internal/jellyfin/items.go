@@ -2,11 +2,17 @@ package jellyfin
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/sj14/jellyfin-go/api"
 	"go.uber.org/zap"
 )
+
+type Nullable[T any] interface {
+	IsSet() bool
+	Get() *T
+}
 
 func (client *APIClient) GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error) {
 	foldersItems, httpResponse, err := client.ItemsAPI.GetItems(context.Background()).
@@ -32,3 +38,11 @@ func (client *APIClient) GetRootFolderIDByName(folderName string, app *app.Appli
 	app.Logger.Warn("Folder not found. Will ignore it.", zap.String("folderName", folderName))
 	return "", ErrItemsNotFound
 }
+
+func OrDefault[T any](n Nullable[T], def T) T {
+	if n.IsSet() {
+		return *n.Get()
+	}
+	return def
+}
+
