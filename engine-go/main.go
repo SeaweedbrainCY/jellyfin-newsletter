@@ -42,4 +42,6 @@ func main() {
 
 	recentlyAddedMovies := jellyfinAPIClient.GetRecentlyAddedMovies(app)
 	app.Logger.Info("movies", zap.Any("movies", recentlyAddedMovies))
+	recentlyAddedSeries := jellyfinAPIClient.GetNewlyAddedSeries(app)
+	app.Logger.Info("series", zap.Any("series", recentlyAddedSeries))
 }
