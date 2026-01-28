@@ -2,7 +2,6 @@ package jellyfin
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
@@ -15,7 +14,7 @@ type MovieItem struct {
 	Name           string
 	AdditionDate   time.Time
 	TMDBId         int
-	ProductionYear int
+	ProductionYear int32
 }
 
 func (client *APIClient) GetRecentlyAddedMovies(app *app.ApplicationContext) *[]MovieItem {
@@ -59,16 +58,9 @@ func (client *APIClient) getRecentlyAddedMoviesByFolder(
 
 	var items = []MovieItem{}
 	for _, movie := range movies.Items {
-		name := "Unknown Movie Name"
+		name := OrDefault(movie.Name, "Unknown Movie Name")
 		tmdbID := 0
-		productionYear := 0
-
-		if movie.Name.IsSet() {
-			name = *movie.Name.Get()
-		}
-		if movie.ProductionYear.IsSet() {
-			productionYear = int(movie.GetProductionYear())
-		}
+		productionYear := OrDefault(movie.ProductionYear, 0)
 
 		if !movie.DateCreated.IsSet() {
 			app.Logger.Warn(
@@ -79,11 +71,7 @@ func (client *APIClient) getRecentlyAddedMoviesByFolder(
 			continue
 		}
 
-		if value, ok := movie.ProviderIds["Tmdb"]; ok {
-			if id, atoiErr := strconv.Atoi(value); atoiErr == nil {
-				tmdbID = id
-			}
-		}
+		tmdbID = getTMDBIDIfExist(&movie)
 
 		if movie.DateCreated.Get().After(minimumAdditionDate) {
 			items = append(items, MovieItem{

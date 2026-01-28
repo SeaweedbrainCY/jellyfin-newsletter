@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
-	"github.com/sj14/jellyfin-go/api"
 	"go.uber.org/zap"
 )
 
@@ -47,20 +46,11 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 		return err
 	}
 
-	apiVersion := "Unknown"
-	serverName := "Unknown"
-	if api.NullableString.IsSet(systemInfo.Version) {
-		apiVersion = *api.NullableString.Get(systemInfo.Version)
-	}
-	if systemInfo.ServerName.IsSet() {
-		serverName = *systemInfo.ServerName.Get()
-	}
-
 	app.Logger.Info(
 		"Successfully connected to Jellyfin",
 		zap.Int("http_status", statusCode),
-		zap.String("apiVersion", apiVersion),
-		zap.String("serverName", serverName),
+		zap.String("apiVersion", OrDefault(systemInfo.Version, "Unknown")),
+		zap.String("serverName", OrDefault(systemInfo.ServerName, "Unknown")),
 	)
 
 	return err
