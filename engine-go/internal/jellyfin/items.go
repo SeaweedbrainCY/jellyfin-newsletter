@@ -46,3 +46,11 @@ func OrDefault[T any](n Nullable[T], def T) T {
 	return def
 }
 
+func getTMDBIDIfExist(item *api.BaseItemDto) int {
+	if value, ok := item.ProviderIds["Tmdb"]; ok {
+		if id, atoiErr := strconv.Atoi(value); atoiErr == nil {
+			return id
+		}
+	}
+	return 0
+}
