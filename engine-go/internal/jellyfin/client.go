@@ -1,27 +1,36 @@
 package jellyfin
 
 import (
-	"context"
+	"net/http"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	jellyfinAPI "github.com/sj14/jellyfin-go/api"
 )
 
-type ItemsAPIInterface interface {
-	GetItems(ctx context.Context) jellyfinAPI.ApiGetItemsRequest
+type SystemAPIInterface interface {
+	PingSystem() (string, *http.Response, error)
+	GetSystemInformation() (*SystemInfo, int, error)
 }
 
-type SystemAPIInterface interface {
-	GetSystemInfo(ctx context.Context) jellyfinAPI.ApiGetSystemInfoRequest
-	PostPingSystem(ctx context.Context) jellyfinAPI.ApiPostPingSystemRequest
+type ItemsAPIInterface interface {
+	GetMoviesItemsByFolderID(
+		folderID string,
+		recursive bool,
+		app *app.ApplicationContext,
+	) (*[]jellyfinAPI.BaseItemDto, error)
+	GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error)
+	GetAllItemsByFolderID(
+		folderID string,
+		app *app.ApplicationContext,
+	) (*[]jellyfinAPI.BaseItemDto, error)
 }
 
 type APIClient struct {
-	ItemsAPI  ItemsAPIInterface
 	SystemAPI SystemAPIInterface
+	ItemsAPI  ItemsAPIInterface
 }
 
-func GetJellyfinAPIClient(app *app.ApplicationContext) *APIClient {
+func NewJellyfinAPIClient(app *app.ApplicationContext) *APIClient {
 	headerToken := "MediaBrowser Token=\"" + app.Config.Jellyfin.APIKey + "\""
 	config := &jellyfinAPI.Configuration{
 		Servers:       jellyfinAPI.ServerConfigurations{{URL: app.Config.Jellyfin.URL}},
@@ -29,6 +38,11 @@ func GetJellyfinAPIClient(app *app.ApplicationContext) *APIClient {
 	}
 	client := jellyfinAPI.NewAPIClient(config)
 	return &APIClient{
-		ItemsAPI: client.ItemsAPI,
+		SystemAPI: JellyfinSystemAPI{
+			client.SystemAPI,
+		},
+		ItemsAPI: JellyfinItemsAPI{
+			client.ItemsAPI,
+		},
 	}
 }
