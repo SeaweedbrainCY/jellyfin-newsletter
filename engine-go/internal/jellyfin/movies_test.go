@@ -21,21 +21,21 @@ type MockJellyfinItemsAPI struct {
 }
 
 func (m MockJellyfinItemsAPI) GetMoviesItemsByFolderID(
-	folderID string,
-	recursive bool,
-	app *app.ApplicationContext,
+	_ string,
+	_ bool,
+	_ *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
 	return m.ExecuteGetMoviesItemsByFolderID()
 }
 
 func (m MockJellyfinItemsAPI) GetAllItemsByFolderID(
-	folderID string,
-	app *app.ApplicationContext,
+	_ string,
+	_ *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
-	return nil, nil
+	return &[]jellyfinAPI.BaseItemDto{}, nil
 }
 
-func (m MockJellyfinItemsAPI) GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error) {
+func (m MockJellyfinItemsAPI) GetRootFolderIDByName(_ string, _ *app.ApplicationContext) (string, error) {
 	return m.ExecuteGetRootFolderIDByName()
 }
 
@@ -107,10 +107,16 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 		},
 	}
 
+	concatMovies := make(
+		[]jellyfinAPI.BaseItemDto,
+		len(mockedRecentlyAddedItems),
+		len(mockedRecentlyAddedItems)+len(mockedOtherItems),
+	)
+	_ = copy(concatMovies, mockedRecentlyAddedItems)
+	concatMovies = append(concatMovies, mockedOtherItems...)
 	mockItemsAPI := MockJellyfinItemsAPI{
 		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
-			items := append(mockedRecentlyAddedItems, mockedOtherItems...)
-			return &items, nil
+			return &concatMovies, nil
 		},
 		ExecuteGetRootFolderIDByName: func() (string, error) {
 			return "id", nil
@@ -163,8 +169,8 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 					expectedMovie.DateCreated.Get().String(),
 					movie.AdditionDate.String(),
 				)
-				expectedProviderID, err := strconv.Atoi(expectedMovie.ProviderIds["Tmdb"])
-				require.NoError(t, err)
+				expectedProviderID, atoiErr := strconv.Atoi(expectedMovie.ProviderIds["Tmdb"])
+				require.NoError(t, atoiErr)
 				assert.Equal(
 					t,
 					expectedProviderID,
