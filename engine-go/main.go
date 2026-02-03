@@ -32,7 +32,7 @@ func main() {
 	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
 	app.Logger.Info("Configuration loaded successfully")
 
-	jellyfinAPIClient := jellyfin.GetJellyfinAPIClient(app)
+	jellyfinAPIClient := jellyfin.NewJellyfinAPIClient(app)
 
 	err = jellyfinAPIClient.TestConnection(app)
 	if err != nil {
