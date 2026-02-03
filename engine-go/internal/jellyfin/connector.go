@@ -29,18 +29,9 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 		zap.String("response", pingAnswer),
 	)
 
-	if err != nil {
-		app.Logger.Error(
-			"Failed to connect to the Jellyfin API",
-			zap.Int("http_status", statusCode),
-			zap.Error(err),
-		)
-		return err
-	}
-
 	systemInfo, httpStatusCode, systemInfoerr := client.SystemAPI.GetSystemInformation()
 	if systemInfoerr != nil {
-		return err
+		return systemInfoerr
 	}
 
 	app.Logger.Info(
