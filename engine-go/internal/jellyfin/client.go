@@ -38,7 +38,7 @@ func NewJellyfinAPIClient(app *app.ApplicationContext) *APIClient {
 	}
 	client := jellyfinAPI.NewAPIClient(config)
 	return &APIClient{
-		SystemAPI: JellyfinSystemAPI{
+		SystemAPI: jellyfinSystemAPI{
 			client.SystemAPI,
 		},
 		ItemsAPI: jellyfinItemsAPI{

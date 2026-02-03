@@ -7,7 +7,7 @@ import (
 	jellyfinAPI "github.com/sj14/jellyfin-go/api"
 )
 
-type JellyfinSystemAPI struct {
+type jellyfinSystemAPI struct {
 	jellyfinAPI.SystemAPI
 }
 
@@ -16,11 +16,11 @@ type SystemInfo struct {
 	ServerName string
 }
 
-func (systemAPI JellyfinSystemAPI) PingSystem() (string, *http.Response, error) {
+func (systemAPI jellyfinSystemAPI) PingSystem() (string, *http.Response, error) {
 	return systemAPI.PostPingSystem(context.Background()).Execute()
 }
 
-func (systemAPI JellyfinSystemAPI) GetSystemInformation() (*SystemInfo, int, error) {
+func (systemAPI jellyfinSystemAPI) GetSystemInformation() (*SystemInfo, int, error) {
 	systemInfo, systemInfoHTTPReponse, err := systemAPI.GetSystemInfo(context.Background()).Execute()
 	statusCode := 0
 	if systemInfoHTTPReponse != nil {
