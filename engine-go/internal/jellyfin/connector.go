@@ -1,7 +1,6 @@
 package jellyfin
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
@@ -9,7 +8,7 @@ import (
 )
 
 func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
-	pingAnswer, pingHTTPReponse, err := client.SystemAPI.PostPingSystem(context.Background()).Execute()
+	pingAnswer, pingHTTPReponse, err := client.SystemAPI.PingSystem()
 	statusCode := 0
 	if pingHTTPReponse != nil {
 		statusCode = pingHTTPReponse.StatusCode
@@ -30,13 +29,6 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 		zap.String("response", pingAnswer),
 	)
 
-	systemInfo, systemInfoHTTPReponse, err := client.SystemAPI.GetSystemInfo(context.Background()).Execute()
-
-	statusCode = 0
-	if pingHTTPReponse != nil {
-		statusCode = systemInfoHTTPReponse.StatusCode
-		defer systemInfoHTTPReponse.Body.Close()
-	}
 	if err != nil {
 		app.Logger.Error(
 			"Failed to connect to the Jellyfin API",
@@ -46,11 +38,16 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 		return err
 	}
 
+	systemInfo, httpStatusCode, systemInfoerr := client.SystemAPI.GetSystemInformation()
+	if systemInfoerr != nil {
+		return err
+	}
+
 	app.Logger.Info(
 		"Successfully connected to Jellyfin",
-		zap.Int("http_status", statusCode),
-		zap.String("apiVersion", OrDefault(systemInfo.Version, "Unknown")),
-		zap.String("serverName", OrDefault(systemInfo.ServerName, "Unknown")),
+		zap.Int("http_status", httpStatusCode),
+		zap.String("apiVersion", systemInfo.APIVersion),
+		zap.String("serverName", systemInfo.ServerName),
 	)
 
 	return err
