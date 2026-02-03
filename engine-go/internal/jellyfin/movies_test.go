@@ -237,7 +237,7 @@ func TestGetRecentlyAddedMoviesByFolderWithMovieNameNull(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Empty(t, recordedLogs)
-	assert.Len(t, len(newlyAddedMovies), 2)
+	assert.Len(t, newlyAddedMovies, 2)
 	isMovieNameDefault := false
 	for _, movie := range newlyAddedMovies {
 		if movie.ID == "8b54388aca994d4fb867944d3150a7e0" {
@@ -327,7 +327,7 @@ func TestGetRecentlyAddedMoviesByFolderWithNoCreationDate(t *testing.T) {
 
 	require.NoError(t, err)
 
-	require.Len(t, recordedLogs, 1)
+	require.Equal(t, 1, recordedLogs.Len())
 	assert.Equal(t, "Movie ignored because it has no creation date.", recordedLogs.All()[0].Message)
 
 	fields := recordedLogs.All()[0].Context
