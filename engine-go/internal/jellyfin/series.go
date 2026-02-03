@@ -1,11 +1,10 @@
 package jellyfin
 
 import (
-	"context"
 	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
-	"github.com/sj14/jellyfin-go/api"
+	jellyfinAPI "github.com/sj14/jellyfin-go/api"
 	"go.uber.org/zap"
 )
 
@@ -44,26 +43,10 @@ type NewlyAddedSeriesItem struct {
 	AdditionDate   time.Time
 }
 
-func (client *APIClient) getAllJellyfinItemsFromFolder(
-	folderID string,
-	app *app.ApplicationContext,
-) (*[]api.BaseItemDto, error) {
-	items, httpResponse, err := client.ItemsAPI.GetItems(context.Background()).
-		Recursive(true).
-		ParentId(folderID).
-		Fields([]api.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear", "IndexNumber", "SeriesId", "Type", "SeasonId"}).
-		Execute()
-	if err != nil {
-		logHTTPResponseError(httpResponse, err, app)
-		return nil, err
-	}
-	return &items.Items, nil
-}
-
-func parseSeriesItems(jellyfinItems *[]api.BaseItemDto) map[string]SeriesItem {
+func parseSeriesItems(jellyfinItems *[]jellyfinAPI.BaseItemDto) map[string]SeriesItem {
 	seriesItems := map[string]SeriesItem{}
 	for _, item := range *jellyfinItems {
-		if *item.Type == api.BASEITEMKIND_SERIES {
+		if *item.Type == jellyfinAPI.BASEITEMKIND_SERIES {
 			seriesItems[*item.Id] = SeriesItem{
 				Name:           OrDefault(item.Name, "Unknown"),
 				AdditionDate:   OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
@@ -77,13 +60,13 @@ func parseSeriesItems(jellyfinItems *[]api.BaseItemDto) map[string]SeriesItem {
 }
 
 func updateSeriesWithSeasons(
-	jellyfinItems *[]api.BaseItemDto,
+	jellyfinItems *[]jellyfinAPI.BaseItemDto,
 	seriesItem map[string]SeriesItem,
 	app *app.ApplicationContext,
 ) {
 	for _, item := range *jellyfinItems {
-		if *item.Type == api.BASEITEMKIND_SEASON {
-			if !item.SeriesId.IsSet() {
+		if *item.Type == jellyfinAPI.BASEITEMKIND_SEASON {
+			if !item.SeriesId.IsSet() || item.SeriesId.Get() == nil {
 				app.Logger.Warn("A season item is ignored because it has no series ID.", zap.String("itemID", *item.Id))
 				continue
 			}
@@ -109,14 +92,16 @@ func updateSeriesWithSeasons(
 }
 
 func updateSeriesWithEpisode(
-	jellyfinItems *[]api.BaseItemDto,
+	jellyfinItems *[]jellyfinAPI.BaseItemDto,
 	seriesItem map[string]SeriesItem,
 	app *app.ApplicationContext,
 ) {
 	for _, item := range *jellyfinItems {
-		if *item.Type == api.BASEITEMKIND_EPISODE && item.LocationType.IsSet() &&
-			*item.LocationType.Get() == api.LOCATIONTYPE_FILE_SYSTEM {
-			if !item.SeriesId.IsSet() || !item.SeasonId.IsSet() {
+		if *item.Type == jellyfinAPI.BASEITEMKIND_EPISODE && item.LocationType.IsSet() &&
+			item.LocationType.Get() != nil &&
+			*item.LocationType.Get() == jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM {
+			if !item.SeriesId.IsSet() || !item.SeasonId.IsSet() || item.SeriesId.Get() == nil ||
+				item.SeasonId.Get() == nil {
 				app.Logger.Warn(
 					"An episode item is ignored because it has no series ID or season ID.",
 					zap.String("itemID", *item.Id),
@@ -157,19 +142,19 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 	folderName string,
 	app *app.ApplicationContext,
 ) (*[]NewlyAddedSeriesItem, error) {
-	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1)
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
 	app.Logger.Debug(
 		"Searching for recently added series.",
 		zap.String("FolderName", folderName),
 		zap.String("StartAdditionDate", minimumAdditionDate.String()),
 	)
 
-	folderID, err := client.GetRootFolderIDByName(folderName, app)
+	folderID, err := client.ItemsAPI.GetRootFolderIDByName(folderName, app)
 	if err != nil {
 		return nil, err
 	}
 
-	jellyfinItems, err := client.getAllJellyfinItemsFromFolder(folderID, app)
+	jellyfinItems, err := client.ItemsAPI.GetAllItemsByFolderID(folderID, app)
 	if err != nil {
 		return nil, err
 	}
