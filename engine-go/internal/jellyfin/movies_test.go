@@ -1,6 +1,7 @@
 package jellyfin
 
 import (
+	"errors"
 	"strconv"
 	"testing"
 	"time"
@@ -16,6 +17,7 @@ import (
 
 type MockJellyfinItemsAPI struct {
 	ExecuteGetMoviesItemsByFolderID func() (*[]jellyfinAPI.BaseItemDto, error)
+	ExecuteGetRootFolderIDByName    func() (string, error)
 }
 
 func (m MockJellyfinItemsAPI) GetMoviesItemsByFolderID(
@@ -34,26 +36,29 @@ func (m MockJellyfinItemsAPI) GetAllItemsByFolderID(
 }
 
 func (m MockJellyfinItemsAPI) GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error) {
-	return "coucuo", nil
+	return m.ExecuteGetRootFolderIDByName()
 }
 
 func Ptr[T any](v T) *T {
 	return &v
 }
 
-func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
+func initApp() (*app.ApplicationContext, *observer.ObservedLogs) {
 	observedDays := 30
 	loggerCore, recordedLogs := observer.New(zap.InfoLevel)
 	logger := zap.New(loggerCore)
-	mockedApp := app.ApplicationContext{
+	return &app.ApplicationContext{
 		Logger: logger,
 		Config: &config.Configuration{
 			Jellyfin: config.JellyfinConfig{
 				ObservedPeriodDays: observedDays,
 			},
 		},
-	}
+	}, recordedLogs
+}
 
+func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
+	mockedApp, recordedLogs := initApp()
 	mockedRecentlyAddedItems := []jellyfinAPI.BaseItemDto{
 		{
 			Id:             Ptr("8b54388aca994d4fb867944d3150a7e0"),
@@ -107,14 +112,17 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 			items := append(mockedRecentlyAddedItems, mockedOtherItems...)
 			return &items, nil
 		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
 	}
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", &mockedApp)
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", mockedApp)
 
 	require.NoError(t, err)
-	assert.Equal(t, recordedLogs.Len(), 0)
+	assert.Equal(t, 0, recordedLogs.Len())
 	assert.Equal(
 		t,
 		len(mockedRecentlyAddedItems),
@@ -176,4 +184,208 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 			*expectedMovie.Id,
 		)
 	}
+}
+
+func baseMovie() []jellyfinAPI.BaseItemDto {
+	return []jellyfinAPI.BaseItemDto{
+		{
+			Id:             Ptr("8b54388aca994d4fb867944d3150a7e0"),
+			Name:           *jellyfinAPI.NewNullableString(Ptr("Movie 1")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2026))),
+			DateCreated:    *jellyfinAPI.NewNullableTime(Ptr(time.Now())),
+			ProviderIds:    map[string]string{"Tmdb": "2876", "Imdb": "2653"},
+		},
+		{
+			Id:             Ptr("2264338b9fe1475b8f2b8095531dd1ff"),
+			Name:           *jellyfinAPI.NewNullableString(Ptr("Movie 2")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			DateCreated:    *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -7))),
+			ProviderIds:    map[string]string{"Tmdb": "1027", "Imdb": "2276"},
+		},
+		{
+			Id:             Ptr("7c48cba998264cea90880b9efd0d9c9b"),
+			Name:           *jellyfinAPI.NewNullableString(Ptr("Movie 3")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2022))),
+			DateCreated:    *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, -2, 0.))),
+			ProviderIds:    map[string]string{"Tmdb": "1092"},
+		},
+	}
+}
+
+func TestGetRecentlyAddedMoviesByFolderWithMovieNameNull(t *testing.T) {
+	app, recordedLogs := initApp()
+	mockItemsAPI := MockJellyfinItemsAPI{
+		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			items := baseMovie()
+			items[0].Name = *jellyfinAPI.NewNullableString(nil)
+			return &items, nil
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
+	}
+	client := APIClient{
+		ItemsAPI: mockItemsAPI,
+	}
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+
+	require.NoError(t, err)
+	assert.Equal(t, 0, recordedLogs.Len())
+	assert.Equal(t, 2, len(newlyAddedMovies))
+	isMovieNameDefault := false
+	for _, movie := range newlyAddedMovies {
+		if movie.ID == "8b54388aca994d4fb867944d3150a7e0" {
+			assert.Equal(t, "Unknown Movie Name", movie.Name)
+			isMovieNameDefault = true
+		}
+	}
+	assert.True(t, isMovieNameDefault, "No movie with ID 8b54388aca994d4fb867944d3150a7e0 found. This is not expected.")
+}
+
+func TestGetRecentlyAddedMoviesByFolderWithMovieProductionYearNull(t *testing.T) {
+	app, recordedLogs := initApp()
+	mockItemsAPI := MockJellyfinItemsAPI{
+		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			items := baseMovie()
+			items[0].ProductionYear = *jellyfinAPI.NewNullableInt32(nil)
+			return &items, nil
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
+	}
+	client := APIClient{
+		ItemsAPI: mockItemsAPI,
+	}
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+
+	require.NoError(t, err)
+	assert.Equal(t, 0, recordedLogs.Len())
+	assert.Equal(t, 2, len(newlyAddedMovies))
+	isMovieNameDefault := false
+	for _, movie := range newlyAddedMovies {
+		if movie.ID == "8b54388aca994d4fb867944d3150a7e0" {
+			assert.Equal(t, int32(0), movie.ProductionYear)
+			isMovieNameDefault = true
+		}
+	}
+	assert.True(t, isMovieNameDefault, "No movie with ID 8b54388aca994d4fb867944d3150a7e0 found. This is not expected.")
+}
+
+func TestGetRecentlyAddedMoviesByFolderWithNoTMDBID(t *testing.T) {
+	app, recordedLogs := initApp()
+	mockItemsAPI := MockJellyfinItemsAPI{
+		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			items := baseMovie()
+			items[0].ProviderIds = map[string]string{}
+			return &items, nil
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
+	}
+	client := APIClient{
+		ItemsAPI: mockItemsAPI,
+	}
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+
+	require.NoError(t, err)
+	assert.Equal(t, 0, recordedLogs.Len())
+	assert.Equal(t, 2, len(newlyAddedMovies))
+	isMovieNameDefault := false
+	for _, movie := range newlyAddedMovies {
+		if movie.ID == "8b54388aca994d4fb867944d3150a7e0" {
+			assert.Equal(t, 0, movie.TMDBId)
+			isMovieNameDefault = true
+		}
+	}
+	assert.True(t, isMovieNameDefault, "No movie with ID 8b54388aca994d4fb867944d3150a7e0 found. This is not expected.")
+}
+
+func TestGetRecentlyAddedMoviesByFolderWithNoCreationDate(t *testing.T) {
+	app, recordedLogs := initApp()
+	mockItemsAPI := MockJellyfinItemsAPI{
+		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			items := baseMovie()
+			items[0].DateCreated = *jellyfinAPI.NewNullableTime(nil)
+			return &items, nil
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
+	}
+	client := APIClient{
+		ItemsAPI: mockItemsAPI,
+	}
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+
+	require.NoError(t, err)
+
+	require.Equal(t, recordedLogs.Len(), 1)
+	assert.Equal(t, "Movie ignored because it has no creation date.", recordedLogs.All()[0].Message)
+
+	fields := recordedLogs.All()[0].Context
+	require.Len(t, fields, 2)
+	assert.Equal(t, "MovieID", fields[0].Key)
+	assert.Equal(t, "8b54388aca994d4fb867944d3150a7e0", fields[0].String)
+
+	assert.Equal(t, 1, len(newlyAddedMovies))
+}
+
+func TestGetRecentlyAddedMoviesByFolderWithNoMovies(t *testing.T) {
+	app, recordedLogs := initApp()
+	mockItemsAPI := MockJellyfinItemsAPI{
+		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			return &[]jellyfinAPI.BaseItemDto{}, nil
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
+	}
+	client := APIClient{
+		ItemsAPI: mockItemsAPI,
+	}
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+
+	require.NoError(t, err)
+
+	require.Equal(t, 0, recordedLogs.Len())
+	assert.Equal(t, 0, len(newlyAddedMovies))
+}
+
+func TestGetRecentlyAddedMoviesByFolderWithErrorWhileRetrievingFolder(t *testing.T) {
+	app, _ := initApp()
+	mockItemsAPI := MockJellyfinItemsAPI{
+		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			items := baseMovie()
+			return &items, nil
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "", errors.New("error")
+		},
+	}
+	client := APIClient{
+		ItemsAPI: mockItemsAPI,
+	}
+	_, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+
+	require.Error(t, err)
+}
+
+func TestGetRecentlyAddedMoviesByFolderWithErrorWhileRetrievingMovies(t *testing.T) {
+	app, _ := initApp()
+	mockItemsAPI := MockJellyfinItemsAPI{
+		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			return nil, errors.New("error")
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
+	}
+	client := APIClient{
+		ItemsAPI: mockItemsAPI,
+	}
+	_, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+
+	require.Error(t, err)
 }
