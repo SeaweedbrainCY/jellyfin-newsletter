@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type JellyfinItemsAPI struct {
+type jellyfinItemsAPI struct {
 	jellyfinAPI.ItemsAPI
 }
 
@@ -18,7 +18,7 @@ type Nullable[T any] interface {
 	Get() *T
 }
 
-func (itemsAPI JellyfinItemsAPI) GetMoviesItemsByFolderID(
+func (itemsAPI jellyfinItemsAPI) GetMoviesItemsByFolderID(
 	folderID string,
 	recursive bool,
 	app *app.ApplicationContext,
@@ -39,7 +39,7 @@ func (itemsAPI JellyfinItemsAPI) GetMoviesItemsByFolderID(
 	return &movies.Items, nil
 }
 
-func (itemsAPI JellyfinItemsAPI) GetAllItemsByFolderID(
+func (itemsAPI jellyfinItemsAPI) GetAllItemsByFolderID(
 	folderID string,
 	app *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
@@ -55,7 +55,7 @@ func (itemsAPI JellyfinItemsAPI) GetAllItemsByFolderID(
 	return &items.Items, nil
 }
 
-func (itemsAPI JellyfinItemsAPI) GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error) {
+func (itemsAPI jellyfinItemsAPI) GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error) {
 	foldersItems, httpResponse, err := itemsAPI.GetItems(context.Background()).
 		Recursive(false).
 		LocationTypes([]jellyfinAPI.LocationType{jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM}).
