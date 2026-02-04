@@ -15,33 +15,6 @@ import (
 	"go.uber.org/zap/zaptest/observer"
 )
 
-type MockJellyfinItemsAPI struct {
-	ExecuteGetMoviesItemsByFolderID func() (*[]jellyfinAPI.BaseItemDto, error)
-	ExecuteGetRootFolderIDByName    func() (string, error)
-}
-
-func (m MockJellyfinItemsAPI) GetMoviesItemsByFolderID(
-	_ string,
-	_ bool,
-	_ *app.ApplicationContext,
-) (*[]jellyfinAPI.BaseItemDto, error) {
-	return m.ExecuteGetMoviesItemsByFolderID()
-}
-
-func (m MockJellyfinItemsAPI) GetAllItemsByFolderID(
-	_ string,
-	_ *app.ApplicationContext,
-) (*[]jellyfinAPI.BaseItemDto, error) {
-	return &[]jellyfinAPI.BaseItemDto{}, nil
-}
-
-func (m MockJellyfinItemsAPI) GetRootFolderIDByName(_ string, _ *app.ApplicationContext) (string, error) {
-	return m.ExecuteGetRootFolderIDByName()
-}
-
-func Ptr[T any](v T) *T {
-	return &v
-}
 
 func initApp() (*app.ApplicationContext, *observer.ObservedLogs) {
 	observedDays := 30
