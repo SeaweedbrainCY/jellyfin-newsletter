@@ -6,6 +6,8 @@ template/new_media_notification_preview.html
 # Used for development purposes, contains local settings and other files that should not be committed
 dev/
 
+cover.*
+
 
 # MacOS .DS_Store files
 .DS_Store
