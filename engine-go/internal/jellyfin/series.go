@@ -35,7 +35,6 @@ type NewlyAddedSeriesItem struct {
 	SeriesID       string
 	IsSeriesNew    bool
 	NewSeasons     map[string]SeasonItem
-	NewEpisodes    map[string]EpisodeItem
 	TMDBId         int
 	ProductionYear int
 	AdditionDate   time.Time
