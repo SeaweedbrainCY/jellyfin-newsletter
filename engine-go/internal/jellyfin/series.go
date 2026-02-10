@@ -172,19 +172,43 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 			newlyAddedSeries = append(newlyAddedSeries, newSeries)
 			continue
 		}
+		// It's not a new series but we may have new seasons
 		newSeries.IsSeriesNew = false
 		for seasonID, season := range series.Seasons {
+			newSeason := SeasonItem{
+					SeasonNumber: season.SeasonNumber,
+					Name: season.Name,
+					AdditionDate: season.AdditionDate,
+					Episodes: nil,
+				}
 			if season.AdditionDate.After(minimumAdditionDate) {
-				newSeries.NewSeasons[seasonID] = season
+				if newSeries.NewSeasons == nil {
+					newSeries.NewSeasons = map[string]SeasonItem{}
+				}
+				newSeason.IsSeasonNew = true
+				newSeries.NewSeasons[seasonID] = newSeason
 				continue
 			}
+			// It's not a new Season but we may have new episodes
+			newSeason.IsSeasonNew = false
 			for episodeID, episode := range season.Episodes {
 				if episode.AdditionDate.After(minimumAdditionDate) {
-					newSeries.NewEpisodes[episodeID] = episode
+					if newSeries.NewSeasons == nil {
+						newSeries.NewSeasons = map[string]SeasonItem{}
+					}
+					if _,ok := newSeries.NewSeasons[seasonID]; !ok {
+						newSeries.NewSeasons[seasonID] = newSeason
+					}
+					seasonToUpdate := newSeries.NewSeasons[seasonID]
+					if seasonToUpdate.Episodes == nil {
+							seasonToUpdate.Episodes = map[string]EpisodeItem{}
+						} 
+					seasonToUpdate.Episodes[episodeID] = episode
+					newSeries.NewSeasons[seasonID] = seasonToUpdate
 				}
-			}
+			} 
 		}
-		if len(newSeries.NewEpisodes) != 0 || len(newSeries.NewSeasons) != 0 {
+		if newSeries.NewSeasons != nil {
 			newlyAddedSeries = append(newlyAddedSeries, newSeries)
 		}
 	}
