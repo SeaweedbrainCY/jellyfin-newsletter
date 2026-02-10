@@ -1,6 +1,7 @@
 package jellyfin
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -28,8 +29,115 @@ func testSeriesInitApp() (*app.ApplicationContext, *observer.ObservedLogs) {
 	}, recordedLogs
 }
 
-func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto) {
-	recentSeries := []jellyfinAPI.BaseItemDto{
+func getExpectedResultFromBaseItem() []NewlyAddedSeriesItem {
+	return []NewlyAddedSeriesItem{
+		{
+			SeriesName: "Series 1",
+			SeriesID: "1813f4b17e9d4a799641c09319b5ffcc",
+			IsSeriesNew: true,
+			NewSeasons: nil,
+			TMDBId: 1027,
+			ProductionYear: 2023,
+			AdditionDate: time.Now().AddDate(0, 0, -7),
+		},
+		{
+			SeriesName: "Series 2",
+			SeriesID: "aa1111",
+			IsSeriesNew: true,
+			NewSeasons: nil,
+			TMDBId: 3001,
+			ProductionYear: 2024,
+			AdditionDate: time.Now().AddDate(0, 0, -5),
+		},
+		{
+			SeriesName: "Old Series 1",
+			SeriesID: "bb2222",
+			IsSeriesNew: false,
+			NewSeasons: map[string]SeasonItem{
+				"bb2222-s2":
+				{
+					Name: "Season 2",
+					AdditionDate: time.Now().AddDate(0, 0, -30),
+					SeasonNumber: 2,
+					Episodes: nil,
+					IsSeasonNew: true,
+				},
+			},
+			TMDBId: 3001,
+			ProductionYear: 2023,
+			AdditionDate: time.Now().AddDate(0, 0, -90),
+		},
+		{
+			SeriesName: "Very Old Series",
+			SeriesID: "cc3333",
+			IsSeriesNew: false,
+			NewSeasons: map[string]SeasonItem{
+				"cc3333-s1": {
+					Name: "Season 1",
+					AdditionDate: time.Now().AddDate(0, 0, -150),
+					SeasonNumber: 1,
+					IsSeasonNew: false,
+					Episodes: map[string]EpisodeItem{
+						"cc3333-s1-e5":{
+							Name: "Episode 5",
+							AdditionDate: time.Now().AddDate(0, 0, -2),
+							EpisodeNumber: 5,
+						},
+					},
+				},
+				"cc3333-s2": {
+					Name: "Season 2",
+					AdditionDate: time.Now().AddDate(0, 0, -140),
+					SeasonNumber: 2,
+					IsSeasonNew: false,
+					Episodes: map[string]EpisodeItem{
+						"cc3333-s2-e5":{
+							Name: "Episode 5",
+							AdditionDate: time.Now().AddDate(0, 0, -1),
+							EpisodeNumber: 5,
+						},
+					},
+				},
+			},
+			TMDBId: 3001,
+			ProductionYear: 2023,
+			AdditionDate: time.Now().AddDate(0, 0, -180),
+		},
+		{
+			SeriesName: "Very Old Series",
+			SeriesID: "ee5555",
+			IsSeriesNew: false,
+			NewSeasons: map[string]SeasonItem{
+				"ee5555-s1": {
+					Name: "Season 1",
+					AdditionDate: time.Now().AddDate(0, 0, -150),
+					SeasonNumber: 1,
+					IsSeasonNew: false,
+					Episodes: map[string]EpisodeItem{
+						"ee5555-s1-e5":{
+							Name: "Episode 5",
+							AdditionDate: time.Now().AddDate(0, 0, -2),
+							EpisodeNumber: 5,
+						},
+					},
+				},
+				"ee5555-s2": {
+					Name: "Season 2",
+					AdditionDate: time.Now().AddDate(0, 0, -5),
+					SeasonNumber: 2,
+					IsSeasonNew: true,
+					Episodes: nil,
+				},
+			},
+			TMDBId: 3001,
+			ProductionYear: 2023,
+			AdditionDate: time.Now().AddDate(0, 0, -180),
+		},
+	}
+}
+
+func getSeriesBaseItems() []jellyfinAPI.BaseItemDto  {
+	return []jellyfinAPI.BaseItemDto{
 		{
 			Id:             Ptr("1813f4b17e9d4a799641c09319b5ffcc"),
 			Name:           *jellyfinAPI.NewNullableString(Ptr("Series 1")),
@@ -40,15 +148,6 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			LocationType:   *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 		},
 		{
-			Id:             Ptr("05bc80140f6c41d1a6366c81dac444a4"),
-			Name:           *jellyfinAPI.NewNullableString(Ptr("Series 2")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
-			DateCreated:    *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -10))),
-			ProviderIds:    map[string]string{"Tmdb": "1027", "Imdb": "2276"},
-			Type:           Ptr(jellyfinAPI.BASEITEMKIND_SERIES),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-		},
-		{
 			Id:             Ptr("f4971e32089041f3a3d6774277c2ccb9"),
 			Name:           *jellyfinAPI.NewNullableString(Ptr("Season 1")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
@@ -57,6 +156,7 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			Type:           Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			SeriesId:       *jellyfinAPI.NewNullableString(Ptr("1813f4b17e9d4a799641c09319b5ffcc")),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
 		},
 		{
 			Id:             Ptr("bcedb6a404974245b41fe224f31e6460"),
@@ -68,10 +168,11 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			LocationType:   *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:       *jellyfinAPI.NewNullableString(Ptr("1813f4b17e9d4a799641c09319b5ffcc")),
 			SeasonId:       *jellyfinAPI.NewNullableString(Ptr("f4971e32089041f3a3d6774277c2ccb9")),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
 		},
 		{
 			Id:             Ptr("aa1111"),
-			Name:           *jellyfinAPI.NewNullableString(Ptr("Series 3")),
+			Name:           *jellyfinAPI.NewNullableString(Ptr("Series 2")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2024))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -5))),
 			ProviderIds:    map[string]string{"Tmdb": "3001"},
@@ -85,6 +186,8 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("aa1111")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
 		},
 		{
 			Id:           Ptr("aa1111-s1-e1"),
@@ -94,18 +197,34 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("aa1111")),
 			SeasonId:     *jellyfinAPI.NewNullableString(Ptr("aa1111-s1")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
 		},
-	}
 
-	recentSeasons := []jellyfinAPI.BaseItemDto{
-		// Old series
+
+		// Old series but recent season
 		{
 			Id:           Ptr("bb2222"),
 			Name:         *jellyfinAPI.NewNullableString(Ptr("Old Series 1")),
 			DateCreated:  *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -90))),
 			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SERIES),
+			ProviderIds:    map[string]string{"Tmdb": "3001"},
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
 		},
+		// old season 
+		{
+			Id:           Ptr("bb2222-s1"),
+			Name:         *jellyfinAPI.NewNullableString(Ptr("Season 1")),
+			DateCreated:  *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -50))),
+			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
+			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("bb2222")),
+			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
+		},
+
 
 		// Recent season
 		{
@@ -115,6 +234,9 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("bb2222")),
+			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(2))),
 		},
 
 		// Episode in that season
@@ -126,17 +248,19 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("bb2222")),
 			SeasonId:     *jellyfinAPI.NewNullableString(Ptr("bb2222-s2")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
 		},
-	}
 
-	recentEpisodes := []jellyfinAPI.BaseItemDto{
-		// Old series
+		// Old series but recent episodes
 		{
 			Id:           Ptr("cc3333"),
 			Name:         *jellyfinAPI.NewNullableString(Ptr("Very Old Series")),
+			ProviderIds:    map[string]string{"Tmdb": "3001"},
 			DateCreated:  *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -180))),
 			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SERIES),
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
 		},
 
 		// Old seasons
@@ -147,6 +271,8 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("cc3333")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
 		},
 		{
 			Id:           Ptr("cc3333-s2"),
@@ -155,6 +281,8 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("cc3333")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(2))),
 		},
 
 		// Recent episode
@@ -166,6 +294,8 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("cc3333")),
 			SeasonId:     *jellyfinAPI.NewNullableString(Ptr("cc3333-s1")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(5))),
 		},
 		{
 			Id:           Ptr("cc3333-s2-e5"),
@@ -175,18 +305,74 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("cc3333")),
 			SeasonId:     *jellyfinAPI.NewNullableString(Ptr("cc3333-s2")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(5))),
 		},
-	}
+		// series with recent episodes and recent seasons
+{
+			Id:           Ptr("ee5555"),
+			Name:         *jellyfinAPI.NewNullableString(Ptr("Very Old Series")),
+			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			DateCreated:  *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -180))),
+			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SERIES),
+			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+		},
 
-	olderLibrary := []jellyfinAPI.BaseItemDto{
+		// Old seasons
+		{
+			Id:           Ptr("ee5555-s1"),
+			Name:         *jellyfinAPI.NewNullableString(Ptr("Season 1")),
+			DateCreated:  *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -150))),
+			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
+			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("ee5555")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
+		},
+		{
+			Id:           Ptr("ee5555-s2"),
+			Name:         *jellyfinAPI.NewNullableString(Ptr("Season 2")),
+			DateCreated:  *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -5))),
+			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
+			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("ee5555")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(2))),
+		},
+
+		{
+			Id:           Ptr("ee5555-s1-e5"),
+			Name:         *jellyfinAPI.NewNullableString(Ptr("Episode 5")),
+			DateCreated:  *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -2))),
+			Type:         Ptr(jellyfinAPI.BASEITEMKIND_EPISODE),
+			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
+			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("ee5555")),
+			SeasonId:     *jellyfinAPI.NewNullableString(Ptr("ee5555-s1")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(5))),
+		},
+		{
+			Id:           Ptr("ee5555-s2-e5"),
+			Name:         *jellyfinAPI.NewNullableString(Ptr("Episode 5")),
+			DateCreated:  *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -1))),
+			Type:         Ptr(jellyfinAPI.BASEITEMKIND_EPISODE),
+			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
+			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("ee5555")),
+			SeasonId:     *jellyfinAPI.NewNullableString(Ptr("ee5555-s2")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(5))),
+		},
 		// Old series
 		{
 			Id:             Ptr("dd4444"),
 			Name:           *jellyfinAPI.NewNullableString(Ptr("Legacy Series")),
+			ProviderIds:    map[string]string{"Tmdb": "3001"},
 			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2019))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -120))),
 			Type:           Ptr(jellyfinAPI.BASEITEMKIND_SERIES),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+			
 		},
 
 		// Old season
@@ -197,6 +383,8 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			Type:         Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("dd4444")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
 		},
 
 		// Old episode
@@ -208,6 +396,8 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("dd4444")),
 			SeasonId:     *jellyfinAPI.NewNullableString(Ptr("dd4444-s1")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
 		},
 
 		// Another old episode (for volume / ordering tests)
@@ -219,29 +409,55 @@ func getSeriesBaseItems() ([]jellyfinAPI.BaseItemDto, []jellyfinAPI.BaseItemDto,
 			LocationType: *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:     *jellyfinAPI.NewNullableString(Ptr("dd4444")),
 			SeasonId:     *jellyfinAPI.NewNullableString(Ptr("dd4444-s1")),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(Ptr(int32(2))),
 		},
 	}
-
-	return recentSeries, recentSeasons, recentEpisodes, olderLibrary
 }
+
+func testReturnedSeriesIsCorrect(t *testing.T, expected *NewlyAddedSeriesItem, returned *NewlyAddedSeriesItem) {
+assert.Equal(t, expected.SeriesName, returned.SeriesName, "Series ID %s", expected.SeriesID)
+		assert.InDelta(t, expected.AdditionDate.Unix(), returned.AdditionDate.Unix(), 10,  "Series ID %s", expected.SeriesID)
+		require.Equal(t, expected.IsSeriesNew, returned.IsSeriesNew, "Series ID %s", expected.SeriesID)
+		assert.Equal(t, expected.TMDBId, returned.TMDBId, "Series ID %s", expected.SeriesID)
+		assert.Equal(t, expected.ProductionYear, returned.ProductionYear, "Series ID %s", expected.SeriesID)
+}
+
+func testReturnedSeasonIsCorrect(t *testing.T, expectedSeason SeasonItem, expectedSeasonID string, returnedSeason SeasonItem) {
+	assert.Equal(t, expectedSeason.SeasonNumber,returnedSeason.SeasonNumber, "SeasonID %s", expectedSeasonID)
+	assert.Equal(t, expectedSeason.Name,returnedSeason.Name, "SeasonID %s", expectedSeasonID)
+	assert.InDelta(t, expectedSeason.AdditionDate.Unix(),returnedSeason.AdditionDate.Unix(), 10,  "SeasonID %s", expectedSeasonID)
+	assert.Equal(t, expectedSeason.IsSeasonNew,returnedSeason.IsSeasonNew, "SeasonID %s", expectedSeasonID)
+
+	require.Len(t,returnedSeason.Episodes, len(expectedSeason.Episodes),"SeasonID %s. Data : %v", expectedSeasonID, returnedSeason)
+}
+
+func testReturnedEpisodeIsCorrect(t *testing.T, expectedEpisodeItem EpisodeItem, expectedEpisodeID string, returnedEpisode EpisodeItem) {
+	assert.Equal(t, expectedEpisodeItem.Name, returnedEpisode.Name, "episodeID %s", expectedEpisodeID)
+	assert.InDelta(t, expectedEpisodeItem.AdditionDate.Unix(),returnedEpisode.AdditionDate.Unix(), 10,  "episodeID %s", expectedEpisodeID)
+	assert.Equal(t, expectedEpisodeItem.EpisodeNumber,returnedEpisode.EpisodeNumber, "episodeID %s", expectedEpisodeID)
+}
+
+func getSeriesItemBySeriesId(seriesId string, items *[]NewlyAddedSeriesItem) (*NewlyAddedSeriesItem, error) {
+	for _,item := range *items {
+		if item.SeriesID == seriesId {
+			newItem := item
+			return &newItem, nil
+		}
+	}
+	return nil, errors.New("not found")
+} 
+
 
 func TestGetNewlyAddedSeries(t *testing.T) {
 	mockedApp, recordedLogs := testSeriesInitApp()
-	recentSeries, recentSeasons, recentEpisodes, olderLibrary := getSeriesBaseItems()
+	mockedJellyfinBaseItem := getSeriesBaseItems()
+	expectedResult := getExpectedResultFromBaseItem()
 
-	allSeriesItems := make(
-		[]jellyfinAPI.BaseItemDto,
-		len(recentSeries),
-		len(recentSeries)+len(recentSeasons)+len(recentEpisodes)+len(olderLibrary),
-	)
-	_ = copy(allSeriesItems, recentSeries)
-	allSeriesItems = append(allSeriesItems, recentSeasons...)
-	allSeriesItems = append(allSeriesItems, recentEpisodes...)
-	allSeriesItems = append(allSeriesItems, olderLibrary...)
 
 	mockItemsAPI := MockJellyfinItemsAPI{
 		ExecuteGetAllItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
-			return &allSeriesItems, nil
+			return &mockedJellyfinBaseItem, nil
 		},
 		ExecuteGetRootFolderIDByName: func() (string, error) {
 			return "id", nil
@@ -251,12 +467,30 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	newSeriesItems, err := client.GetNewlyAddedSeries(mockedApp)
+	returnedNewSeriesItems := client.GetNewlyAddedSeries(mockedApp)
 
-	require.NoError(t, err)
-	assert.Empty(t, recordedLogs)
-	listOfMissingItemsId := []string{}
-	for _,series := range recentSeries {
+
+
+	require.Empty(t, recordedLogs)
+	require.Len(t, *returnedNewSeriesItems, len(expectedResult))
+	for _,expectedItem := range expectedResult {
+		returnedItem, err := getSeriesItemBySeriesId(expectedItem.SeriesID, returnedNewSeriesItems)
 		
+		assert.NoError(t, err, "Series ID %s", expectedItem.SeriesID)
+
+		testReturnedSeriesIsCorrect(t, &expectedItem,returnedItem)
+		
+		
+		if !expectedItem.IsSeriesNew {
+			require.Len(t, returnedItem.NewSeasons, len(expectedItem.NewSeasons))
+			for seasonId, season := range expectedItem.NewSeasons {
+				testReturnedSeasonIsCorrect(t, season, seasonId, returnedItem.NewSeasons[seasonId])
+				if !season.IsSeasonNew{
+					for episodeId, episode := range season.Episodes{
+						testReturnedEpisodeIsCorrect(t, episode, episodeId, returnedItem.NewSeasons[seasonId].Episodes[episodeId])
+					}
+				}
+			}
+		}
 	}
 }
