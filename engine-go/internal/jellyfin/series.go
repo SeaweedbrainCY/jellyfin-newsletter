@@ -18,9 +18,8 @@ type SeasonItem struct {
 	SeasonNumber   int32
 	Name           string
 	AdditionDate   time.Time
-	ProductionYear int32
 	Episodes       map[string]EpisodeItem
-	TMDBId         int
+	IsSeasonNew bool
 }
 
 type SeriesItem struct {
