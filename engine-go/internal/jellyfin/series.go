@@ -11,7 +11,6 @@ import (
 type EpisodeItem struct {
 	Name           string
 	AdditionDate   time.Time
-	ProductionYear int32
 	EpisodeNumber  int32
 }
 
