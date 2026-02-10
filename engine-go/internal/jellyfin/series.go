@@ -70,8 +70,6 @@ func updateSeriesWithSeasons(
 			seasonItem := SeasonItem{
 				Name:           OrDefault(item.Name, "Unknown"),
 				AdditionDate:   OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
-				ProductionYear: OrDefault(item.ProductionYear, 0),
-				TMDBId:         getTMDBIDIfExist(&item),
 				SeasonNumber:   OrDefault(item.IndexNumber, 0),
 				Episodes:       map[string]EpisodeItem{},
 			}
@@ -126,7 +124,6 @@ func updateSeriesWithEpisode(
 			episodeItem := EpisodeItem{
 				Name:           OrDefault(item.Name, ""),
 				AdditionDate:   OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
-				ProductionYear: OrDefault(item.ProductionYear, 0),
 				EpisodeNumber:  OrDefault(item.IndexNumber, 0),
 			}
 
@@ -165,8 +162,7 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 		newSeries := NewlyAddedSeriesItem{
 			SeriesName:     series.Name,
 			SeriesID:       seriesID,
-			NewSeasons:     map[string]SeasonItem{},
-			NewEpisodes:    map[string]EpisodeItem{},
+			NewSeasons:     nil,
 			TMDBId:         series.TMDBId,
 			ProductionYear: int(series.ProductionYear),
 			AdditionDate:   series.AdditionDate,
