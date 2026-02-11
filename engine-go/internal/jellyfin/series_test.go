@@ -465,9 +465,9 @@ func testReturnedEpisodeIsCorrect(
 	assert.Equal(t, expectedEpisodeItem.EpisodeNumber, returnedEpisode.EpisodeNumber, "episodeID %s", expectedEpisodeID)
 }
 
-func getSeriesItemBySeriesId(seriesId string, items *[]NewlyAddedSeriesItem) (*NewlyAddedSeriesItem, error) {
+func getSeriesItemBySeriesID(seriesID string, items *[]NewlyAddedSeriesItem) (*NewlyAddedSeriesItem, error) {
 	for _, item := range *items {
-		if item.SeriesID == seriesId {
+		if item.SeriesID == seriesID {
 			newItem := item
 			return &newItem, nil
 		}
@@ -497,7 +497,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 	require.Empty(t, recordedLogs)
 	require.Len(t, *returnedNewSeriesItems, len(expectedResult))
 	for _, expectedItem := range expectedResult {
-		returnedItem, err := getSeriesItemBySeriesId(expectedItem.SeriesID, returnedNewSeriesItems)
+		returnedItem, err := getSeriesItemBySeriesID(expectedItem.SeriesID, returnedNewSeriesItems)
 
 		assert.NoError(t, err, "Series ID %s", expectedItem.SeriesID)
 
@@ -505,15 +505,15 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 
 		if !expectedItem.IsSeriesNew {
 			require.Len(t, returnedItem.NewSeasons, len(expectedItem.NewSeasons))
-			for seasonId, season := range expectedItem.NewSeasons {
-				testReturnedSeasonIsCorrect(t, season, seasonId, returnedItem.NewSeasons[seasonId])
+			for seasonID, season := range expectedItem.NewSeasons {
+				testReturnedSeasonIsCorrect(t, season, seasonID, returnedItem.NewSeasons[seasonID])
 				if !season.IsSeasonNew {
-					for episodeId, episode := range season.Episodes {
+					for episodeID, episode := range season.Episodes {
 						testReturnedEpisodeIsCorrect(
 							t,
 							episode,
-							episodeId,
-							returnedItem.NewSeasons[seasonId].Episodes[episodeId],
+							episodeID,
+							returnedItem.NewSeasons[seasonID].Episodes[episodeID],
 						)
 					}
 				}
