@@ -143,6 +143,19 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 		zap.String("StartAdditionDate", minimumAdditionDate.String()),
 	)
 
+	seriesItem, err := client.fetchAndParseSeries(folderName, app)
+	if err != nil {
+		return nil, err
+	}
+
+	newlyAddedSeries := client.buildNewlyAddedSeriesList(seriesItem, minimumAdditionDate)
+	return &newlyAddedSeries, nil
+}
+
+func (client *APIClient) fetchAndParseSeries(
+	folderName string,
+	app *app.ApplicationContext,
+) (map[string]SeriesItem, error) {
 	folderID, err := client.ItemsAPI.GetRootFolderIDByName(folderName, app)
 	if err != nil {
 		return nil, err
@@ -157,62 +170,107 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 	updateSeriesWithSeasons(jellyfinItems, seriesItem, app)
 	updateSeriesWithEpisode(jellyfinItems, seriesItem, app)
 
-	var newlyAddedSeries = []NewlyAddedSeriesItem{}
+	return seriesItem, nil
+}
+
+func (client *APIClient) buildNewlyAddedSeriesList(
+	seriesItem map[string]SeriesItem,
+	minimumAdditionDate time.Time,
+) []NewlyAddedSeriesItem {
+	var newlyAddedSeries []NewlyAddedSeriesItem
+
 	for seriesID, series := range seriesItem {
-		newSeries := NewlyAddedSeriesItem{
-			SeriesName:     series.Name,
-			SeriesID:       seriesID,
-			NewSeasons:     nil,
-			TMDBId:         series.TMDBId,
-			ProductionYear: int(series.ProductionYear),
-			AdditionDate:   series.AdditionDate,
-		}
-		if series.AdditionDate.After(minimumAdditionDate) {
-			newSeries.IsSeriesNew = true
-			newlyAddedSeries = append(newlyAddedSeries, newSeries)
-			continue
-		}
-		// It's not a new series but we may have new seasons
-		newSeries.IsSeriesNew = false
-		for seasonID, season := range series.Seasons {
-			newSeason := SeasonItem{
-				SeasonNumber: season.SeasonNumber,
-				Name:         season.Name,
-				AdditionDate: season.AdditionDate,
-				Episodes:     nil,
-			}
-			if season.AdditionDate.After(minimumAdditionDate) {
-				if newSeries.NewSeasons == nil {
-					newSeries.NewSeasons = map[string]SeasonItem{}
-				}
-				newSeason.IsSeasonNew = true
-				newSeries.NewSeasons[seasonID] = newSeason
-				continue
-			}
-			// It's not a new Season but we may have new episodes
-			newSeason.IsSeasonNew = false
-			for episodeID, episode := range season.Episodes {
-				if episode.AdditionDate.After(minimumAdditionDate) {
-					if newSeries.NewSeasons == nil {
-						newSeries.NewSeasons = map[string]SeasonItem{}
-					}
-					if _, ok := newSeries.NewSeasons[seasonID]; !ok {
-						newSeries.NewSeasons[seasonID] = newSeason
-					}
-					seasonToUpdate := newSeries.NewSeasons[seasonID]
-					if seasonToUpdate.Episodes == nil {
-						seasonToUpdate.Episodes = map[string]EpisodeItem{}
-					}
-					seasonToUpdate.Episodes[episodeID] = episode
-					newSeries.NewSeasons[seasonID] = seasonToUpdate
-				}
-			}
-		}
-		if newSeries.NewSeasons != nil {
+		newSeries := client.createNewlyAddedSeriesItem(seriesID, series, minimumAdditionDate)
+
+		if newSeries.IsSeriesNew || newSeries.NewSeasons != nil {
 			newlyAddedSeries = append(newlyAddedSeries, newSeries)
 		}
 	}
-	return &newlyAddedSeries, nil
+
+	return newlyAddedSeries
+}
+
+func (client *APIClient) createNewlyAddedSeriesItem(
+	seriesID string,
+	series SeriesItem,
+	minimumAdditionDate time.Time,
+) NewlyAddedSeriesItem {
+	newSeries := NewlyAddedSeriesItem{
+		SeriesName:     series.Name,
+		SeriesID:       seriesID,
+		TMDBId:         series.TMDBId,
+		ProductionYear: int(series.ProductionYear),
+		AdditionDate:   series.AdditionDate,
+	}
+
+	if series.AdditionDate.After(minimumAdditionDate) {
+		newSeries.IsSeriesNew = true
+		return newSeries
+	}
+
+	newSeries.IsSeriesNew = false
+	newSeries.NewSeasons = client.findNewSeasons(series.Seasons, minimumAdditionDate)
+
+	return newSeries
+}
+
+func (client *APIClient) findNewSeasons(
+	seasons map[string]SeasonItem,
+	minimumAdditionDate time.Time,
+) map[string]SeasonItem {
+	var newSeasons map[string]SeasonItem
+
+	for seasonID, season := range seasons {
+		newSeason := client.processSeasonForNewContent(season, minimumAdditionDate)
+
+		if newSeason.IsSeasonNew || newSeason.Episodes != nil {
+			if newSeasons == nil {
+				newSeasons = map[string]SeasonItem{}
+			}
+			newSeasons[seasonID] = newSeason
+		}
+	}
+
+	return newSeasons
+}
+
+func (client *APIClient) processSeasonForNewContent(
+	season SeasonItem,
+	minimumAdditionDate time.Time,
+) SeasonItem {
+	newSeason := SeasonItem{
+		SeasonNumber: season.SeasonNumber,
+		Name:         season.Name,
+		AdditionDate: season.AdditionDate,
+	}
+
+	if season.AdditionDate.After(minimumAdditionDate) {
+		newSeason.IsSeasonNew = true
+		return newSeason
+	}
+
+	newSeason.IsSeasonNew = false
+	newSeason.Episodes = client.findNewEpisodes(season.Episodes, minimumAdditionDate)
+
+	return newSeason
+}
+
+func (client *APIClient) findNewEpisodes(
+	episodes map[string]EpisodeItem,
+	minimumAdditionDate time.Time,
+) map[string]EpisodeItem {
+	var newEpisodes map[string]EpisodeItem
+
+	for episodeID, episode := range episodes {
+		if episode.AdditionDate.After(minimumAdditionDate) {
+			if newEpisodes == nil {
+				newEpisodes = map[string]EpisodeItem{}
+			}
+			newEpisodes[episodeID] = episode
+		}
+	}
+
+	return newEpisodes
 }
 
 func (client *APIClient) GetNewlyAddedSeries(
