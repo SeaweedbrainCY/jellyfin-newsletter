@@ -499,7 +499,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 	for _, expectedItem := range expectedResult {
 		returnedItem, err := getSeriesItemBySeriesID(expectedItem.SeriesID, returnedNewSeriesItems)
 
-		assert.NoError(t, err, "Series ID %s", expectedItem.SeriesID)
+		require.NoError(t, err, "Series ID %s", expectedItem.SeriesID)
 
 		testReturnedSeriesIsCorrect(t, &expectedItem, returnedItem)
 
