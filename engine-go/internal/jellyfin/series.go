@@ -9,17 +9,17 @@ import (
 )
 
 type EpisodeItem struct {
-	Name           string
-	AdditionDate   time.Time
-	EpisodeNumber  int32
+	Name          string
+	AdditionDate  time.Time
+	EpisodeNumber int32
 }
 
 type SeasonItem struct {
-	SeasonNumber   int32
-	Name           string
-	AdditionDate   time.Time
-	Episodes       map[string]EpisodeItem
-	IsSeasonNew bool
+	SeasonNumber int32
+	Name         string
+	AdditionDate time.Time
+	Episodes     map[string]EpisodeItem
+	IsSeasonNew  bool
 }
 
 type SeriesItem struct {
@@ -68,10 +68,10 @@ func updateSeriesWithSeasons(
 				continue
 			}
 			seasonItem := SeasonItem{
-				Name:           OrDefault(item.Name, "Unknown"),
-				AdditionDate:   OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
-				SeasonNumber:   OrDefault(item.IndexNumber, 0),
-				Episodes:       map[string]EpisodeItem{},
+				Name:         OrDefault(item.Name, "Unknown"),
+				AdditionDate: OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
+				SeasonNumber: OrDefault(item.IndexNumber, 0),
+				Episodes:     map[string]EpisodeItem{},
 			}
 			if _, ok := seriesItem[*item.SeriesId.Get()]; !ok {
 				app.Logger.Warn(
@@ -122,9 +122,9 @@ func updateSeriesWithEpisode(
 				continue
 			}
 			episodeItem := EpisodeItem{
-				Name:           OrDefault(item.Name, ""),
-				AdditionDate:   OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
-				EpisodeNumber:  OrDefault(item.IndexNumber, 0),
+				Name:          OrDefault(item.Name, ""),
+				AdditionDate:  OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
+				EpisodeNumber: OrDefault(item.IndexNumber, 0),
 			}
 
 			seriesItem[*item.SeriesId.Get()].Seasons[*item.SeasonId.Get()].Episodes[*item.Id] = episodeItem
@@ -176,11 +176,11 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 		newSeries.IsSeriesNew = false
 		for seasonID, season := range series.Seasons {
 			newSeason := SeasonItem{
-					SeasonNumber: season.SeasonNumber,
-					Name: season.Name,
-					AdditionDate: season.AdditionDate,
-					Episodes: nil,
-				}
+				SeasonNumber: season.SeasonNumber,
+				Name:         season.Name,
+				AdditionDate: season.AdditionDate,
+				Episodes:     nil,
+			}
 			if season.AdditionDate.After(minimumAdditionDate) {
 				if newSeries.NewSeasons == nil {
 					newSeries.NewSeasons = map[string]SeasonItem{}
@@ -196,17 +196,17 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 					if newSeries.NewSeasons == nil {
 						newSeries.NewSeasons = map[string]SeasonItem{}
 					}
-					if _,ok := newSeries.NewSeasons[seasonID]; !ok {
+					if _, ok := newSeries.NewSeasons[seasonID]; !ok {
 						newSeries.NewSeasons[seasonID] = newSeason
 					}
 					seasonToUpdate := newSeries.NewSeasons[seasonID]
 					if seasonToUpdate.Episodes == nil {
-							seasonToUpdate.Episodes = map[string]EpisodeItem{}
-						} 
+						seasonToUpdate.Episodes = map[string]EpisodeItem{}
+					}
 					seasonToUpdate.Episodes[episodeID] = episode
 					newSeries.NewSeasons[seasonID] = seasonToUpdate
 				}
-			} 
+			}
 		}
 		if newSeries.NewSeasons != nil {
 			newlyAddedSeries = append(newlyAddedSeries, newSeries)

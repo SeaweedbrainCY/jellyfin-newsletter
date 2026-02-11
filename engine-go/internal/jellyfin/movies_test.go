@@ -15,7 +15,6 @@ import (
 	"go.uber.org/zap/zaptest/observer"
 )
 
-
 func initApp() (*app.ApplicationContext, *observer.ObservedLogs) {
 	observedDays := 30
 	loggerCore, recordedLogs := observer.New(zap.InfoLevel)
