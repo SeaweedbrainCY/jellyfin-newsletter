@@ -40,7 +40,7 @@ type NewlyAddedSeriesItem struct {
 	AdditionDate   time.Time
 }
 
-func parseSeriesItems(jellyfinItems *[]jellyfinAPI.BaseItemDto) map[string]SeriesItem {
+func parseSeriesItems(app *app.ApplicationContext, jellyfinItems *[]jellyfinAPI.BaseItemDto) map[string]SeriesItem {
 	seriesItems := map[string]SeriesItem{}
 	for _, item := range *jellyfinItems {
 		if *item.Type == jellyfinAPI.BASEITEMKIND_SERIES {
@@ -50,6 +50,13 @@ func parseSeriesItems(jellyfinItems *[]jellyfinAPI.BaseItemDto) map[string]Serie
 				ProductionYear: OrDefault(item.ProductionYear, 0),
 				Seasons:        map[string]SeasonItem{},
 				TMDBId:         getTMDBIDIfExist(&item),
+			}
+			if seriesItems[*item.Id].AdditionDate == time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC) {
+				app.Logger.Warn(
+					"Found a series with no addition date. This can lead to inaccuracy when detecting newly added media.",
+					zap.String("Series ID", *item.Id),
+					zap.String("Series Name", seriesItems[*item.Id].Name),
+				)
 			}
 		}
 	}
@@ -76,10 +83,21 @@ func updateSeriesWithSeasons(
 			if _, ok := seriesItem[*item.SeriesId.Get()]; !ok {
 				app.Logger.Warn(
 					"A season item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
-					zap.String("itemID", *item.Id),
-					zap.String("seriesID", *item.SeriesId.Get()),
+					zap.String("Season ID", *item.Id),
+					zap.String("Season Name", seasonItem.Name),
+					zap.String("Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Series ID", *item.SeriesId.Get()),
 				)
 				continue
+			}
+			if seasonItem.AdditionDate == time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC) {
+				app.Logger.Warn(
+					"Found a season with no addition date. This can lead to inaccuracy when detecting newly added media.",
+					zap.String("Season ID", *item.Id),
+					zap.String("Season Name", seasonItem.Name),
+					zap.String("Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Series ID", *item.SeriesId.Get()),
+				)
 			}
 			seriesItem[*item.SeriesId.Get()].Seasons[*item.Id] = seasonItem
 		}
@@ -122,9 +140,20 @@ func updateSeriesWithEpisode(
 				continue
 			}
 			episodeItem := EpisodeItem{
-				Name:          OrDefault(item.Name, ""),
+				Name:          OrDefault(item.Name, "Unknown"),
 				AdditionDate:  OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
 				EpisodeNumber: OrDefault(item.IndexNumber, 0),
+			}
+			if episodeItem.AdditionDate == time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC) {
+				app.Logger.Warn(
+					"Found an episode with no addition date. This can lead to inaccuracy when detecting newly added media.",
+					zap.String("Episode ID", *item.Id),
+					zap.String("Episode Name", episodeItem.Name),
+					zap.String("Season Name", OrDefault(item.SeasonName, "Unknown")),
+					zap.String("Season ID", *item.SeasonId.Get()),
+					zap.String("Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Series ID", *item.SeriesId.Get()),
+				)
 			}
 
 			seriesItem[*item.SeriesId.Get()].Seasons[*item.SeasonId.Get()].Episodes[*item.Id] = episodeItem
@@ -166,7 +195,7 @@ func (client *APIClient) fetchAndParseSeries(
 		return nil, err
 	}
 
-	seriesItem := parseSeriesItems(jellyfinItems)
+	seriesItem := parseSeriesItems(app, jellyfinItems)
 	updateSeriesWithSeasons(jellyfinItems, seriesItem, app)
 	updateSeriesWithEpisode(jellyfinItems, seriesItem, app)
 
