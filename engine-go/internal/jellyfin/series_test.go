@@ -11,8 +11,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest/observer"
 )
+
+type TableTests struct {
+	getSeriesBaseItems            func() []jellyfinAPI.BaseItemDto
+	getExpectedResultFromBaseItem func() []NewlyAddedSeriesItem
+	name                          string
+	loggedMessages                []observer.LoggedEntry
+}
 
 func testSeriesInitApp() (*app.ApplicationContext, *observer.ObservedLogs) {
 	observedDays := 30
@@ -227,6 +235,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 		{
 			Id:             Ptr("bb2222-s2"),
 			Name:           *jellyfinAPI.NewNullableString(Ptr("Season 2")),
+			SeriesName:     *jellyfinAPI.NewNullableString(Ptr("Old Series 1")),
 			DateCreated:    *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -30))),
 			Type:           Ptr(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
@@ -287,6 +296,8 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			Id:             Ptr("cc3333-s1-e5"),
 			Name:           *jellyfinAPI.NewNullableString(Ptr("Episode 5")),
 			DateCreated:    *jellyfinAPI.NewNullableTime(Ptr(time.Now().AddDate(0, 0, -2))),
+			SeasonName:     *jellyfinAPI.NewNullableString(Ptr("Season 1")),
+			SeriesName:     *jellyfinAPI.NewNullableString(Ptr("Very Old Series")),
 			Type:           Ptr(jellyfinAPI.BASEITEMKIND_EPISODE),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:       *jellyfinAPI.NewNullableString(Ptr("cc3333")),
@@ -475,10 +486,19 @@ func getSeriesItemBySeriesID(seriesID string, items *[]NewlyAddedSeriesItem) (*N
 	return nil, errors.New("not found")
 }
 
-func TestGetNewlyAddedSeries(t *testing.T) {
+func assertLogsAreCorrect(t *testing.T, tt TableTests, recordedLogs *observer.ObservedLogs) {
+	logs := recordedLogs.All()
+	require.Len(t, logs, len(tt.loggedMessages))
+	for i, log := range logs {
+		assert.Equal(t, tt.loggedMessages[i].Message, log.Message)
+		assert.ElementsMatch(t, tt.loggedMessages[i].Context, log.Context)
+	}
+}
+
+func runGetNewlyAddedSeriesTest(t *testing.T, tt TableTests) {
 	mockedApp, recordedLogs := testSeriesInitApp()
-	mockedJellyfinBaseItem := getSeriesBaseItems()
-	expectedResult := getExpectedResultFromBaseItem()
+	mockedJellyfinBaseItem := tt.getSeriesBaseItems()
+	expectedResult := tt.getExpectedResultFromBaseItem()
 
 	mockItemsAPI := MockJellyfinItemsAPI{
 		ExecuteGetAllItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
@@ -494,7 +514,8 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 	}
 	returnedNewSeriesItems := client.GetNewlyAddedSeries(mockedApp)
 
-	require.Empty(t, recordedLogs)
+	assertLogsAreCorrect(t, tt, recordedLogs)
+
 	require.Len(t, *returnedNewSeriesItems, len(expectedResult))
 	for _, expectedItem := range expectedResult {
 		returnedItem, err := getSeriesItemBySeriesID(expectedItem.SeriesID, returnedNewSeriesItems)
@@ -519,5 +540,231 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func getBaseItemIndexByID(id string) int {
+	baseItems := getSeriesBaseItems()
+	for i, item := range baseItems {
+		if *item.Id == id {
+			return i
+		}
+	}
+	return 0
+}
+
+func getExpectedSeriesItemIndexByID(id string) int {
+	expected := getExpectedResultFromBaseItem()
+	for i, series := range expected {
+		if series.SeriesID == id {
+			return i
+		}
+	}
+	return 0
+}
+
+func TestGetNewlyAddedSeries(t *testing.T) {
+	tests := []TableTests{
+		{
+			name:                          "Valid data",
+			getSeriesBaseItems:            getSeriesBaseItems,
+			getExpectedResultFromBaseItem: getExpectedResultFromBaseItem,
+		},
+		{
+			name:           "seriesName is null",
+			loggedMessages: []observer.LoggedEntry{},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].Name = *jellyfinAPI.NewNullableString(nil)
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].SeriesName = "Unknown"
+				return expected
+			},
+		},
+		{
+			name:           "series productionYear is null",
+			loggedMessages: []observer.LoggedEntry{},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProductionYear = *jellyfinAPI.NewNullableInt32(nil)
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProductionYear = 0
+				return expected
+			},
+		},
+		{
+			name: "series dateCreated is null",
+			loggedMessages: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "Found a series with no addition date. This can lead to inaccuracy when detecting newly added media.",
+					},
+					Context: []zapcore.Field{
+						zap.String("Series ID", "1813f4b17e9d4a799641c09319b5ffcc"),
+						zap.String("Series Name", "Series 1"),
+					},
+				},
+			},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].AdditionDate = time.Date(
+					1970,
+					01,
+					01,
+					00,
+					00,
+					00,
+					00,
+					time.UTC,
+				)
+				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].IsSeriesNew = false
+				// since the series has no creation date, the underlying season is taken
+				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].NewSeasons = map[string]SeasonItem{
+					"f4971e32089041f3a3d6774277c2ccb9": {
+						SeasonNumber: 1,
+						Name:         "Season 1",
+						AdditionDate: time.Now().AddDate(0, 0, -7),
+						Episodes:     nil,
+						IsSeasonNew:  true,
+					},
+				}
+				return expected
+			},
+		},
+		{
+			name: "season dateCreated is null",
+			loggedMessages: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "Found a season with no addition date. This can lead to inaccuracy when detecting newly added media.",
+					},
+					Context: []zapcore.Field{
+						zap.String("Series ID", "bb2222"),
+						zap.String("Series Name", "Old Series 1"),
+						zap.String("Season ID", "bb2222-s2"),
+						zap.String("Season Name", "Season 2"),
+					},
+				},
+			},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems[getBaseItemIndexByID("bb2222-s2")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				newSeason := expected[getExpectedSeriesItemIndexByID("bb2222")].NewSeasons["bb2222-s2"]
+				newSeason.AdditionDate = time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)
+				newSeason.IsSeasonNew = false
+				// since the season has no creation date, the underlying episode is taken
+				newSeason.Episodes = map[string]EpisodeItem{
+					"bb2222-s2-e1": {
+						EpisodeNumber: 1,
+						Name:          "Episode 1",
+						AdditionDate:  time.Now().AddDate(0, 0, -8),
+					},
+				}
+				expected[getExpectedSeriesItemIndexByID("bb2222")].NewSeasons["bb2222-s2"] = newSeason
+				return expected
+			},
+		},
+		{
+			name: "episode dateCreated is null",
+			loggedMessages: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "Found an episode with no addition date. This can lead to inaccuracy when detecting newly added media.",
+					},
+					Context: []zapcore.Field{
+						zap.String("Episode ID", "cc3333-s1-e5"),
+						zap.String("Episode Name", "Episode 5"),
+						zap.String("Season Name", "Season 1"),
+						zap.String("Season ID", "cc3333-s1"),
+						zap.String("Series Name", "Very Old Series"),
+						zap.String("Series ID", "cc3333"),
+					},
+				},
+			},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems[getBaseItemIndexByID("cc3333-s1-e5")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons = map[string]SeasonItem{
+					"cc3333-s2": expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons["cc3333-s2"],
+				}
+				return expected
+			},
+		},
+		{
+			name:           "episode is virtual",
+			loggedMessages: []observer.LoggedEntry{},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems[getBaseItemIndexByID("cc3333-s1-e5")].LocationType = *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_VIRTUAL))
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons = map[string]SeasonItem{
+					"cc3333-s2": expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons["cc3333-s2"],
+				}
+				return expected
+			},
+		},
+		{
+			name:           "episode file location is nil",
+			loggedMessages: []observer.LoggedEntry{},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems[getBaseItemIndexByID("cc3333-s1-e5")].LocationType = *jellyfinAPI.NewNullableLocationType(nil)
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons = map[string]SeasonItem{
+					"cc3333-s2": expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons["cc3333-s2"],
+				}
+				return expected
+			},
+		},
+		{
+			name:           "series with no TMDBID",
+			loggedMessages: []observer.LoggedEntry{},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProviderIds = map[string]string{
+					"imdb": "1726",
+				}
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].TMDBId = 0
+				return expected
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			runGetNewlyAddedSeriesTest(t, tt)
+		})
 	}
 }
