@@ -51,7 +51,7 @@ func parseSeriesItems(app *app.ApplicationContext, jellyfinItems *[]jellyfinAPI.
 				Seasons:        map[string]SeasonItem{},
 				TMDBId:         getTMDBIDIfExist(&item),
 			}
-			if seriesItems[*item.Id].AdditionDate == time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC) {
+			if seriesItems[*item.Id].AdditionDate.Equal(time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)) {
 				app.Logger.Warn(
 					"Found a series with no addition date. This can lead to inaccuracy when detecting newly added media.",
 					zap.String("Series ID", *item.Id),
@@ -90,7 +90,7 @@ func updateSeriesWithSeasons(
 				)
 				continue
 			}
-			if seasonItem.AdditionDate == time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC) {
+			if seasonItem.AdditionDate.Equal(time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)) {
 				app.Logger.Warn(
 					"Found a season with no addition date. This can lead to inaccuracy when detecting newly added media.",
 					zap.String("Season ID", *item.Id),
@@ -144,7 +144,7 @@ func updateSeriesWithEpisode(
 				AdditionDate:  OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
 				EpisodeNumber: OrDefault(item.IndexNumber, 0),
 			}
-			if episodeItem.AdditionDate == time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC) {
+			if episodeItem.AdditionDate.Equal(time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)) {
 				app.Logger.Warn(
 					"Found an episode with no addition date. This can lead to inaccuracy when detecting newly added media.",
 					zap.String("Episode ID", *item.Id),
