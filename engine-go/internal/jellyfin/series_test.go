@@ -2,6 +2,7 @@ package jellyfin
 
 import (
 	"errors"
+	"slices"
 	"testing"
 	"time"
 
@@ -229,6 +230,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			ProviderIds:    map[string]string{"Tmdb": "3001"},
 			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
 			IndexNumber:    *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
+			SeriesName:     *jellyfinAPI.NewNullableString(Ptr("Old Series 1")),
 		},
 
 		// Recent season
@@ -253,7 +255,9 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			Type:           Ptr(jellyfinAPI.BASEITEMKIND_EPISODE),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(Ptr(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:       *jellyfinAPI.NewNullableString(Ptr("bb2222")),
+			SeriesName:     *jellyfinAPI.NewNullableString(Ptr("Old Series 1")),
 			SeasonId:       *jellyfinAPI.NewNullableString(Ptr("bb2222-s2")),
+			SeasonName:     *jellyfinAPI.NewNullableString(Ptr("Season 2")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(Ptr(int32(2023))),
 			IndexNumber:    *jellyfinAPI.NewNullableInt32(Ptr(int32(1))),
 		},
@@ -757,6 +761,63 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
 				expected := getExpectedResultFromBaseItem()
 				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].TMDBId = 0
+				return expected
+			},
+		},
+		{
+			name: "Orphelin season",
+			loggedMessages: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "A season item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
+					},
+					Context: []zapcore.Field{
+						zap.String("Season ID", "bb2222-s1"),
+						zap.String("Season Name", "Season 1"),
+						zap.String("Not found Series Name", "Old Series 1"),
+						zap.String("Not found Series ID", "bb2222"),
+					},
+				},
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "A season item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
+					},
+					Context: []zapcore.Field{
+						zap.String("Season ID", "bb2222-s2"),
+						zap.String("Season Name", "Season 2"),
+						zap.String("Not found Series Name", "Old Series 1"),
+						zap.String("Not found Series ID", "bb2222"),
+					},
+				},
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "An episode item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
+					},
+					Context: []zapcore.Field{
+						zap.String("Expected Season ID", "bb2222-s2"),
+						zap.String("Expected Season Name", "Season 2"),
+						zap.String("Expected Series Name", "Old Series 1"),
+						zap.String("Expected Series ID", "bb2222"),
+						zap.String("Episode ID", "bb2222-s2-e1"),
+						zap.String("Episode Name", "Episode 1"),
+					},
+				},
+			},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems = slices.Delete(baseItems, getBaseItemIndexByID("bb2222"), getBaseItemIndexByID("bb2222")+1)
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				expected = slices.Delete(
+					expected,
+					getExpectedSeriesItemIndexByID("bb2222"),
+					getExpectedSeriesItemIndexByID("bb2222")+1,
+				)
 				return expected
 			},
 		},

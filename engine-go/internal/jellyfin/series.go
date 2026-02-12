@@ -71,7 +71,10 @@ func updateSeriesWithSeasons(
 	for _, item := range *jellyfinItems {
 		if *item.Type == jellyfinAPI.BASEITEMKIND_SEASON {
 			if !item.SeriesId.IsSet() || item.SeriesId.Get() == nil {
-				app.Logger.Warn("A season item is ignored because it has no series ID.", zap.String("itemID", *item.Id))
+				app.Logger.Warn(
+					"A season item is ignored because it has no series ID.",
+					zap.String("Season ID", *item.Id),
+				)
 				continue
 			}
 			seasonItem := SeasonItem{
@@ -85,8 +88,8 @@ func updateSeriesWithSeasons(
 					"A season item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
 					zap.String("Season ID", *item.Id),
 					zap.String("Season Name", seasonItem.Name),
-					zap.String("Series Name", OrDefault(item.SeriesName, "Unknown")),
-					zap.String("Series ID", *item.SeriesId.Get()),
+					zap.String("Not found Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Not found Series ID", OrDefault(item.SeriesId, "Unknown")),
 				)
 				continue
 			}
@@ -117,17 +120,24 @@ func updateSeriesWithEpisode(
 				item.SeasonId.Get() == nil {
 				app.Logger.Warn(
 					"An episode item is ignored because it has no series ID or season ID.",
-					zap.String("itemID", *item.Id),
-					zap.String("seasonID", OrDefault(item.SeasonId, "")),
-					zap.String("seriesID", OrDefault(item.SeriesId, "")),
+					zap.String("Episode ID", *item.Id),
+					zap.String("Episode Name", OrDefault(item.Name, "Unknown")),
+					zap.String("Expected Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Expected Series ID", OrDefault(item.SeriesId, "Unknown")),
+					zap.String("Expected Season Name", OrDefault(item.SeasonName, "Unknown")),
+					zap.String("Expected Season ID", OrDefault(item.SeriesId, "Unknown")),
 				)
 				continue
 			}
 			if _, ok := seriesItem[*item.SeriesId.Get()]; !ok {
 				app.Logger.Warn(
 					"An episode item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
-					zap.String("itemID", *item.Id),
-					zap.String("seriesID", *item.SeriesId.Get()),
+					zap.String("Episode ID", *item.Id),
+					zap.String("Episode Name", OrDefault(item.Name, "Unknown")),
+					zap.String("Expected Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Expected Series ID", OrDefault(item.SeriesId, "Unknown")),
+					zap.String("Expected Season Name", OrDefault(item.SeasonName, "Unknown")),
+					zap.String("Expected Season ID", OrDefault(item.SeasonId, "Unknown")),
 				)
 				continue
 			}
