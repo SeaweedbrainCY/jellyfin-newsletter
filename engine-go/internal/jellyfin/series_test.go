@@ -821,6 +821,40 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				return expected
 			},
 		},
+		{
+			name: "Season without series ID",
+			loggedMessages: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "A season item is ignored because it has no series ID.",
+					},
+					Context: []zapcore.Field{
+						zap.String("Season ID", "f4971e32089041f3a3d6774277c2ccb9"),
+					},
+				},
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "An episode item is ignored because it belongs to a Seasons that doesn't exist in Jellyfin's API response.",
+					},
+					Context: []zapcore.Field{
+						zap.String("itemID", "bcedb6a404974245b41fe224f31e6460"),
+						zap.String("seasonID", "f4971e32089041f3a3d6774277c2ccb9"),
+					},
+				},
+			},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				item := baseItems[getBaseItemIndexByID("f4971e32089041f3a3d6774277c2ccb9")]
+				item.SeriesId = *jellyfinAPI.NewNullableString(nil)
+				baseItems[getBaseItemIndexByID("f4971e32089041f3a3d6774277c2ccb9")] = item
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				return getExpectedResultFromBaseItem()
+			},
+		},
 	}
 
 	for _, tt := range tests {
