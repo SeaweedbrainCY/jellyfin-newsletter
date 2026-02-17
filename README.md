@@ -14,6 +14,14 @@ A newsletter for Jellyfin to notify your users of your latest additions. Jellyfi
 
 It is fully customizable and can be run on a schedule using a cron job or a task scheduler.
 
+> [!important]
+> **This project engine is under heavy rewrite, from python to GO.**
+>
+> The python version is the stable reference and is still maintained.
+> The GO version is in development. The GO version will be more efficient, easier to maintain and extend, and will have a better architecture.
+>
+> See the [reasons and implication of the rewrite](https://github.com/SeaweedbrainCY/jellyfin-newsletter/discussions/103) for more details.
+
 ## Table of Contents
 1. [What it looks like](#what-it-looks-like)
 2. [Features](#features)

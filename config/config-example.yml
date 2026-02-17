@@ -92,6 +92,11 @@ email:
     # TLS Type for the SMTP connection
     smtp_tls_type: "STARTTLS" # "STARTTLS" or "TLS" (implicit TLS)
 
+#log:
+    # Minimum log level. Can be DEBUG INFO WARN ERROR. Default: INFO
+    #level: INFO
+    # Log format. Can be console or json. Default: json
+    #format: json
 
 #dry-run:
 #    enabled: false
