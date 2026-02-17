@@ -15,6 +15,10 @@ type MovieItem struct {
 	ProductionYear int32
 }
 
+// GetRecentlyAddedMovies aggregates recently added movies from all
+// configured watched film folders. It queries each folder via
+// `getRecentlyAddedMoviesByFolder` and returns a slice of
+// `MovieItem` for movies added within the configured observed period.
 func (client *APIClient) GetRecentlyAddedMovies(app *app.ApplicationContext) *[]MovieItem {
 	var movieItems = []MovieItem{}
 	for _, folderName := range app.Config.Jellyfin.WatchedFilmFolders {
@@ -25,6 +29,11 @@ func (client *APIClient) GetRecentlyAddedMovies(app *app.ApplicationContext) *[]
 	return &movieItems
 }
 
+// getRecentlyAddedMoviesByFolder retrieves movies for a single
+// Jellyfin folder, filters them by their addition/creation date
+// against the configured observed period, and returns only those
+// movies added after the computed cutoff. Movies without a
+// creation date are logged and ignored.
 func (client *APIClient) getRecentlyAddedMoviesByFolder(
 	folderName string,
 	app *app.ApplicationContext,

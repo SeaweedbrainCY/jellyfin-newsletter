@@ -40,6 +40,12 @@ type NewlyAddedSeriesItem struct {
 	AdditionDate   time.Time
 }
 
+// parseSeriesItems scans a slice of Jellyfin BaseItemDto and extracts
+// all items of type SERIES into a map keyed by the series ID.
+// For each series it builds a `SeriesItem` with name, addition date,
+// production year, an empty seasons map and the TMDB id when present.
+// Missing addition dates are logged as warnings because they affect
+// newly-added detection.
 func parseSeriesItems(app *app.ApplicationContext, jellyfinItems *[]jellyfinAPI.BaseItemDto) map[string]SeriesItem {
 	seriesItems := map[string]SeriesItem{}
 	for _, item := range *jellyfinItems {
@@ -63,6 +69,10 @@ func parseSeriesItems(app *app.ApplicationContext, jellyfinItems *[]jellyfinAPI.
 	return seriesItems
 }
 
+// updateSeriesWithSeasons iterates over Jellyfin items and attaches
+// Season entries to their parent `SeriesItem` in the provided map.
+// Seasons that reference a missing series are ignored and logged.
+// If a season lacks an addition date the function emits a warning.
 func updateSeriesWithSeasons(
 	jellyfinItems *[]jellyfinAPI.BaseItemDto,
 	seriesItem map[string]SeriesItem,
@@ -107,6 +117,11 @@ func updateSeriesWithSeasons(
 	}
 }
 
+// updateSeriesWithEpisode finds episode items (file-system location)
+// and attaches them into the corresponding `SeasonItem.Episodes` map
+// under the correct `SeriesItem`. Episodes referencing missing series
+// or seasons are ignored and logged. Episodes without addition dates
+// also produce warnings because they affect new-content detection.
 func updateSeriesWithEpisode(
 	jellyfinItems *[]jellyfinAPI.BaseItemDto,
 	seriesItem map[string]SeriesItem,
@@ -171,6 +186,10 @@ func updateSeriesWithEpisode(
 	}
 }
 
+// getNewlyAddedSeriesByFolder fetches series metadata for the given
+// Jellyfin folder, computes the cutoff date based on the configured
+// observed period, and returns a slice of `NewlyAddedSeriesItem`
+// representing series, new seasons or episodes added after the cutoff.
 func (client *APIClient) getNewlyAddedSeriesByFolder(
 	folderName string,
 	app *app.ApplicationContext,
@@ -191,6 +210,11 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 	return &newlyAddedSeries, nil
 }
 
+// fetchAndParseSeries resolves the folder ID by name, retrieves all
+// items for that folder from the Items API, and builds a structured
+// map of `SeriesItem` populated with seasons and episodes.
+// Returns the resulting map or an error encountered while calling
+// the Items API.
 func (client *APIClient) fetchAndParseSeries(
 	folderName string,
 	app *app.ApplicationContext,
@@ -212,6 +236,11 @@ func (client *APIClient) fetchAndParseSeries(
 	return seriesItem, nil
 }
 
+// buildNewlyAddedSeriesList walks the parsed series map and converts
+// each `SeriesItem` into a `NewlyAddedSeriesItem` using
+// `createNewlyAddedSeriesItem`. Only series that are entirely new or
+// contain new seasons/episodes (after `minimumAdditionDate`) are
+// included in the returned slice.
 func (client *APIClient) buildNewlyAddedSeriesList(
 	seriesItem map[string]SeriesItem,
 	minimumAdditionDate time.Time,
@@ -229,6 +258,10 @@ func (client *APIClient) buildNewlyAddedSeriesList(
 	return newlyAddedSeries
 }
 
+// createNewlyAddedSeriesItem builds a `NewlyAddedSeriesItem` from a
+// `SeriesItem`. If the series addition date is after the cutoff the
+// series is marked as new. Otherwise the function scans seasons to
+// detect newly added seasons or episodes and populates `NewSeasons`.
 func (client *APIClient) createNewlyAddedSeriesItem(
 	seriesID string,
 	series SeriesItem,
@@ -253,6 +286,10 @@ func (client *APIClient) createNewlyAddedSeriesItem(
 	return newSeries
 }
 
+// findNewSeasons iterates over seasons and returns a map of seasons
+// that are newly added or contain newly added episodes relative to
+// `minimumAdditionDate`. The returned map is nil when no new seasons
+// are found.
 func (client *APIClient) findNewSeasons(
 	seasons map[string]SeasonItem,
 	minimumAdditionDate time.Time,
@@ -273,6 +310,11 @@ func (client *APIClient) findNewSeasons(
 	return newSeasons
 }
 
+// processSeasonForNewContent returns a `SeasonItem` describing whether
+// the season itself is new (based on addition date) or contains newly
+// added episodes. If the season is new it is marked accordingly and
+// returned without episode details; otherwise the episode map is
+// scanned and returned when new episodes are present.
 func (client *APIClient) processSeasonForNewContent(
 	season SeasonItem,
 	minimumAdditionDate time.Time,
@@ -294,6 +336,9 @@ func (client *APIClient) processSeasonForNewContent(
 	return newSeason
 }
 
+// findNewEpisodes filters episodes and returns a map containing only
+// those episodes whose addition date is after `minimumAdditionDate`.
+// Returns nil when no new episodes are found.
 func (client *APIClient) findNewEpisodes(
 	episodes map[string]EpisodeItem,
 	minimumAdditionDate time.Time,
@@ -312,6 +357,9 @@ func (client *APIClient) findNewEpisodes(
 	return newEpisodes
 }
 
+// GetNewlyAddedSeries collects newly added series information for all
+// configured `WatchedSeriesFolders`. For each configured folder it
+// calls `getNewlyAddedSeriesByFolder` and aggregates the results.
 func (client *APIClient) GetNewlyAddedSeries(
 	app *app.ApplicationContext,
 ) *[]NewlyAddedSeriesItem {
