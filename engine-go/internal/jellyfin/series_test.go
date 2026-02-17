@@ -851,9 +851,61 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				baseItems[getBaseItemIndexByID("f4971e32089041f3a3d6774277c2ccb9")] = item
 				return baseItems
 			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				return getExpectedResultFromBaseItem()
+			getExpectedResultFromBaseItem: getExpectedResultFromBaseItem,
+		},
+		{
+			name: "Episode without Season ID",
+			loggedMessages: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "An episode item is ignored because it has no series ID or season ID.",
+					},
+					Context: []zapcore.Field{
+						zap.String("Episode ID", "bcedb6a404974245b41fe224f31e6460"),
+						zap.String("Episode Name", "Episode 1"),
+						zap.String("Expected Series Name", "Unknown"),
+						zap.String("Expected Series ID", "1813f4b17e9d4a799641c09319b5ffcc"),
+						zap.String("Expected Season Name", "Unknown"),
+						zap.String("Expected Season ID", "Unknown"),
+					},
+				},
 			},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				item := baseItems[getBaseItemIndexByID("bcedb6a404974245b41fe224f31e6460")]
+				item.SeasonId = *jellyfinAPI.NewNullableString(nil)
+				baseItems[getBaseItemIndexByID("bcedb6a404974245b41fe224f31e6460")] = item
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: getExpectedResultFromBaseItem,
+		},
+		{
+			name: "Episode without Series ID",
+			loggedMessages: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.WarnLevel,
+						Message: "An episode item is ignored because it has no series ID or season ID.",
+					},
+					Context: []zapcore.Field{
+						zap.String("Episode ID", "bcedb6a404974245b41fe224f31e6460"),
+						zap.String("Episode Name", "Episode 1"),
+						zap.String("Expected Series Name", "Unknown"),
+						zap.String("Expected Series ID", "Unknown"),
+						zap.String("Expected Season Name", "Unknown"),
+						zap.String("Expected Season ID", "f4971e32089041f3a3d6774277c2ccb9"),
+					},
+				},
+			},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				item := baseItems[getBaseItemIndexByID("bcedb6a404974245b41fe224f31e6460")]
+				item.SeriesId = *jellyfinAPI.NewNullableString(nil)
+				baseItems[getBaseItemIndexByID("bcedb6a404974245b41fe224f31e6460")] = item
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: getExpectedResultFromBaseItem,
 		},
 	}
 
