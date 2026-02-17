@@ -125,7 +125,7 @@ func updateSeriesWithEpisode(
 					zap.String("Expected Series Name", OrDefault(item.SeriesName, "Unknown")),
 					zap.String("Expected Series ID", OrDefault(item.SeriesId, "Unknown")),
 					zap.String("Expected Season Name", OrDefault(item.SeasonName, "Unknown")),
-					zap.String("Expected Season ID", OrDefault(item.SeriesId, "Unknown")),
+					zap.String("Expected Season ID", OrDefault(item.SeasonId, "Unknown")),
 				)
 				continue
 			}
