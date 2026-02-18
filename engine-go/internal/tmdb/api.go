@@ -23,7 +23,7 @@ type SearchMediaHTTPResponse struct {
 	} `json:"results"`
 }
 
-func (client TMDBAPIClient) prepareGetAPIRequest(url string) (*http.Request, error) {
+func (client APIClient) prepareGetAPIRequest(url string) (*http.Request, error) {
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		client.Logger.Error(
@@ -70,7 +70,7 @@ func checkHTTPResponse(url string, resp *http.Response, httpErr error, logger *z
 	return nil
 }
 
-func (client TMDBAPIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaHTTPResponse, error) {
+func (client APIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaHTTPResponse, error) {
 	url := "https://api.themoviedb.org/3/" + mediaType.ToString() + "/" + id + "?language=" + client.Lang
 
 	request, err := client.prepareGetAPIRequest(url)
@@ -111,7 +111,7 @@ func (client TMDBAPIClient) GetMediaByID(id string, mediaType MediaType) (*GetMe
 	return &decodedBody, nil
 }
 
-func (client TMDBAPIClient) SearchMediaByName(
+func (client APIClient) SearchMediaByName(
 	name string,
 	productionYear int,
 	mediaType MediaType,

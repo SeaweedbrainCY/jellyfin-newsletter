@@ -7,7 +7,7 @@ import (
 )
 
 func GetSeriesDetails(
-	tmdbAPIClient TMDBAPIClient,
+	tmdbAPIClient APIClient,
 	jellyfinSeriesItem jellyfin.NewlyAddedSeriesItem,
 	app app.ApplicationContext,
 ) *ItemDetails {

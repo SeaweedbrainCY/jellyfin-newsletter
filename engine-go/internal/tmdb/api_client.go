@@ -5,19 +5,19 @@ import (
 	"go.uber.org/zap"
 )
 
-type TMDBAPIInterface interface {
+type APIInterface interface {
 	GetMediaByID(id string, mediaType MediaType) (*GetMediaHTTPResponse, error)
 	GetMediaByTitle(mediaName string, mediaType MediaType)
 }
 
-type TMDBAPIClient struct {
+type APIClient struct {
 	APIKey string
 	Lang   string
 	Logger *zap.Logger
 }
 
-func InitTMDBApiClient(app *app.ApplicationContext) TMDBAPIClient {
-	return TMDBAPIClient{
+func InitTMDBApiClient(app *app.ApplicationContext) APIClient {
+	return APIClient{
 		APIKey: app.Config.TMDB.APIKey,
 		Lang:   app.Config.EmailTemplate.Language,
 		Logger: app.Logger,
