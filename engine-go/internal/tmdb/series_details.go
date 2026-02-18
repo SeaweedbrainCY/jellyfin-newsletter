@@ -12,14 +12,14 @@ func GetSeriesDetails(
 	app app.ApplicationContext,
 ) *ItemDetails {
 	if jellyfinSeriesItem.TMDBId != "" {
-		parsedHttpResponse, err := tmdbAPIClient.GetMediaByID(jellyfinSeriesItem.TMDBId, MediaTypeSeries)
+		parsedHTTPResponse, err := tmdbAPIClient.GetMediaByID(jellyfinSeriesItem.TMDBId, MediaTypeSeries)
 
 		if err != nil {
 			// Error is already logged by GetMediaByID
 			return getDefaultItemDetails()
 		}
 
-		return getItemDetailsFromHTTPResponse(parsedHttpResponse)
+		return getItemDetailsFromHTTPResponse(parsedHTTPResponse)
 	} else {
 		// No TMDB id, we perform a search by name and select the item with the highest popularity
 		app.Logger.Debug(

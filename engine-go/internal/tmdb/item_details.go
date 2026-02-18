@@ -12,13 +12,13 @@ func getDefaultItemDetails() *ItemDetails {
 	}
 }
 
-func getItemDetailsFromHTTPResponse(parsedHttpResponse *GetMediaHTTPResponse) *ItemDetails {
+func getItemDetailsFromHTTPResponse(parsedHTTPResponse *GetMediaHTTPResponse) *ItemDetails {
 	itemDetails := getDefaultItemDetails()
-	if parsedHttpResponse.Overview != "" {
-		itemDetails.Overview = parsedHttpResponse.Overview
+	if parsedHTTPResponse.Overview != "" {
+		itemDetails.Overview = parsedHTTPResponse.Overview
 	}
-	if parsedHttpResponse.PosterPath != "" {
-		itemDetails.PosterURL = "https://image.tmdb.org/t/p/w500" + parsedHttpResponse.PosterPath
+	if parsedHTTPResponse.PosterPath != "" {
+		itemDetails.PosterURL = "https://image.tmdb.org/t/p/w500" + parsedHTTPResponse.PosterPath
 	}
 	return itemDetails
 }
