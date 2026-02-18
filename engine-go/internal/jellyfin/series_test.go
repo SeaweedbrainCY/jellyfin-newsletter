@@ -45,7 +45,7 @@ func getExpectedResultFromBaseItem() []NewlyAddedSeriesItem {
 			SeriesID:       "1813f4b17e9d4a799641c09319b5ffcc",
 			IsSeriesNew:    true,
 			NewSeasons:     nil,
-			TMDBId:         1027,
+			TMDBId:         "1027",
 			ProductionYear: 2023,
 			AdditionDate:   time.Now().AddDate(0, 0, -7),
 		},
@@ -54,7 +54,7 @@ func getExpectedResultFromBaseItem() []NewlyAddedSeriesItem {
 			SeriesID:       "aa1111",
 			IsSeriesNew:    true,
 			NewSeasons:     nil,
-			TMDBId:         3001,
+			TMDBId:         "3001",
 			ProductionYear: 2024,
 			AdditionDate:   time.Now().AddDate(0, 0, -5),
 		},
@@ -71,7 +71,7 @@ func getExpectedResultFromBaseItem() []NewlyAddedSeriesItem {
 					IsSeasonNew:  true,
 				},
 			},
-			TMDBId:         3001,
+			TMDBId:         "3001",
 			ProductionYear: 2023,
 			AdditionDate:   time.Now().AddDate(0, 0, -90),
 		},
@@ -107,7 +107,7 @@ func getExpectedResultFromBaseItem() []NewlyAddedSeriesItem {
 					},
 				},
 			},
-			TMDBId:         3001,
+			TMDBId:         "3001",
 			ProductionYear: 2023,
 			AdditionDate:   time.Now().AddDate(0, 0, -180),
 		},
@@ -137,7 +137,7 @@ func getExpectedResultFromBaseItem() []NewlyAddedSeriesItem {
 					Episodes:     nil,
 				},
 			},
-			TMDBId:         3001,
+			TMDBId:         "3001",
 			ProductionYear: 2023,
 			AdditionDate:   time.Now().AddDate(0, 0, -180),
 		},
@@ -760,7 +760,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			},
 			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
 				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].TMDBId = 0
+				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].TMDBId = ""
 				return expected
 			},
 		},

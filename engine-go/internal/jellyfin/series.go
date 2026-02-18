@@ -27,7 +27,7 @@ type seriesItem struct {
 	AdditionDate   time.Time
 	ProductionYear int32
 	Seasons        map[string]SeasonItem
-	TMDBId         int
+	TMDBId         string
 }
 
 type NewlyAddedSeriesItem struct {
@@ -35,7 +35,7 @@ type NewlyAddedSeriesItem struct {
 	SeriesID       string
 	IsSeriesNew    bool
 	NewSeasons     map[string]SeasonItem
-	TMDBId         int
+	TMDBId         string
 	ProductionYear int
 	AdditionDate   time.Time
 }

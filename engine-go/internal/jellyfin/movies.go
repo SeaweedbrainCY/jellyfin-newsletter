@@ -11,7 +11,7 @@ type MovieItem struct {
 	ID             string
 	Name           string
 	AdditionDate   *time.Time
-	TMDBId         int
+	TMDBId         string
 	ProductionYear int32
 }
 

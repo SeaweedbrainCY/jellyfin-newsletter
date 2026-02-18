@@ -2,7 +2,6 @@ package jellyfin
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	jellyfinAPI "github.com/sj14/jellyfin-go/api"
@@ -87,11 +86,9 @@ func OrDefault[T any](n Nullable[T], def T) T {
 	return def
 }
 
-func getTMDBIDIfExist(item *jellyfinAPI.BaseItemDto) int {
+func getTMDBIDIfExist(item *jellyfinAPI.BaseItemDto) string {
 	if value, ok := item.ProviderIds["Tmdb"]; ok {
-		if id, atoiErr := strconv.Atoi(value); atoiErr == nil {
-			return id
-		}
+		return value
 	}
-	return 0
+	return ""
 }
