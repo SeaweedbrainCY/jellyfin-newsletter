@@ -1,6 +1,7 @@
 package tmdb
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -24,7 +25,7 @@ type SearchMediaHTTPResponse struct {
 }
 
 func (client APIClient) prepareGetAPIRequest(url string) (*http.Request, error) {
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	request, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
 	if err != nil {
 		client.Logger.Error(
 			"An error occurred while building the request towards the TMDB API.",
