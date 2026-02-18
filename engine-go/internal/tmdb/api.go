@@ -32,7 +32,7 @@ func (client TMDBAPIClient) prepareGetAPIRequest(url string) (*http.Request, err
 		)
 		return nil, err
 	}
-	request.Header.Add("accept", "application/json")
+	request.Header.Add("Accept", "application/json")
 	request.Header.Add("Authorization", "Bearer "+client.APIKey)
 
 	return request, nil
