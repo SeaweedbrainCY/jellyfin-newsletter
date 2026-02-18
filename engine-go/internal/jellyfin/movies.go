@@ -57,7 +57,7 @@ func (client *APIClient) getRecentlyAddedMoviesByFolder(
 
 	var items = []MovieItem{}
 	for _, movie := range *movies {
-		name := OrDefault(movie.Name, "Unknown Movie Name")
+		name := OrDefault(movie.Name, "")
 		productionYear := OrDefault(movie.ProductionYear, 0)
 
 		if !movie.DateCreated.IsSet() || movie.DateCreated.Get() == nil {

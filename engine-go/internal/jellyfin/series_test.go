@@ -584,7 +584,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			},
 			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
 				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].SeriesName = "Unknown"
+				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].SeriesName = ""
 				return expected
 			},
 		},
@@ -864,10 +864,10 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 					Context: []zapcore.Field{
 						zap.String("Episode ID", "bcedb6a404974245b41fe224f31e6460"),
 						zap.String("Episode Name", "Episode 1"),
-						zap.String("Expected Series Name", "Unknown"),
+						zap.String("Expected Series Name", ""),
 						zap.String("Expected Series ID", "1813f4b17e9d4a799641c09319b5ffcc"),
-						zap.String("Expected Season Name", "Unknown"),
-						zap.String("Expected Season ID", "Unknown"),
+						zap.String("Expected Season Name", ""),
+						zap.String("Expected Season ID", ""),
 					},
 				},
 			},
@@ -891,9 +891,9 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 					Context: []zapcore.Field{
 						zap.String("Episode ID", "bcedb6a404974245b41fe224f31e6460"),
 						zap.String("Episode Name", "Episode 1"),
-						zap.String("Expected Series Name", "Unknown"),
-						zap.String("Expected Series ID", "Unknown"),
-						zap.String("Expected Season Name", "Unknown"),
+						zap.String("Expected Series Name", ""),
+						zap.String("Expected Series ID", ""),
+						zap.String("Expected Season Name", ""),
 						zap.String("Expected Season ID", "f4971e32089041f3a3d6774277c2ccb9"),
 					},
 				},

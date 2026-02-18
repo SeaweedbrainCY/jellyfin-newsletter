@@ -51,7 +51,7 @@ func parseSeriesItems(app *app.ApplicationContext, jellyfinItems *[]jellyfinAPI.
 	for _, item := range *jellyfinItems {
 		if *item.Type == jellyfinAPI.BASEITEMKIND_SERIES {
 			seriesItems[*item.Id] = seriesItem{
-				Name:           OrDefault(item.Name, "Unknown"),
+				Name:           OrDefault(item.Name, ""),
 				AdditionDate:   OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
 				ProductionYear: OrDefault(item.ProductionYear, 0),
 				Seasons:        map[string]SeasonItem{},
@@ -88,7 +88,7 @@ func updateSeriesWithSeasons(
 				continue
 			}
 			seasonItem := SeasonItem{
-				Name:         OrDefault(item.Name, "Unknown"),
+				Name:         OrDefault(item.Name, ""),
 				AdditionDate: OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
 				SeasonNumber: OrDefault(item.IndexNumber, 0),
 				Episodes:     map[string]EpisodeItem{},
@@ -98,8 +98,8 @@ func updateSeriesWithSeasons(
 					"A season item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
 					zap.String("Season ID", *item.Id),
 					zap.String("Season Name", seasonItem.Name),
-					zap.String("Not found Series Name", OrDefault(item.SeriesName, "Unknown")),
-					zap.String("Not found Series ID", OrDefault(item.SeriesId, "Unknown")),
+					zap.String("Not found Series Name", OrDefault(item.SeriesName, "")),
+					zap.String("Not found Series ID", OrDefault(item.SeriesId, "")),
 				)
 				continue
 			}
@@ -108,7 +108,7 @@ func updateSeriesWithSeasons(
 					"Found a season with no addition date. This can lead to inaccuracy when detecting newly added media.",
 					zap.String("Season ID", *item.Id),
 					zap.String("Season Name", seasonItem.Name),
-					zap.String("Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Series Name", OrDefault(item.SeriesName, "")),
 					zap.String("Series ID", *item.SeriesId.Get()),
 				)
 			}
@@ -136,11 +136,11 @@ func updateSeriesWithEpisode(
 				app.Logger.Warn(
 					"An episode item is ignored because it has no series ID or season ID.",
 					zap.String("Episode ID", *item.Id),
-					zap.String("Episode Name", OrDefault(item.Name, "Unknown")),
-					zap.String("Expected Series Name", OrDefault(item.SeriesName, "Unknown")),
-					zap.String("Expected Series ID", OrDefault(item.SeriesId, "Unknown")),
-					zap.String("Expected Season Name", OrDefault(item.SeasonName, "Unknown")),
-					zap.String("Expected Season ID", OrDefault(item.SeasonId, "Unknown")),
+					zap.String("Episode Name", OrDefault(item.Name, "")),
+					zap.String("Expected Series Name", OrDefault(item.SeriesName, "")),
+					zap.String("Expected Series ID", OrDefault(item.SeriesId, "")),
+					zap.String("Expected Season Name", OrDefault(item.SeasonName, "")),
+					zap.String("Expected Season ID", OrDefault(item.SeasonId, "")),
 				)
 				continue
 			}
@@ -148,11 +148,11 @@ func updateSeriesWithEpisode(
 				app.Logger.Warn(
 					"An episode item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
 					zap.String("Episode ID", *item.Id),
-					zap.String("Episode Name", OrDefault(item.Name, "Unknown")),
-					zap.String("Expected Series Name", OrDefault(item.SeriesName, "Unknown")),
-					zap.String("Expected Series ID", OrDefault(item.SeriesId, "Unknown")),
-					zap.String("Expected Season Name", OrDefault(item.SeasonName, "Unknown")),
-					zap.String("Expected Season ID", OrDefault(item.SeasonId, "Unknown")),
+					zap.String("Episode Name", OrDefault(item.Name, "")),
+					zap.String("Expected Series Name", OrDefault(item.SeriesName, "")),
+					zap.String("Expected Series ID", OrDefault(item.SeriesId, "")),
+					zap.String("Expected Season Name", OrDefault(item.SeasonName, "")),
+					zap.String("Expected Season ID", OrDefault(item.SeasonId, "")),
 				)
 				continue
 			}
@@ -165,7 +165,7 @@ func updateSeriesWithEpisode(
 				continue
 			}
 			episodeItem := EpisodeItem{
-				Name:          OrDefault(item.Name, "Unknown"),
+				Name:          OrDefault(item.Name, ""),
 				AdditionDate:  OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
 				EpisodeNumber: OrDefault(item.IndexNumber, 0),
 			}
@@ -174,9 +174,9 @@ func updateSeriesWithEpisode(
 					"Found an episode with no addition date. This can lead to inaccuracy when detecting newly added media.",
 					zap.String("Episode ID", *item.Id),
 					zap.String("Episode Name", episodeItem.Name),
-					zap.String("Season Name", OrDefault(item.SeasonName, "Unknown")),
+					zap.String("Season Name", OrDefault(item.SeasonName, "")),
 					zap.String("Season ID", *item.SeasonId.Get()),
-					zap.String("Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Series Name", OrDefault(item.SeriesName, "")),
 					zap.String("Series ID", *item.SeriesId.Get()),
 				)
 			}
