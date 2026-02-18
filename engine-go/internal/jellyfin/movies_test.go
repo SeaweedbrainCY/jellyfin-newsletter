@@ -210,7 +210,7 @@ func TestGetRecentlyAddedMoviesByFolderWithMovieNameNull(t *testing.T) {
 	isMovieNameDefault := false
 	for _, movie := range newlyAddedMovies {
 		if movie.ID == "8b54388aca994d4fb867944d3150a7e0" {
-			assert.Equal(t, "", movie.Name)
+			assert.Empty(t, movie.Name)
 			isMovieNameDefault = true
 		}
 	}
@@ -270,7 +270,7 @@ func TestGetRecentlyAddedMoviesByFolderWithNoTMDBID(t *testing.T) {
 	isMovieNameDefault := false
 	for _, movie := range newlyAddedMovies {
 		if movie.ID == "8b54388aca994d4fb867944d3150a7e0" {
-			assert.Equal(t, "", movie.TMDBId)
+			assert.Empty(t, movie.TMDBId)
 			isMovieNameDefault = true
 		}
 	}
