@@ -126,7 +126,7 @@ func (client TMDBAPIClient) SearchMediaByName(
 	url := "https://api.themoviedb.org/3/search/" + mediaType.ToString() + "?query=" + name + "&language=" + client.Lang
 
 	if productionYear != 0 {
-		url += "&year=" + string(productionYear)
+		url += "&year=" + strconv.Itoa(productionYear)
 	}
 
 	request, err := client.prepareGetAPIRequest(url)
