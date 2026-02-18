@@ -12,11 +12,14 @@ type libraryItemAPI struct {
 }
 
 func (libraryAPI libraryItemAPI) GetItemsStats(app *app.ApplicationContext) (int32, int32, error) {
-	itemsCounts, httpResponse, err := libraryAPI.GetItemCounts(context.Background()).Execute()
+	itemsCounts, httpResponse, httpErr := libraryAPI.GetItemCounts(context.Background()).Execute()
+
+	err := checkHTTPRequest("GetItemsStats", httpResponse, httpErr, app.Logger)
 	if err != nil {
-		logHTTPResponseError(httpResponse, err, app)
 		return 0, 0, err
 	}
+
+	defer httpResponse.Body.Close()
 	defer httpResponse.Body.Close()
 	return *itemsCounts.MovieCount, *itemsCounts.EpisodeCount, nil
 }

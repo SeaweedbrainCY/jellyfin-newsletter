@@ -22,7 +22,7 @@ func (itemsAPI jellyfinItemsAPI) GetMoviesItemsByFolderID(
 	recursive bool,
 	app *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
-	movies, getMoviesHTTPResponse, err := itemsAPI.GetItems(context.Background()).
+	movies, getMoviesHTTPResponse, httpErr := itemsAPI.GetItems(context.Background()).
 		Recursive(recursive).
 		ParentId(folderID).
 		LocationTypes([]jellyfinAPI.LocationType{jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM}).
@@ -30,8 +30,8 @@ func (itemsAPI jellyfinItemsAPI) GetMoviesItemsByFolderID(
 		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear"}).
 		Execute()
 
+	err := checkHTTPRequest("GetMoviesItemsByFolderID", getMoviesHTTPResponse, httpErr, app.Logger)
 	if err != nil {
-		logHTTPResponseError(getMoviesHTTPResponse, err, app)
 		return nil, err
 	}
 	defer getMoviesHTTPResponse.Body.Close()
@@ -42,28 +42,35 @@ func (itemsAPI jellyfinItemsAPI) GetAllItemsByFolderID(
 	folderID string,
 	app *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
-	items, httpResponse, err := itemsAPI.GetItems(context.Background()).
+	items, httpResponse, httpErr := itemsAPI.GetItems(context.Background()).
 		Recursive(true).
 		ParentId(folderID).
 		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear", "IndexNumber", "SeriesId", "Type", "SeasonId"}).
 		Execute()
+
+	err := checkHTTPRequest("GetAllItemsByFolderID", httpResponse, httpErr, app.Logger)
 	if err != nil {
-		logHTTPResponseError(httpResponse, err, app)
 		return nil, err
 	}
+
+	defer httpResponse.Body.Close()
+
 	return &items.Items, nil
 }
 
 func (itemsAPI jellyfinItemsAPI) GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error) {
-	foldersItems, httpResponse, err := itemsAPI.GetItems(context.Background()).
+	foldersItems, httpResponse, httpErr := itemsAPI.GetItems(context.Background()).
 		Recursive(false).
 		LocationTypes([]jellyfinAPI.LocationType{jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM}).
 		Execute()
+
+	err := checkHTTPRequest("GetRootFolderIDByName", httpResponse, httpErr, app.Logger)
 	if err != nil {
-		logHTTPResponseError(httpResponse, err, app)
 		return "", err
 	}
+
 	defer httpResponse.Body.Close()
+
 	if !foldersItems.HasItems() {
 		app.Logger.Warn(
 			"No folders found. This could happen if Jellyfin has no collection or folder at all. Media should belong in folders but none are found.",
