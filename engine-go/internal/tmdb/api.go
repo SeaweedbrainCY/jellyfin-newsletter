@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strconv"
 
 	"go.uber.org/zap"
 )
@@ -15,7 +16,7 @@ type GetMediaHTTPResponse struct {
 }
 
 type SearchMediaHTTPResponse struct {
-	Results struct {
+	Results []struct {
 		Overview   string  `json:"overview"`
 		PosterPath string  `json:"poster_path"`
 		Popularity float64 `json:"popularity"`
@@ -63,7 +64,7 @@ func checkHTTPResponse(url string, resp *http.Response, httpErr error, logger *z
 		}
 
 		logger.Error("Unexpected HTTP response", fields...)
-		return errors.New("unexpected status code: " + string(resp.StatusCode))
+		return errors.New("unexpected status code: " + strconv.Itoa(resp.StatusCode))
 	}
 
 	return nil
@@ -112,7 +113,7 @@ func (client TMDBAPIClient) GetMediaByID(id string, mediaType MediaType) (*GetMe
 
 func (client TMDBAPIClient) SearchMediaByName(
 	name string,
-	productionYear int32,
+	productionYear int,
 	mediaType MediaType,
 ) (*SearchMediaHTTPResponse, error) {
 	if name == "" {
