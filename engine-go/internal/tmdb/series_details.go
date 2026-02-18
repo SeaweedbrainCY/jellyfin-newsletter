@@ -40,5 +40,4 @@ func GetSeriesDetails(
 	}
 
 	return getItemDetailsFromSearchResult(searchResult)
-
 }
