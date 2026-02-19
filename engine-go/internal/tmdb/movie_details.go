@@ -7,7 +7,7 @@ import (
 )
 
 func GetMovieDetails(
-	tmdbAPIClient APIClient,
+	tmdbAPIClient APIInterface,
 	jellyfinMovieItem jellyfin.MovieItem,
 	app app.ApplicationContext,
 ) *ItemDetails {
