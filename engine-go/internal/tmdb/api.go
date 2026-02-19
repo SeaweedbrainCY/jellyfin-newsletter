@@ -14,7 +14,7 @@ import (
 
 type APIInterface interface {
 	GetMediaByID(id string, mediaType MediaType) (*GetMediaHTTPResponse, error)
-	GetMediaByTitle(mediaName string, mediaType MediaType)
+	SearchMediaByName(name string, productionYear int, mediaType MediaType) (*SearchMediaHTTPResponse, error)
 }
 
 type APIClient struct {
@@ -32,16 +32,13 @@ func InitTMDBApiClient(app *app.ApplicationContext) APIClient {
 }
 
 type GetMediaHTTPResponse struct {
-	Overview   string `json:"overview"`
-	PosterPath string `json:"poster_path"`
+	Overview   string  `json:"overview"`
+	PosterPath string  `json:"poster_path"`
+	Popularity float64 `json:"popularity"`
 }
 
 type SearchMediaHTTPResponse struct {
-	Results []struct {
-		Overview   string  `json:"overview"`
-		PosterPath string  `json:"poster_path"`
-		Popularity float64 `json:"popularity"`
-	} `json:"results"`
+	Results []GetMediaHTTPResponse `json:"results"`
 }
 
 func (client APIClient) prepareGetAPIRequest(url string) (*http.Request, error) {
