@@ -228,7 +228,7 @@ def populate_email_template(movies, series, total_tv, total_movie) -> str:
                 added_items_html = f"<bdi>{added_items_str}</bdi>"
                 with open(f"./themes/new_media/{configuration.conf.email_template.theme}/tv.html", encoding='utf-8') as movie_template_file:
                     tv_template = movie_template_file.read()
-                    tv_template = re.sub(r"\${tv_title}", serie_data['series_name'], tv_template)
+                    tv_template = re.sub(r"\${tv_title}", tv_title, tv_template)
                     tv_template = re.sub(r"\${tv_overview_style}", tv_overview_style, tv_template)
                     tv_template = re.sub(r"\${tv_overview}", serie_data['description'], tv_template)
                     tv_template = re.sub(r"\${tv_added_on}", added_date_html, tv_template)
