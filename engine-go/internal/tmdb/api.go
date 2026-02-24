@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
@@ -96,9 +97,34 @@ func checkHTTPResponse(url string, resp *http.Response, httpErr error, logger *z
 }
 
 func (client APIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaHTTPResponse, error) {
-	url := client.BaseURL + "/" + mediaType.ToString() + "/" + id + "?language=" + client.Lang
+	baseURL, err := url.JoinPath(client.BaseURL, mediaType.ToString(), id)
 
-	request, err := client.prepareGetAPIRequest(url)
+	if err != nil {
+		client.Logger.Error(
+			"An error occurred while buidling TMDB URL",
+			zap.Error(err),
+			zap.String("baseURL", client.BaseURL),
+			zap.String("MediaType", mediaType.ToString()),
+			zap.String("Media id", id),
+		)
+		return nil, err
+	}
+
+	apiURL, err := url.Parse(baseURL)
+	if err != nil {
+		client.Logger.Error(
+			"An error occurred while parsing TMDB URL",
+			zap.Error(err),
+			zap.String("baseURL", baseURL),
+		)
+		return nil, err
+	}
+	urlQuery := apiURL.Query()
+	urlQuery.Add("language", client.Lang)
+	apiURL.RawQuery = urlQuery.Encode()
+	encodedURL := apiURL.String()
+
+	request, err := client.prepareGetAPIRequest(encodedURL)
 
 	if err != nil {
 		return nil, err
@@ -106,7 +132,7 @@ func (client APIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaH
 
 	httpResponse, execReqErr := client.HTTPClient.Do(request)
 
-	err = checkHTTPResponse(url, httpResponse, execReqErr, client.Logger)
+	err = checkHTTPResponse(encodedURL, httpResponse, execReqErr, client.Logger)
 
 	if err != nil {
 		return nil, err
@@ -118,7 +144,7 @@ func (client APIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaH
 
 	if err != nil {
 		client.Logger.Error("Impossible to read the HTTP response body.",
-			zap.String("URL", url),
+			zap.String("URL", encodedURL),
 			zap.Int("HTTP Status code", httpResponse.StatusCode),
 			zap.Error(err))
 	}
@@ -130,7 +156,7 @@ func (client APIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaH
 		client.Logger.Error(
 			"An error occurred while decoding TMDB API's answer.",
 			zap.Error(jsonDecodeErr),
-			zap.String("URL", url),
+			zap.String("URL", encodedURL),
 		)
 		return nil, jsonDecodeErr
 	}
@@ -149,13 +175,39 @@ func (client APIClient) SearchMediaByName(
 		return nil, errors.New("empty name")
 	}
 
-	url := client.BaseURL + "/search/" + mediaType.ToString() + "?query=" + name + "&language=" + client.Lang
+	baseURL, err := url.JoinPath(client.BaseURL, "search", mediaType.ToString())
 
-	if productionYear != 0 {
-		url += "&year=" + strconv.Itoa(productionYear)
+	if err != nil {
+		client.Logger.Error(
+			"An error occurred while buidling TMDB URL",
+			zap.Error(err),
+			zap.String("baseURL", client.BaseURL),
+			zap.String("MediaType", mediaType.ToString()),
+		)
+		return nil, err
 	}
 
-	request, err := client.prepareGetAPIRequest(url)
+	apiURL, err := url.Parse(baseURL)
+	if err != nil {
+		client.Logger.Error(
+			"An error occurred while parsing TMDB URL",
+			zap.Error(err),
+			zap.String("baseURL", baseURL),
+		)
+		return nil, err
+	}
+	urlQuery := apiURL.Query()
+	urlQuery.Add("language", client.Lang)
+	urlQuery.Add("query", name)
+
+	if productionYear != 0 {
+		urlQuery.Add("year", strconv.Itoa(productionYear))
+	}
+
+	apiURL.RawQuery = urlQuery.Encode()
+	encodedURL := apiURL.String()
+
+	request, err := client.prepareGetAPIRequest(encodedURL)
 
 	if err != nil {
 		return nil, err
@@ -163,7 +215,7 @@ func (client APIClient) SearchMediaByName(
 
 	httpResponse, execReqErr := client.HTTPClient.Do(request)
 
-	err = checkHTTPResponse(url, httpResponse, execReqErr, client.Logger)
+	err = checkHTTPResponse(encodedURL, httpResponse, execReqErr, client.Logger)
 
 	if err != nil {
 		return nil, err
@@ -175,7 +227,7 @@ func (client APIClient) SearchMediaByName(
 
 	if err != nil {
 		client.Logger.Error("Impossible to read the HTTP response body.",
-			zap.String("URL", url),
+			zap.String("URL", encodedURL),
 			zap.Int("HTTP Status code", httpResponse.StatusCode),
 			zap.Error(err))
 	}
@@ -187,7 +239,7 @@ func (client APIClient) SearchMediaByName(
 		client.Logger.Error(
 			"An error occurred while decoding TMDB API's answer.",
 			zap.Error(jsonDecodeErr),
-			zap.String("URL", url),
+			zap.String("URL", encodedURL),
 		)
 		return nil, jsonDecodeErr
 	}

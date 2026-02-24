@@ -58,3 +58,29 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 	assert.Equal(t, "This is the description of a media", movieDetails.Overview)
 	assert.Equal(t, "https://image.tmdb.org/t/p/w500/poster/path", movieDetails.PosterURL)
 }
+
+func TestGetMovieDetailsWithSearchByName(t *testing.T) {
+	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(
+			[]byte(
+				`{"results": [{"overview": "This is the description of a media", "popularity": 2.8, "poster_path":"/poster/path"}, {"overview": "This is the description of the most popular media", "popularity": 12.5, "poster_path":"/poster/popular/path"}]`,
+			),
+		)
+	}))
+	defer testServer.Close()
+	loggerCore, recordedLogs := observer.New(zap.InfoLevel)
+	logger := zap.New(loggerCore)
+	client := getTestClient(logger, testServer)
+
+	jellyfinMovieItem := getBaseJellyfinMovieItem()
+	jellyfinMovieItem.TMDBId = ""
+	app := app.ApplicationContext{
+		Logger: logger,
+	}
+	movieDetails := GetMovieDetails(client, jellyfinMovieItem, app)
+
+	require.Empty(t, recordedLogs.All())
+	assert.Equal(t, "This is the description of the most popular media", movieDetails.Overview)
+	assert.Equal(t, "/poster/popular/path", movieDetails.PosterURL)
+}
