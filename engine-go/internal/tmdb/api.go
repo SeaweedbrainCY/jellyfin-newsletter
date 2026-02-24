@@ -17,17 +17,25 @@ type APIInterface interface {
 	SearchMediaByName(name string, productionYear int, mediaType MediaType) (*SearchMediaHTTPResponse, error)
 }
 
+type HTTPClientInterface interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 type APIClient struct {
-	APIKey string
-	Lang   string
-	Logger *zap.Logger
+	APIKey     string
+	Lang       string
+	Logger     *zap.Logger
+	BaseURL    string
+	HTTPClient HTTPClientInterface
 }
 
 func InitTMDBApiClient(app *app.ApplicationContext) APIClient {
 	return APIClient{
-		APIKey: app.Config.TMDB.APIKey,
-		Lang:   app.Config.EmailTemplate.Language,
-		Logger: app.Logger,
+		APIKey:     app.Config.TMDB.APIKey,
+		Lang:       app.Config.EmailTemplate.Language,
+		Logger:     app.Logger,
+		BaseURL:    "https://api.themoviedb.org/3",
+		HTTPClient: http.DefaultClient,
 	}
 }
 
@@ -65,9 +73,8 @@ func checkHTTPResponse(url string, resp *http.Response, httpErr error, logger *z
 		)
 	}
 
-	defer resp.Body.Close()
-
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		defer resp.Body.Close()
 		body, bodyErr := io.ReadAll(resp.Body)
 
 		fields := []zap.Field{
@@ -89,7 +96,7 @@ func checkHTTPResponse(url string, resp *http.Response, httpErr error, logger *z
 }
 
 func (client APIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaHTTPResponse, error) {
-	url := "https://api.themoviedb.org/3/" + mediaType.ToString() + "/" + id + "?language=" + client.Lang
+	url := client.BaseURL + "/" + mediaType.ToString() + "/" + id + "?language=" + client.Lang
 
 	request, err := client.prepareGetAPIRequest(url)
 
@@ -97,7 +104,7 @@ func (client APIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaH
 		return nil, err
 	}
 
-	httpResponse, execReqErr := http.DefaultClient.Do(request)
+	httpResponse, execReqErr := client.HTTPClient.Do(request)
 
 	err = checkHTTPResponse(url, httpResponse, execReqErr, client.Logger)
 
@@ -112,6 +119,7 @@ func (client APIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaH
 	if err != nil {
 		client.Logger.Error("Impossible to read the HTTP response body.",
 			zap.String("URL", url),
+			zap.Int("HTTP Status code", httpResponse.StatusCode),
 			zap.Error(err))
 	}
 
@@ -141,7 +149,7 @@ func (client APIClient) SearchMediaByName(
 		return nil, errors.New("empty name")
 	}
 
-	url := "https://api.themoviedb.org/3/search/" + mediaType.ToString() + "?query=" + name + "&language=" + client.Lang
+	url := client.BaseURL + "/search/" + mediaType.ToString() + "?query=" + name + "&language=" + client.Lang
 
 	if productionYear != 0 {
 		url += "&year=" + strconv.Itoa(productionYear)
@@ -153,7 +161,7 @@ func (client APIClient) SearchMediaByName(
 		return nil, err
 	}
 
-	httpResponse, execReqErr := http.DefaultClient.Do(request)
+	httpResponse, execReqErr := client.HTTPClient.Do(request)
 
 	err = checkHTTPResponse(url, httpResponse, execReqErr, client.Logger)
 
@@ -168,6 +176,7 @@ func (client APIClient) SearchMediaByName(
 	if err != nil {
 		client.Logger.Error("Impossible to read the HTTP response body.",
 			zap.String("URL", url),
+			zap.Int("HTTP Status code", httpResponse.StatusCode),
 			zap.Error(err))
 	}
 
