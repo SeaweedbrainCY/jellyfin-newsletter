@@ -72,6 +72,7 @@ func checkHTTPResponse(url string, resp *http.Response, httpErr error, logger *z
 			zap.String("URL", url),
 			zap.Error(httpErr),
 		)
+		return httpErr
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
@@ -147,6 +148,7 @@ func (client APIClient) GetMediaByID(id string, mediaType MediaType) (*GetMediaH
 			zap.String("URL", encodedURL),
 			zap.Int("HTTP Status code", httpResponse.StatusCode),
 			zap.Error(err))
+		return nil, err
 	}
 
 	var decodedBody GetMediaHTTPResponse
