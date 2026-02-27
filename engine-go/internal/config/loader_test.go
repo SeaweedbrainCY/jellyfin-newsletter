@@ -175,7 +175,7 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(t, "INFO", config.Log.Level)
 	assert.Equal(t, "console", config.Log.Format)
 	assert.Equal(t, "http://localhost:8096", config.Jellyfin.URL)
-	assert.Equal(t, "secret", config.Jellyfin.APIKey)
+	assert.Equal(t, "secret", string(config.Jellyfin.APIKey))
 	assert.Equal(t, []string{"/movies"}, config.Jellyfin.WatchedFilmFolders)
 	assert.Equal(t, []string{"/series"}, config.Jellyfin.WatchedSeriesFolders)
 	assert.Equal(t, 30, config.Jellyfin.ObservedPeriodDays)
@@ -183,12 +183,12 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(
 		t,
 		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30",
-		config.TMDB.APIKey,
+		string(config.TMDB.APIKey),
 	)
 	assert.Equal(t, "smtp.example.com", config.SMTP.Host)
 	assert.Equal(t, 587, config.SMTP.Port)
 	assert.Equal(t, "user", config.SMTP.Username)
-	assert.Equal(t, "pass", config.SMTP.Password)
+	assert.Equal(t, "pass", string(config.SMTP.Password))
 	assert.Equal(t, "Jellyfin", config.SMTP.SenderName)
 	assert.Equal(t, "classic", config.EmailTemplate.Theme)
 	assert.Equal(t, "en", config.EmailTemplate.Language)
