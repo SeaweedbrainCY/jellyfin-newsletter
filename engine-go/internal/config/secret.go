@@ -13,7 +13,7 @@ func (s Secret) MarshalJSON() ([]byte, error) {
 	return []byte(`"[REDACTED]"`), nil
 }
 
-func (s Secret) MarshalYAML() (interface{}, error) { return "[REDACTED]", nil }
+func (s Secret) MarshalYAML() (any, error) { return "[REDACTED]", nil }
 
 func (s Secret) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement("[REDACTED]", start)
