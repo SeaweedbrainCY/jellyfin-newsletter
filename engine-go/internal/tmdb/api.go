@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
 	"go.uber.org/zap"
 )
 
@@ -23,7 +24,7 @@ type HTTPClientInterface interface {
 }
 
 type APIClient struct {
-	APIKey     string
+	APIKey     config.Secret
 	Lang       string
 	Logger     *zap.Logger
 	BaseURL    string
@@ -60,7 +61,7 @@ func (client APIClient) prepareGetAPIRequest(url string) (*http.Request, error) 
 		return nil, err
 	}
 	request.Header.Add("Accept", "application/json")
-	request.Header.Add("Authorization", "Bearer "+client.APIKey)
+	request.Header.Add("Authorization", "Bearer "+string(client.APIKey))
 
 	return request, nil
 }
