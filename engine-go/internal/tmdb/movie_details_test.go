@@ -49,7 +49,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Success - Valid response",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -64,7 +64,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Success - No results",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -79,7 +79,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Error - Malformed json",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -94,7 +94,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Success - Missing overview",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -109,7 +109,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Success - Missing posterPath",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -124,7 +124,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Success - Missing popularity",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -139,7 +139,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Error - Connection reset",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				hj, ok := w.(http.Hijacker)
 				if !ok {
 					panic("not a hijacker")
@@ -154,7 +154,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Error - partial response EOF",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Header().Set("Content-Length", "1000") // lie about body size
 				w.Write([]byte(`{"overview": `))
@@ -166,7 +166,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Error - Error 404",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusNotFound)
 			}),
 			expectErr:          true,
@@ -176,7 +176,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Error - Error 403",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusUnauthorized)
 			}),
 			expectErr:          true,
@@ -186,7 +186,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 		{
 			name:   "Error - Error 500",
 			tmdbID: "12345",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
 			}),
 			expectErr:          true,
@@ -233,7 +233,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Success - Valid response multiple movies",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -248,7 +248,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Success - Valid response one movie",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -263,7 +263,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Success - No results",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -278,7 +278,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Error - Malformed json",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -293,7 +293,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Success - Missing overview",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -308,7 +308,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Success - Missing posterPath",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -323,7 +323,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Success - Missing popularity",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -338,7 +338,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Success - Missing popularity multiple movies",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -353,7 +353,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Success - Same popularity",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Write(
 					[]byte(
@@ -368,7 +368,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Error - Connection reset",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				hj, ok := w.(http.Hijacker)
 				if !ok {
 					panic("not a hijacker")
@@ -383,7 +383,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Error - partial response EOF",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.Header().Set("Content-Length", "1000") // lie about body size
 				w.Write([]byte(`{"results":`))
@@ -395,7 +395,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Error - Error 404",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusNotFound)
 			}),
 			expectErr:          true,
@@ -405,7 +405,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Error - Error 403",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusUnauthorized)
 			}),
 			expectErr:          true,
@@ -415,7 +415,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 		{
 			name:      "Error - Error 500",
 			movieName: "Test movie",
-			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
 			}),
 			expectErr:          true,
