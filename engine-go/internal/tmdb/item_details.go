@@ -27,7 +27,7 @@ func getItemDetailsFromHTTPResponse(parsedHTTPResponse *GetMediaHTTPResponse) *I
 // The final item will be selected based on popularity.
 func getItemDetailsFromSearchResult(result *SearchMediaHTTPResponse) *ItemDetails {
 	itemDetails := getDefaultItemDetails()
-	popularity := 0.0
+	popularity := -1.0
 	for _, item := range result.Results {
 		if item.Popularity > popularity {
 			if item.Overview != "" {
