@@ -34,29 +34,189 @@ func getBaseJellyfinMovieItem() jellyfin.MovieItem {
 		ProductionYear: 2026,
 	}
 }
+
 func TestGetMovieDetailsWithTMDBID(t *testing.T) {
-	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(
-			[]byte(
-				`{"overview": "This is the description of a media", "popularity": 12.5, "poster_path":"/poster/path"}`,
-			),
-		)
-	}))
-	defer testServer.Close()
-	loggerCore, recordedLogs := observer.New(zap.InfoLevel)
-	logger := zap.New(loggerCore)
-	client := getTestClient(logger, testServer)
-
-	jellyfinMovieItem := getBaseJellyfinMovieItem()
-	app := app.ApplicationContext{
-		Logger: logger,
+	defaultOverview := "No description available."
+	defaultPosterURL := "https://placehold.co/200"
+	tests := []struct {
+		name               string
+		tmdbID             string
+		testServerHandler  http.Handler
+		expectedOverview   string
+		expectedPosterPath string
+		expectErr          bool
+	}{
+		{
+			name:   "Success - Valid response",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(
+					[]byte(
+						`{"overview": "This is the description of a media", "popularity": 12.5, "poster_path":"/poster/path"}`,
+					),
+				)
+			}),
+			expectedOverview:   "This is the description of a media",
+			expectedPosterPath: "https://image.tmdb.org/t/p/w500/poster/path",
+			expectErr:          false,
+		},
+		{
+			name:   "Success - No results",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(
+					[]byte(
+						`{}`,
+					),
+				)
+			}),
+			expectedOverview:   defaultOverview,
+			expectedPosterPath: defaultPosterURL,
+			expectErr:          false,
+		},
+		{
+			name:   "Error - Malformed json",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(
+					[]byte(
+						`{{"overview": "This is the description of`,
+					),
+				)
+			}),
+			expectedOverview:   defaultOverview,
+			expectedPosterPath: defaultPosterURL,
+			expectErr:          true,
+		},
+		{
+			name:   "Success - Missing overview",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(
+					[]byte(
+						`{"popularity": 12.5, "poster_path":"/poster/path"}`,
+					),
+				)
+			}),
+			expectedOverview:   defaultOverview,
+			expectedPosterPath: "https://image.tmdb.org/t/p/w500/poster/path",
+			expectErr:          false,
+		},
+		{
+			name:   "Success - Missing posterPath",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(
+					[]byte(
+						`{"overview": "This is the description of a media", "popularity": 12.5}`,
+					),
+				)
+			}),
+			expectedOverview:   "This is the description of a media",
+			expectedPosterPath: defaultPosterURL,
+			expectErr:          false,
+		},
+		{
+			name:   "Success - Missing popularity",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.Write(
+					[]byte(
+						`{"overview": "This is the description of a media",  "poster_path":"/poster/path"}`,
+					),
+				)
+			}),
+			expectedOverview:   "This is the description of a media",
+			expectedPosterPath: "https://image.tmdb.org/t/p/w500/poster/path",
+			expectErr:          false,
+		},
+		{
+			name:   "Error - Connection reset",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				hj, ok := w.(http.Hijacker)
+				if !ok {
+					panic("not a hijacker")
+				}
+				conn, _, _ := hj.Hijack()
+				conn.Close()
+			}),
+			expectErr:          true,
+			expectedOverview:   defaultOverview,
+			expectedPosterPath: defaultPosterURL,
+		},
+		{
+			name:   "Error - partial response EOF",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.Header().Set("Content-Length", "1000") // lie about body size
+				w.Write([]byte(`{"overview": `))
+			}),
+			expectErr:          true,
+			expectedOverview:   defaultOverview,
+			expectedPosterPath: defaultPosterURL,
+		},
+		{
+			name:   "Error - Error 404",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusNotFound)
+			}),
+			expectErr:          true,
+			expectedOverview:   defaultOverview,
+			expectedPosterPath: defaultPosterURL,
+		},
+		{
+			name:   "Error - Error 403",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusUnauthorized)
+			}),
+			expectErr:          true,
+			expectedOverview:   defaultOverview,
+			expectedPosterPath: defaultPosterURL,
+		},
+		{
+			name:   "Error - Error 500",
+			tmdbID: "12345",
+			testServerHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusInternalServerError)
+			}),
+			expectErr:          true,
+			expectedOverview:   defaultOverview,
+			expectedPosterPath: defaultPosterURL,
+		},
 	}
-	movieDetails := GetMovieDetails(client, jellyfinMovieItem, app)
 
-	require.Empty(t, recordedLogs.All())
-	assert.Equal(t, "This is the description of a media", movieDetails.Overview)
-	assert.Equal(t, "https://image.tmdb.org/t/p/w500/poster/path", movieDetails.PosterURL)
+	for _, testCase := range tests {
+		t.Run(testCase.name, func(t *testing.T) {
+			testServer := httptest.NewServer(testCase.testServerHandler)
+			defer testServer.Close()
+			loggerCore, recordedLogs := observer.New(zap.InfoLevel)
+			logger := zap.New(loggerCore)
+			client := getTestClient(logger, testServer)
+			jellyfinMovieItem := getBaseJellyfinMovieItem()
+			jellyfinMovieItem.TMDBId = testCase.tmdbID
+			app := app.ApplicationContext{
+				Logger: logger,
+			}
+			movieDetails := GetMovieDetails(client, jellyfinMovieItem, app)
+			if testCase.expectErr {
+				assert.NotEmpty(t, recordedLogs.All())
+			} else {
+				require.Empty(t, recordedLogs.All())
+			}
+			assert.Equal(t, testCase.expectedOverview, movieDetails.Overview)
+			assert.Equal(t, testCase.expectedPosterPath, movieDetails.PosterURL)
+		})
+	}
 }
 
 func TestGetMovieDetailsWithSearchByName(t *testing.T) {
@@ -174,7 +334,6 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 			expectedOverview:   "This is the description of a media",
 			expectedPosterPath: "https://image.tmdb.org/t/p/w500/poster/path",
 			expectErr:          false,
-			
 		},
 		{
 			name:      "Success - Missing popularity multiple movies",
