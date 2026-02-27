@@ -446,5 +446,4 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 			assert.Equal(t, testCase.expectedPosterPath, movieDetails.PosterURL)
 		})
 	}
-
 }
