@@ -12,7 +12,7 @@ type SchedulerConfig struct {
 
 type JellyfinConfig struct {
 	URL                                 string
-	APIKey                              string
+	APIKey                              Secret
 	WatchedFilmFolders                  []string
 	WatchedSeriesFolders                []string
 	ObservedPeriodDays                  int
@@ -20,7 +20,7 @@ type JellyfinConfig struct {
 }
 
 type TMDBConfig struct {
-	APIKey string
+	APIKey Secret
 }
 
 type EmailTemplateConfig struct {
@@ -41,7 +41,7 @@ type SMTPConfig struct {
 	Host       string
 	Port       int
 	Username   string
-	Password   string
+	Password   Secret
 	SenderName string
 	TLSType    string
 }
@@ -76,14 +76,14 @@ type yamlConfiguration struct {
 	} `yaml:"scheduler,omitempty"`
 	Jellyfin struct {
 		URL                                 string   `yaml:"url" validate:"required,http_url"`
-		APIToken                            string   `yaml:"api_token" validate:"required"`
+		APIToken                            Secret   `yaml:"api_token" validate:"required"`
 		WatchedFilmFolders                  []string `yaml:"watched_film_folders" validate:"required"`
 		WatchedSeriesFolders                []string `yaml:"watched_tv_folders" validate:"required"`
 		ObservedPeriodDays                  int      `yaml:"observed_period_days" validate:"required,numeric"`
 		IgnoreItemsAddedAfterLastNewsletter *bool    `yaml:"ignore_item_added_before_last_newsletter,omitempty" validate:"omitempty,boolean"`
 	} `yaml:"jellyfin"            validate:"required"`
 	TMDB struct {
-		APIKey string `yaml:"api_key" validate:"required,jwt"`
+		APIKey Secret `yaml:"api_key" validate:"required,jwt"`
 	} `yaml:"tmdb"                validate:"required"`
 	EmailTemplate struct {
 		Theme                   string `yaml:"theme,omitempty" validate:"omitempty,oneof=classic"`
@@ -101,7 +101,7 @@ type yamlConfiguration struct {
 		SMTPServer     string `yaml:"smtp_server" validate:"required,hostname|ip"`
 		SMTPPort       int    `yaml:"smtp_port" validate:"required,numeric,min=1,max=65535"`
 		SMTPUsername   string `yaml:"smtp_username" validate:"required"`
-		SMTPPassword   string `yaml:"smtp_password" validate:"required"`
+		SMTPPassword   Secret `yaml:"smtp_password" validate:"required"`
 		SMTPSenderName string `yaml:"smtp_sender_email" validate:"required"`
 		SMTPTlsType    string `yaml:"smtp_tls_type,omitempty" validate:"omitempty,oneof=TLS STARTTLS"`
 	} `yaml:"email"               validate:"required"`

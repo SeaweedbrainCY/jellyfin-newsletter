@@ -2,7 +2,6 @@ package jellyfin
 
 import (
 	"errors"
-	"strconv"
 	"testing"
 	"time"
 
@@ -141,11 +140,9 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 					expectedMovie.DateCreated.Get().String(),
 					movie.AdditionDate.String(),
 				)
-				expectedProviderID, atoiErr := strconv.Atoi(expectedMovie.ProviderIds["Tmdb"])
-				require.NoError(t, atoiErr)
 				assert.Equal(
 					t,
-					expectedProviderID,
+					expectedMovie.ProviderIds["Tmdb"],
 					movie.TMDBId,
 					"Movie ID %s: Not the TMDBID. Expected: %s. Actual: %d",
 					movie.ID,
@@ -213,7 +210,7 @@ func TestGetRecentlyAddedMoviesByFolderWithMovieNameNull(t *testing.T) {
 	isMovieNameDefault := false
 	for _, movie := range newlyAddedMovies {
 		if movie.ID == "8b54388aca994d4fb867944d3150a7e0" {
-			assert.Equal(t, "Unknown Movie Name", movie.Name)
+			assert.Empty(t, movie.Name)
 			isMovieNameDefault = true
 		}
 	}
@@ -273,7 +270,7 @@ func TestGetRecentlyAddedMoviesByFolderWithNoTMDBID(t *testing.T) {
 	isMovieNameDefault := false
 	for _, movie := range newlyAddedMovies {
 		if movie.ID == "8b54388aca994d4fb867944d3150a7e0" {
-			assert.Equal(t, 0, movie.TMDBId)
+			assert.Empty(t, movie.TMDBId)
 			isMovieNameDefault = true
 		}
 	}

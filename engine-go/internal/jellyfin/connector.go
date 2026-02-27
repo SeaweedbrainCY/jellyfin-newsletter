@@ -1,7 +1,10 @@
 package jellyfin
 
 import (
+	"errors"
+	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"go.uber.org/zap"
@@ -44,11 +47,34 @@ func (client *APIClient) TestConnection(app *app.ApplicationContext) error {
 	return err
 }
 
-func logHTTPResponseError(httpResponse *http.Response, err error, app *app.ApplicationContext) {
-	statusCode := 0
-	if httpResponse != nil {
-		statusCode = httpResponse.StatusCode
-		defer httpResponse.Body.Close()
+func checkHTTPRequest(ctx string, resp *http.Response, httpErr error, logger *zap.Logger) error {
+	if httpErr != nil {
+		logger.Error(
+			"HTTP request failed",
+			zap.String("context", ctx),
+			zap.Error(httpErr),
+		)
 	}
-	app.Logger.Error("Getting root Items failed.", zap.Int("httpStatusCode", statusCode), zap.Error(err))
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, bodyErr := io.ReadAll(resp.Body)
+
+		fields := []zap.Field{
+			zap.Int("status", resp.StatusCode),
+			zap.String("context", ctx),
+		}
+
+		if bodyErr == nil {
+			fields = append(fields, zap.String("body", string(body)))
+		} else {
+			fields = append(fields, zap.NamedError("body_read_error", bodyErr))
+		}
+
+		logger.Error("Unexpected HTTP response", fields...)
+		return errors.New("unexpected status code: " + strconv.Itoa(resp.StatusCode))
+	}
+
+	return nil
 }

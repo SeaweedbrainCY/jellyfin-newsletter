@@ -39,7 +39,7 @@ func NewJellyfinAPIClient(app *app.ApplicationContext) *APIClient {
 	headerToken := "MediaBrowser Token=\"" + app.Config.Jellyfin.APIKey + "\""
 	config := &jellyfinAPI.Configuration{
 		Servers:       jellyfinAPI.ServerConfigurations{{URL: app.Config.Jellyfin.URL}},
-		DefaultHeader: map[string]string{"Authorization": headerToken},
+		DefaultHeader: map[string]string{"Authorization": string(headerToken)},
 	}
 	client := jellyfinAPI.NewAPIClient(config)
 	return &APIClient{

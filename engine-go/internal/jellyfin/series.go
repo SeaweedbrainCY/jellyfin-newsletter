@@ -22,12 +22,12 @@ type SeasonItem struct {
 	IsSeasonNew  bool
 }
 
-type SeriesItem struct {
+type seriesItem struct {
 	Name           string
 	AdditionDate   time.Time
 	ProductionYear int32
 	Seasons        map[string]SeasonItem
-	TMDBId         int
+	TMDBId         string
 }
 
 type NewlyAddedSeriesItem struct {
@@ -35,23 +35,23 @@ type NewlyAddedSeriesItem struct {
 	SeriesID       string
 	IsSeriesNew    bool
 	NewSeasons     map[string]SeasonItem
-	TMDBId         int
+	TMDBId         string
 	ProductionYear int
 	AdditionDate   time.Time
 }
 
 // parseSeriesItems scans a slice of Jellyfin BaseItemDto and extracts
 // all items of type SERIES into a map keyed by the series ID.
-// For each series it builds a `SeriesItem` with name, addition date,
+// For each series it builds a `seriesItem` with name, addition date,
 // production year, an empty seasons map and the TMDB id when present.
 // Missing addition dates are logged as warnings because they affect
 // newly-added detection.
-func parseSeriesItems(app *app.ApplicationContext, jellyfinItems *[]jellyfinAPI.BaseItemDto) map[string]SeriesItem {
-	seriesItems := map[string]SeriesItem{}
+func parseSeriesItems(app *app.ApplicationContext, jellyfinItems *[]jellyfinAPI.BaseItemDto) map[string]seriesItem {
+	seriesItems := map[string]seriesItem{}
 	for _, item := range *jellyfinItems {
 		if *item.Type == jellyfinAPI.BASEITEMKIND_SERIES {
-			seriesItems[*item.Id] = SeriesItem{
-				Name:           OrDefault(item.Name, "Unknown"),
+			seriesItems[*item.Id] = seriesItem{
+				Name:           OrDefault(item.Name, ""),
 				AdditionDate:   OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
 				ProductionYear: OrDefault(item.ProductionYear, 0),
 				Seasons:        map[string]SeasonItem{},
@@ -70,12 +70,12 @@ func parseSeriesItems(app *app.ApplicationContext, jellyfinItems *[]jellyfinAPI.
 }
 
 // updateSeriesWithSeasons iterates over Jellyfin items and attaches
-// Season entries to their parent `SeriesItem` in the provided map.
+// Season entries to their parent `seriesItem` in the provided map.
 // Seasons that reference a missing series are ignored and logged.
 // If a season lacks an addition date the function emits a warning.
 func updateSeriesWithSeasons(
 	jellyfinItems *[]jellyfinAPI.BaseItemDto,
-	seriesItem map[string]SeriesItem,
+	seriesItem map[string]seriesItem,
 	app *app.ApplicationContext,
 ) {
 	for _, item := range *jellyfinItems {
@@ -88,7 +88,7 @@ func updateSeriesWithSeasons(
 				continue
 			}
 			seasonItem := SeasonItem{
-				Name:         OrDefault(item.Name, "Unknown"),
+				Name:         OrDefault(item.Name, ""),
 				AdditionDate: OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
 				SeasonNumber: OrDefault(item.IndexNumber, 0),
 				Episodes:     map[string]EpisodeItem{},
@@ -98,8 +98,8 @@ func updateSeriesWithSeasons(
 					"A season item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
 					zap.String("Season ID", *item.Id),
 					zap.String("Season Name", seasonItem.Name),
-					zap.String("Not found Series Name", OrDefault(item.SeriesName, "Unknown")),
-					zap.String("Not found Series ID", OrDefault(item.SeriesId, "Unknown")),
+					zap.String("Not found Series Name", OrDefault(item.SeriesName, "")),
+					zap.String("Not found Series ID", OrDefault(item.SeriesId, "")),
 				)
 				continue
 			}
@@ -108,7 +108,7 @@ func updateSeriesWithSeasons(
 					"Found a season with no addition date. This can lead to inaccuracy when detecting newly added media.",
 					zap.String("Season ID", *item.Id),
 					zap.String("Season Name", seasonItem.Name),
-					zap.String("Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Series Name", OrDefault(item.SeriesName, "")),
 					zap.String("Series ID", *item.SeriesId.Get()),
 				)
 			}
@@ -119,12 +119,12 @@ func updateSeriesWithSeasons(
 
 // updateSeriesWithEpisode finds episode items (file-system location)
 // and attaches them into the corresponding `SeasonItem.Episodes` map
-// under the correct `SeriesItem`. Episodes referencing missing series
+// under the correct `seriesItem`. Episodes referencing missing series
 // or seasons are ignored and logged. Episodes without addition dates
 // also produce warnings because they affect new-content detection.
 func updateSeriesWithEpisode(
 	jellyfinItems *[]jellyfinAPI.BaseItemDto,
-	seriesItem map[string]SeriesItem,
+	seriesItem map[string]seriesItem,
 	app *app.ApplicationContext,
 ) {
 	for _, item := range *jellyfinItems {
@@ -136,11 +136,11 @@ func updateSeriesWithEpisode(
 				app.Logger.Warn(
 					"An episode item is ignored because it has no series ID or season ID.",
 					zap.String("Episode ID", *item.Id),
-					zap.String("Episode Name", OrDefault(item.Name, "Unknown")),
-					zap.String("Expected Series Name", OrDefault(item.SeriesName, "Unknown")),
-					zap.String("Expected Series ID", OrDefault(item.SeriesId, "Unknown")),
-					zap.String("Expected Season Name", OrDefault(item.SeasonName, "Unknown")),
-					zap.String("Expected Season ID", OrDefault(item.SeasonId, "Unknown")),
+					zap.String("Episode Name", OrDefault(item.Name, "")),
+					zap.String("Expected Series Name", OrDefault(item.SeriesName, "")),
+					zap.String("Expected Series ID", OrDefault(item.SeriesId, "")),
+					zap.String("Expected Season Name", OrDefault(item.SeasonName, "")),
+					zap.String("Expected Season ID", OrDefault(item.SeasonId, "")),
 				)
 				continue
 			}
@@ -148,11 +148,11 @@ func updateSeriesWithEpisode(
 				app.Logger.Warn(
 					"An episode item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
 					zap.String("Episode ID", *item.Id),
-					zap.String("Episode Name", OrDefault(item.Name, "Unknown")),
-					zap.String("Expected Series Name", OrDefault(item.SeriesName, "Unknown")),
-					zap.String("Expected Series ID", OrDefault(item.SeriesId, "Unknown")),
-					zap.String("Expected Season Name", OrDefault(item.SeasonName, "Unknown")),
-					zap.String("Expected Season ID", OrDefault(item.SeasonId, "Unknown")),
+					zap.String("Episode Name", OrDefault(item.Name, "")),
+					zap.String("Expected Series Name", OrDefault(item.SeriesName, "")),
+					zap.String("Expected Series ID", OrDefault(item.SeriesId, "")),
+					zap.String("Expected Season Name", OrDefault(item.SeasonName, "")),
+					zap.String("Expected Season ID", OrDefault(item.SeasonId, "")),
 				)
 				continue
 			}
@@ -165,7 +165,7 @@ func updateSeriesWithEpisode(
 				continue
 			}
 			episodeItem := EpisodeItem{
-				Name:          OrDefault(item.Name, "Unknown"),
+				Name:          OrDefault(item.Name, ""),
 				AdditionDate:  OrDefault(item.DateCreated, time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)),
 				EpisodeNumber: OrDefault(item.IndexNumber, 0),
 			}
@@ -174,9 +174,9 @@ func updateSeriesWithEpisode(
 					"Found an episode with no addition date. This can lead to inaccuracy when detecting newly added media.",
 					zap.String("Episode ID", *item.Id),
 					zap.String("Episode Name", episodeItem.Name),
-					zap.String("Season Name", OrDefault(item.SeasonName, "Unknown")),
+					zap.String("Season Name", OrDefault(item.SeasonName, "")),
 					zap.String("Season ID", *item.SeasonId.Get()),
-					zap.String("Series Name", OrDefault(item.SeriesName, "Unknown")),
+					zap.String("Series Name", OrDefault(item.SeriesName, "")),
 					zap.String("Series ID", *item.SeriesId.Get()),
 				)
 			}
@@ -212,13 +212,13 @@ func (client *APIClient) getNewlyAddedSeriesByFolder(
 
 // fetchAndParseSeries resolves the folder ID by name, retrieves all
 // items for that folder from the Items API, and builds a structured
-// map of `SeriesItem` populated with seasons and episodes.
+// map of `seriesItem` populated with seasons and episodes.
 // Returns the resulting map or an error encountered while calling
 // the Items API.
 func (client *APIClient) fetchAndParseSeries(
 	folderName string,
 	app *app.ApplicationContext,
-) (map[string]SeriesItem, error) {
+) (map[string]seriesItem, error) {
 	folderID, err := client.ItemsAPI.GetRootFolderIDByName(folderName, app)
 	if err != nil {
 		return nil, err
@@ -237,12 +237,12 @@ func (client *APIClient) fetchAndParseSeries(
 }
 
 // buildNewlyAddedSeriesList walks the parsed series map and converts
-// each `SeriesItem` into a `NewlyAddedSeriesItem` using
+// each `seriesItem` into a `NewlyAddedSeriesItem` using
 // `createNewlyAddedSeriesItem`. Only series that are entirely new or
 // contain new seasons/episodes (after `minimumAdditionDate`) are
 // included in the returned slice.
 func (client *APIClient) buildNewlyAddedSeriesList(
-	seriesItem map[string]SeriesItem,
+	seriesItem map[string]seriesItem,
 	minimumAdditionDate time.Time,
 ) []NewlyAddedSeriesItem {
 	var newlyAddedSeries []NewlyAddedSeriesItem
@@ -259,12 +259,12 @@ func (client *APIClient) buildNewlyAddedSeriesList(
 }
 
 // createNewlyAddedSeriesItem builds a `NewlyAddedSeriesItem` from a
-// `SeriesItem`. If the series addition date is after the cutoff the
+// `seriesItem`. If the series addition date is after the cutoff the
 // series is marked as new. Otherwise the function scans seasons to
 // detect newly added seasons or episodes and populates `NewSeasons`.
 func (client *APIClient) createNewlyAddedSeriesItem(
 	seriesID string,
-	series SeriesItem,
+	series seriesItem,
 	minimumAdditionDate time.Time,
 ) NewlyAddedSeriesItem {
 	newSeries := NewlyAddedSeriesItem{
