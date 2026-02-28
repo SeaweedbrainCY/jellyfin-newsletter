@@ -13,6 +13,7 @@ other = "Attualmente disponibile su Jellyfin:"
 
 [movies]
 one = "Film"
+other = "Film"
 
 [episodes]
 other = "Episodi"
