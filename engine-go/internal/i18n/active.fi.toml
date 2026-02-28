@@ -1,1 +1,38 @@
 
+[discover_now]
+other = "Tutustu nyt"
+
+[new_film]
+other = "Uudet elokuvat:"
+
+[new_tvs]
+other = "Uudet sarjat:"
+
+[currently_available]
+other = "Tällä hetkellä saatavilla Jellyfinissä:"
+
+[movies]
+one = "Elokuva"
+other = "Elokuvat"
+
+[footer_label]
+other = "Saat tämän sähköpostin, koska käytät {{.JellyfinOwnerName}}:n Jellyfin-palvelinta. Jos haluat lopettaa näiden sähköpostien vastaanottamisen, voit peruuttaa tilauksen ilmoittamalla osoitteeseen {{.UnsubscribeEmail}}."
+
+[added_on]
+other = "Lisätty"
+
+[episodes]
+one = "Jakso"
+other = "Jaksot"
+
+[new_episodes]
+other = "uudet jaksot"
+
+[footer_project_open_source]
+other = "on avoimen lähdekoodin projekti."
+
+[footer_developed_by]
+other = "Kehitetty ❤️:lla <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> ja <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">yhteistyökumppanit</a>."
+
+[license_and_copyright]
+other = "Copyright © 2025 Nathan Stchepinsky, lisensoitu AGPLv3-lisenssillä."
