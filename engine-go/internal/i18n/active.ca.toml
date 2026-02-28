@@ -13,6 +13,7 @@ other = "Pel·lícules noves:"
 
 [movies]
 other = "Pel·lícules"
+one = "Pel·lícula"
 
 [episodes]
 other = "Episodis"
