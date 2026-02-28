@@ -1,1 +1,37 @@
 
+[discover_now]
+other = "גלה עכשיו"
+
+[new_film]
+other = "סרטים חדשים:\\u200f"
+
+[new_tvs]
+other = "סדרות חדשות:\\u200f"
+
+[currently_available]
+other = "זמין כעת בג'ליפין:\\u200f"
+
+[movies]
+other = "סרטים"
+
+[footer_label]
+other = "אתם מקבלים מייל זה משום שאתם משתמשים בשרת ג'ליפין של {{.JellyfinOwnerName}}. כדי להפסיק לקבל מיילים אלה, ניתן לבקש להסיר ב־{{.UnsubscribeEmail}}."
+
+[added_on]
+other = "נוסף בתאריך"
+
+[episodes]
+one = "פרק"
+other = "פרקים"
+
+[new_episodes]
+other = "פרקים חדשים"
+
+[footer_project_open_source]
+other = "הוא פרויקט קוד פתוח."
+
+[footer_developed_by]
+other = "פותח באהבה ❤️ על ידי <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> ו<a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">תורמים</a>."
+
+[license_and_copyright]
+other = "זכויות יוצרים © 2025 Nathan Stchepinsky, ברישיון AGPLv3."
