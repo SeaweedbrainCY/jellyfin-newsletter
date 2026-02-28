@@ -10,6 +10,7 @@ require (
 	github.com/go-playground/validator/v10 v10.29.0 // indirect
 	github.com/goccy/go-yaml v1.19.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/nicksnyder/go-i18n/v2 v2.6.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sj14/jellyfin-go v0.4.2 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
