@@ -1,0 +1,38 @@
+
+[discover_now]
+other = "Descobreix ara"
+
+[new_tvs]
+other = "Sèries noves:"
+
+[currently_available]
+other = "Disponible actualment a Jellyfin:"
+
+[new_film]
+other = "Pel·lícules noves:"
+
+[movies]
+other = "Pel·lícules"
+one = "Pel·lícula"
+
+[episodes]
+other = "Episodis"
+one = "Episodi"
+
+[new_episodes]
+other = "episodis nous"
+
+[footer_project_open_source]
+other = "és un projecte de codi obert."
+
+[footer_developed_by]
+other = "Desenvolupat amb ❤️ per <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> i <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">els col·laboradors</a>."
+
+[license_and_copyright]
+other = "Copyright © 2025 Nathan Stchepinsky, amb llicència AGPLv3."
+
+[footer_label]
+other = "Rebeu aquest correu electrònic perquè utilitzeu el servidor Jellyfin de {{.JellyfinOwnerName}}. Si no voleu rebre més aquests correus, podeu donar-vos de baixa notificant-ho a {{.UnsubscribeEmail}}."
+
+[added_on]
+other = "Afegit el"
