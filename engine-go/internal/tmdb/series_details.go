@@ -53,5 +53,4 @@ func EnrichSeriesItem(
 
 	jellyfinSeriesItem.Overview = details.Overview
 	jellyfinSeriesItem.PosterURL = details.PosterURL
-	return
 }

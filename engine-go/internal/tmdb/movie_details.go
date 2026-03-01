@@ -52,5 +52,4 @@ func EnrichMovieItem(
 	details := getItemDetailsFromSearchResult(searchResult)
 	jellyfinMovieItem.Overview = details.Overview
 	jellyfinMovieItem.PosterURL = details.PosterURL
-	return
 }
