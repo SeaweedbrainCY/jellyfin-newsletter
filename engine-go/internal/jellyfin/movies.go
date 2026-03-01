@@ -13,6 +13,8 @@ type MovieItem struct {
 	AdditionDate   *time.Time
 	TMDBId         string
 	ProductionYear int32
+	Overview       string // Will be populated with tmdb
+	PosterURL      string // Will be populated with tmdb
 }
 
 // GetRecentlyAddedMovies aggregates recently added movies from all

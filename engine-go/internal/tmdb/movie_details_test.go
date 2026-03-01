@@ -207,14 +207,14 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 			app := app.ApplicationContext{
 				Logger: logger,
 			}
-			movieDetails := GetMovieDetails(client, jellyfinMovieItem, app)
+			EnrichMovieItem(&jellyfinMovieItem, client, app)
 			if testCase.expectErr {
 				assert.NotEmpty(t, recordedLogs.All())
 			} else {
 				require.Empty(t, recordedLogs.All())
 			}
-			assert.Equal(t, testCase.expectedOverview, movieDetails.Overview)
-			assert.Equal(t, testCase.expectedPosterPath, movieDetails.PosterURL)
+			assert.Equal(t, testCase.expectedOverview, jellyfinMovieItem.Overview)
+			assert.Equal(t, testCase.expectedPosterPath, jellyfinMovieItem.PosterURL)
 		})
 	}
 }
@@ -436,14 +436,14 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 			app := app.ApplicationContext{
 				Logger: logger,
 			}
-			movieDetails := GetMovieDetails(client, jellyfinMovieItem, app)
+			EnrichMovieItem(&jellyfinMovieItem, client, app)
 			if testCase.expectErr {
 				assert.NotEmpty(t, recordedLogs.All())
 			} else {
 				require.Empty(t, recordedLogs.All())
 			}
-			assert.Equal(t, testCase.expectedOverview, movieDetails.Overview)
-			assert.Equal(t, testCase.expectedPosterPath, movieDetails.PosterURL)
+			assert.Equal(t, testCase.expectedOverview, jellyfinMovieItem.Overview)
+			assert.Equal(t, testCase.expectedPosterPath, jellyfinMovieItem.PosterURL)
 		})
 	}
 }

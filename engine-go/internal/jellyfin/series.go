@@ -38,6 +38,8 @@ type NewlyAddedSeriesItem struct {
 	TMDBId         string
 	ProductionYear int
 	AdditionDate   time.Time
+	Overview       string // Will be populated with tmdb
+	PosterURL      string // Will be populated with tmdb
 }
 
 // parseSeriesItems scans a slice of Jellyfin BaseItemDto and extracts

@@ -207,14 +207,14 @@ func TestGetSeriesDetailsWithTMDBID(t *testing.T) {
 			app := app.ApplicationContext{
 				Logger: logger,
 			}
-			seriesDetails := GetSeriesDetails(client, jellyfinSeriesItem, app)
+			EnrichSeriesItem(&jellyfinSeriesItem, client, app)
 			if testCase.expectErr {
 				assert.NotEmpty(t, recordedLogs.All())
 			} else {
 				require.Empty(t, recordedLogs.All())
 			}
-			assert.Equal(t, testCase.expectedOverview, seriesDetails.Overview)
-			assert.Equal(t, testCase.expectedPosterPath, seriesDetails.PosterURL)
+			assert.Equal(t, testCase.expectedOverview, jellyfinSeriesItem.Overview)
+			assert.Equal(t, testCase.expectedPosterPath, jellyfinSeriesItem.PosterURL)
 		})
 	}
 }
@@ -436,14 +436,14 @@ func TestGetSeriesDetailsWithSearchByName(t *testing.T) {
 			app := app.ApplicationContext{
 				Logger: logger,
 			}
-			seriesDetails := GetSeriesDetails(client, jellyfinSeriesItem, app)
+			EnrichSeriesItem(&jellyfinSeriesItem, client, app)
 			if testCase.expectErr {
 				assert.NotEmpty(t, recordedLogs.All())
 			} else {
 				require.Empty(t, recordedLogs.All())
 			}
-			assert.Equal(t, testCase.expectedOverview, seriesDetails.Overview)
-			assert.Equal(t, testCase.expectedPosterPath, seriesDetails.PosterURL)
+			assert.Equal(t, testCase.expectedOverview, jellyfinSeriesItem.Overview)
+			assert.Equal(t, testCase.expectedPosterPath, jellyfinSeriesItem.PosterURL)
 		})
 	}
 }
