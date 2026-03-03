@@ -24,6 +24,10 @@ other = "Added on"
 one = "Episode"
 other = "Episodes"
 
+[season]
+one = "Season"
+other = "Seasons"
+
 [new_episodes]
 other = "new episodes"
 
