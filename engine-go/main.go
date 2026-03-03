@@ -6,6 +6,7 @@ import (
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
 	"go.uber.org/zap"
@@ -27,7 +28,9 @@ func main() {
 		panic("an error occured while loading logger : " + err.Error())
 	}
 
-	app := app.InitApplicationContext(config, logger)
+	localizer := i18n.NewLocalizer(config.EmailTemplate.Language)
+
+	app := app.InitApplicationContext(config, logger, localizer)
 
 	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
 	app.Logger.Info("Configuration loaded successfully")

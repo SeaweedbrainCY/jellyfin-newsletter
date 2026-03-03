@@ -2,12 +2,18 @@ package app
 
 import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"go.uber.org/zap"
 )
 
-func InitApplicationContext(config *config.Configuration, logger *zap.Logger) *ApplicationContext {
+func InitApplicationContext(
+	config *config.Configuration,
+	logger *zap.Logger,
+	localizer *i18n.Localizer,
+) *ApplicationContext {
 	return &ApplicationContext{
-		Logger: logger,
-		Config: config,
+		Logger:    logger,
+		Config:    config,
+		Localizer: localizer,
 	}
 }
