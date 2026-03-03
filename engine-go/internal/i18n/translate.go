@@ -8,7 +8,11 @@ import (
 	"golang.org/x/text/language"
 )
 
-func NewLocalizer(lang string) *i18n.Localizer {
+type Localizer struct {
+	*i18n.Localizer
+}
+
+func NewLocalizer(lang string) *Localizer {
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 
@@ -18,5 +22,19 @@ func NewLocalizer(lang string) *i18n.Localizer {
 		bundle.LoadMessageFileFS(translationFS, "internal/i18n/"+e.Name())
 	}
 
-	return i18n.NewLocalizer(bundle, lang, "en")
+	return &Localizer{
+		i18n.NewLocalizer(bundle, lang, "en"),
+	}
+}
+
+func (l *Localizer) Localize(keyName string) string {
+	translation, err := l.Localizer.Localize(&i18n.LocalizeConfig{
+		MessageID: keyName,
+	})
+
+	if err != nil {
+		return "{" + keyName + "}"
+	}
+
+	return translation
 }
