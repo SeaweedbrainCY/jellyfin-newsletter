@@ -27,9 +27,10 @@ func NewLocalizer(lang string) *Localizer {
 	}
 }
 
-func (l *Localizer) Localize(keyName string) string {
+func (l *Localizer) Localize(keyName string, PluralCount int) string {
 	translation, err := l.Localizer.Localize(&i18n.LocalizeConfig{
-		MessageID: keyName,
+		MessageID:   keyName,
+		PluralCount: PluralCount,
 	})
 
 	if err != nil {
