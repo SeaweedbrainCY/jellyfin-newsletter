@@ -1,25 +1,29 @@
 package template
 
 import (
+	"bytes"
 	"fmt"
-	"os"
+	"html/template"
 	"path/filepath"
+	"slices"
 	"sort"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"go.uber.org/zap"
 )
 
-type NewMovieItemTemplateData struct {
+type newMovieItemTemplateData struct {
 	PosterURL    string
 	Name         string
 	AddedOnLabel string
 	AdditionDate string
 	Overview     string
 }
-type NewSeriesItemTemplateData struct {
+type newSeriesItemTemplateData struct {
 	PosterURL      string
 	SeriesName     string
 	AddedOnLabel   string
@@ -28,7 +32,7 @@ type NewSeriesItemTemplateData struct {
 	NewSeriesTitle string
 }
 
-type NewMediaTemplateData struct {
+type newMediaTemplateData struct {
 	HTMLLang                     string
 	HTMLDir                      string
 	Title                        string
@@ -37,10 +41,10 @@ type NewMediaTemplateData struct {
 	DiscoverNowLabel             string
 	DisplayNewMovies             bool
 	NewFilmLabel                 string
-	NewMovies                    []NewMovieItemTemplateData
+	NewMovies                    []newMovieItemTemplateData
 	DisplayNewSeries             bool
 	NewSeriesLabel               string
-	NewSeries                    []NewSeriesItemTemplateData
+	NewSeries                    []newSeriesItemTemplateData
 	CurrentlyAvailableLabel      string
 	MoviesCount                  string
 	MoviesLabel                  string
@@ -53,9 +57,24 @@ type NewMediaTemplateData struct {
 	FooterLicenceAndCopyright    string
 }
 
-func getNewMediaHTMLTemplate(themes_type string, app *app.ApplicationContext) (string, error) {
+type titlePlaceholders struct {
+	Date             string
+	DayName          string
+	DayNumber        string
+	MonthName        string
+	MonthNumber      string
+	Year             string
+	StartDate        string
+	StartDayName     string
+	StartDayNumber   string
+	StartMonthName   string
+	StartMonthNumber string
+	StartYear        string
+}
+
+func getNewMediaHTMLTemplate(themes_type string, app *app.ApplicationContext) (*template.Template, error) {
 	filePath := filepath.Join("themes", themes_type, app.Config.EmailTemplate.Theme)
-	template, err := os.ReadFile(filePath)
+	tmpl, err := template.ParseFiles(filePath)
 
 	if err != nil {
 		app.Logger.Error(
