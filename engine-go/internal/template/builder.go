@@ -82,10 +82,10 @@ func getNewMediaHTMLTemplate(themes_type string, app *app.ApplicationContext) (*
 			zap.String("filePath", filePath),
 			zap.Error(err),
 		)
-		return "", err
+		return nil, err
 	}
 
-	return string(template), nil
+	return tmpl, nil
 }
 
 // compressNumbers converts [1 2 3 6 7 9] → "1-3 & 6-7 & 9".
@@ -169,45 +169,156 @@ func buildNewSeriesItemFromSeriesNewItems(item jellyfin.NewlyAddedSeriesItem, ap
 	return title
 }
 
+func buildStringTemplateWithPlaceholders(titleTemplate string, observedPeriodDays int) string {
+	today := time.Now()
+	todayDayNumber := today.Format("2")
+	todayMonthNumber := today.Format("1")
+
+	startDate := time.Now().Add(time.Duration(observedPeriodDays) * -1)
+	startDayNumber := startDate.Format("2")
+	startMonthNumber := startDate.Format("1")
+
+	daysName := map[string]string{
+		"1": "monday",
+		"2": "tuesday",
+		"3": "wednesday",
+		"4": "thursday",
+		"5": "friday",
+		"6": "saturday",
+		"7": "sunday",
+	}
+
+	monthsName := map[string]string{
+		"1":  "january",
+		"2":  "february",
+		"3":  "march",
+		"4":  "april",
+		"5":  "may",
+		"6":  "june",
+		"7":  "july",
+		"8":  "august",
+		"9":  "september",
+		"10": "october",
+		"11": "november",
+		"12": "december",
+	}
+
+	placeholders := titlePlaceholders{
+		Date:             today.Format("2006-01-02"),
+		DayName:          daysName[todayDayNumber],
+		DayNumber:        todayDayNumber,
+		MonthName:        monthsName[todayMonthNumber],
+		MonthNumber:      todayMonthNumber,
+		Year:             today.Format("2006"),
+		StartDate:        startDate.Format("2006-01-02"),
+		StartDayName:     daysName[startDayNumber],
+		StartDayNumber:   todayDayNumber,
+		StartMonthName:   monthsName[startMonthNumber],
+		StartMonthNumber: todayMonthNumber,
+		StartYear:        startDate.Format("2006"),
+	}
+
+	tmpl := template.Must(template.New("title").Parse(titleTemplate))
+	var buf bytes.Buffer
+	tmpl.Execute(&buf, placeholders)
+
+	return buf.String()
+}
+
 func buildNewMediaTemplateData(
 	newMovies *[]jellyfin.MovieItem,
 	newSeries *[]jellyfin.NewlyAddedSeriesItem,
-	app *app.ApplicationContext) NewMediaTemplateData {
-	newMoviesData := []NewMovieItemTemplateData{}
-	newSeriesData := []NewSeriesItemTemplateData{}
+	movieCount int32,
+	episodesCount int32,
+	app *app.ApplicationContext) newMediaTemplateData {
+	newMoviesData := []newMovieItemTemplateData{}
+	newSeriesData := []newSeriesItemTemplateData{}
+
+	HTMLdir := "ltr"
+	if slices.Contains(
+		[]string{"ar", "he", "fa", "ur", "ku", "ps", "yi", "dv", "qrc"},
+		app.Config.EmailTemplate.Language,
+	) {
+		HTMLdir = "rtl"
+	}
 
 	for _, newMovieItem := range *newMovies {
-		newMoviesData = append(newMoviesData, NewMovieItemTemplateData{
+		newMoviesData = append(newMoviesData, newMovieItemTemplateData{
 			PosterURL:    newMovieItem.PosterURL,
 			Name:         newMovieItem.Name,
 			AdditionDate: newMovieItem.AdditionDate.Format("2006-01-02"),
 			Overview:     newMovieItem.Overview,
-			AddedOnLabel: app.Localizer.Localize("added_on", 1),
+			AddedOnLabel: app.Localizer.Localize("added_on"),
 		})
 	}
 
 	for _, newSeriesItem := range *newSeries {
-		newSeriesData = append(newSeriesData, NewSeriesItemTemplateData{
+		newSeriesData = append(newSeriesData, newSeriesItemTemplateData{
 			PosterURL:      newSeriesItem.PosterURL,
 			SeriesName:     newSeriesItem.SeriesName,
-			AddedOnLabel:   app.Localizer.Localize("added_on", 1),
+			AddedOnLabel:   app.Localizer.Localize("added_on"),
 			AdditionDate:   newSeriesItem.AdditionDate.Format("2006-01-02"),
 			Overview:       newSeriesItem.Overview,
 			NewSeriesTitle: buildNewSeriesItemFromSeriesNewItems(newSeriesItem, app),
 		})
+	}
+
+	return newMediaTemplateData{
+		HTMLLang: app.Config.EmailTemplate.Language,
+		HTMLDir:  HTMLdir,
+		Title: buildStringTemplateWithPlaceholders(
+			app.Config.EmailTemplate.Title,
+			app.Config.Jellyfin.ObservedPeriodDays,
+		),
+		Subtitle: buildStringTemplateWithPlaceholders(
+			app.Config.EmailTemplate.Subtitle,
+			app.Config.Jellyfin.ObservedPeriodDays,
+		),
+		JellyfinURL:                  app.Config.EmailTemplate.JellyfinURL,
+		DiscoverNowLabel:             app.Localizer.Localize("discover_now"),
+		DisplayNewMovies:             len(newMoviesData) > 0,
+		NewFilmLabel:                 app.Localizer.Localize("new_film"),
+		NewMovies:                    newMoviesData,
+		DisplayNewSeries:             len(newSeriesData) > 0,
+		NewSeriesLabel:               app.Localizer.Localize("new_tvs"),
+		NewSeries:                    newSeriesData,
+		CurrentlyAvailableLabel:      app.Localizer.Localize("currently_available"),
+		MoviesCount:                  strconv.Itoa(int(movieCount)),
+		SeriesCount:                  strconv.Itoa(int(episodesCount)),
+		MoviesLabel:                  app.Localizer.Localize("movies", int(movieCount)),
+		SeriesLabel:                  app.Localizer.Localize("episode", int(episodesCount)),
+		FooterLabel:                  app.Localizer.Localize("footer_label"),
+		FooterProjectLinkLabel:       "Jellyfin Newsletter",
+		FooterOpenSourceProjectLabel: app.Localizer.Localize("footer_project_open_source"),
+		FooterDevelopedByLabel:       app.Localizer.Localize("footer_developed_by"),
+		FooterLicenceAndCopyright:    app.Localizer.Localize("license_and_copyright"),
 	}
 }
 
 func BuildNewMediaEmailHTML(
 	newMovies *[]jellyfin.MovieItem,
 	newSeries *[]jellyfin.NewlyAddedSeriesItem,
+	movieCount int32,
+	episodesCount int32,
 	app *app.ApplicationContext,
 ) (string, error) {
-	template, err := getNewMediaHTMLTemplate("new_media", app)
+	tmpl, err := getNewMediaHTMLTemplate("new_media", app)
 
 	if err != nil {
 		// Error already logged
 		return "", err
 	}
+
+	tmplData := buildNewMediaTemplateData(newMovies, newSeries, movieCount, episodesCount, app)
+
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, tmplData)
+
+	if err != nil {
+		app.Logger.Error("An error occurred while populating the email HTML template", zap.Error(err))
+		return "", err
+	}
+
+	return buf.String(), nil
 
 }
