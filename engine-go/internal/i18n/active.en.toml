@@ -39,3 +39,60 @@ other = "Developed with ❤️ by <a href=\"https://github.com/SeaweedbrainCY/\"
 
 [license_and_copyright]
 other = "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3."
+
+[monday]
+other = "Monday"
+
+[tuesday]
+other = "Tuesday"
+
+[wednesday]
+other = "Wednesday"
+
+[thursday]
+other = "Thursday"
+
+[friday]
+other = "Friday"
+
+[saturday]
+other = "Saturday"
+
+[sunday]
+other = "Sunday"
+
+[january]
+other = "January"
+
+[february]
+other = "February"
+
+[march]
+other = "March"
+
+[april]
+other = "April"
+
+[may]
+other = "May"
+
+[june]
+other = "June"
+
+[july]
+other = "July"
+
+[august]
+other = "August"
+
+[september]
+other = "September"
+
+[october]
+other = "October"
+
+[november]
+other = "November"
+
+[december]
+other = "December"
