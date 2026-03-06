@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"slices"
+	"strings"
 
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
 	"github.com/go-playground/validator/v10"
 	"github.com/goccy/go-yaml"
 )
@@ -105,6 +109,24 @@ func buildTMDBConfig(yamlParsedConfig *yamlConfiguration) TMDBConfig {
 	}
 }
 
+// If the theme file is not available, panics.
+func checkIfThemeAvailable(themeName string) {
+	filePath := filepath.Join("themes", "new_media", themeName, themeName+".html")
+	if _, err := os.Stat(filePath); err != nil {
+		panic(
+			"The theme you choose (" + themeName + ") doesn't exist or is not usable right now. Error: " + err.Error(),
+		)
+	}
+}
+
+// Checks if the provided language is currently supported. If not, panics.
+func checkIfLangIsSupported(lang string) {
+	supportedLang := i18n.GetSupportedLang()
+	if !slices.Contains(supportedLang, lang) {
+		panic(lang + " is not a supported language. Supported languages are: " + strings.Join(supportedLang, ", "))
+	}
+}
+
 func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplateConfig {
 	const defaultDisplayOverviewMaxItem int = 10
 
@@ -121,7 +143,10 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplate
 		SortMode:                "date_desc",
 	}
 
+	checkIfLangIsSupported(emailTemplateConfig.Language)
+
 	if yamlParsedConfig.EmailTemplate.Theme != "" {
+		checkIfThemeAvailable(yamlParsedConfig.EmailTemplate.Theme)
 		emailTemplateConfig.Theme = yamlParsedConfig.EmailTemplate.Theme
 	}
 
