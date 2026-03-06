@@ -2,6 +2,7 @@ package template
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"html/template"
 	"path/filepath"
@@ -15,6 +16,9 @@ import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"go.uber.org/zap"
 )
+
+//go:embed themes
+var themeFS embed.FS
 
 type newMovieItemTemplateData struct {
 	PosterURL    string
@@ -77,9 +81,31 @@ type footerTemplateData struct {
 	unsubscribeEmail string
 }
 
-func getNewMediaHTMLTemplate(themes_type string, app *app.ApplicationContext) (*template.Template, error) {
-	filePath := filepath.Join("themes", themes_type, app.Config.EmailTemplate.Theme)
-	tmpl, err := template.ParseFiles(filePath)
+// CheckIfThemeIsAvailable: If themes not available, panics.
+func CheckIfThemeIsAvailable(app *app.ApplicationContext) {
+	filePath := filepath.Join(
+		"themes",
+		"new_media",
+		app.Config.EmailTemplate.Theme,
+		app.Config.EmailTemplate.Theme+".html",
+	)
+	if _, err := template.ParseFS(themeFS, filePath); err != nil {
+		app.Logger.Fatal(
+			"Chosen theme doesn't exist or is not usable right now.",
+			zap.String("Theme name", app.Config.EmailTemplate.Theme),
+			zap.Error(err),
+		)
+	}
+}
+
+func getNewMediaHTMLTemplate(themesType string, app *app.ApplicationContext) (*template.Template, error) {
+	filePath := filepath.Join(
+		"themes",
+		themesType,
+		app.Config.EmailTemplate.Theme,
+		app.Config.EmailTemplate.Theme+".html",
+	)
+	tmpl, err := template.ParseFS(themeFS, filePath)
 
 	if err != nil {
 		app.Logger.Error(
