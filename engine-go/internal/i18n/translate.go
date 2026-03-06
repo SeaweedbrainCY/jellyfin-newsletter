@@ -12,14 +12,33 @@ type Localizer struct {
 	*i18n.Localizer
 }
 
+//go:embed *.toml
+var translationFS embed.FS
+
+func GetSupportedLang() []string {
+	bundle := i18n.NewBundle(language.English)
+	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+
+	entries, _ := translationFS.ReadDir(".")
+	for _, e := range entries {
+		bundle.LoadMessageFileFS(translationFS, e.Name())
+	}
+
+	supportedLangs := []string{}
+
+	for _, t := range bundle.LanguageTags() {
+		supportedLangs = append(supportedLangs, t.String())
+	}
+	return supportedLangs
+}
+
 func NewLocalizer(lang string) *Localizer {
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 
-	var translationFS embed.FS
-	entries, _ := translationFS.ReadDir("internal/i18n")
+	entries, _ := translationFS.ReadDir(".")
 	for _, e := range entries {
-		bundle.LoadMessageFileFS(translationFS, "internal/i18n/"+e.Name())
+		bundle.LoadMessageFileFS(translationFS, e.Name())
 	}
 
 	return &Localizer{
