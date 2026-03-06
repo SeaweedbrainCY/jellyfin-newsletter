@@ -9,6 +9,7 @@ import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
 	"go.uber.org/zap"
 )
 
@@ -31,6 +32,7 @@ func main() {
 	localizer := i18n.NewLocalizer(config.EmailTemplate.Language)
 
 	app := app.InitApplicationContext(config, logger, localizer)
+	template.CheckIfThemeIsAvailable(app)
 
 	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
 	app.Logger.Info("Configuration loaded successfully")

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"slices"
 	"strings"
 
@@ -109,16 +108,6 @@ func buildTMDBConfig(yamlParsedConfig *yamlConfiguration) TMDBConfig {
 	}
 }
 
-// If the theme file is not available, panics.
-func checkIfThemeAvailable(themeName string) {
-	filePath := filepath.Join("themes", "new_media", themeName, themeName+".html")
-	if _, err := os.Stat(filePath); err != nil {
-		panic(
-			"The theme you choose (" + themeName + ") doesn't exist or is not usable right now. Error: " + err.Error(),
-		)
-	}
-}
-
 // Checks if the provided language is currently supported. If not, panics.
 func checkIfLangIsSupported(lang string) {
 	supportedLang := i18n.GetSupportedLang()
@@ -146,8 +135,8 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplate
 	checkIfLangIsSupported(emailTemplateConfig.Language)
 
 	if yamlParsedConfig.EmailTemplate.Theme != "" {
-		checkIfThemeAvailable(yamlParsedConfig.EmailTemplate.Theme)
 		emailTemplateConfig.Theme = yamlParsedConfig.EmailTemplate.Theme
+		// Theme availability will be tested by main
 	}
 
 	if yamlParsedConfig.EmailTemplate.DisplayOverviewMaxItems != nil {
