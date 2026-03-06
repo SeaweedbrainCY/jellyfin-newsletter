@@ -72,6 +72,11 @@ type titlePlaceholders struct {
 	StartYear        string
 }
 
+type footerTemplateData struct {
+	ownerName        string
+	unsubscribeEmail string
+}
+
 func getNewMediaHTMLTemplate(themes_type string, app *app.ApplicationContext) (*template.Template, error) {
 	filePath := filepath.Join("themes", themes_type, app.Config.EmailTemplate.Theme)
 	tmpl, err := template.ParseFiles(filePath)
@@ -225,6 +230,18 @@ func buildStringTemplateWithPlaceholders(titleTemplate string, observedPeriodDay
 	return buf.String()
 }
 
+func buildFooterLabel(label string, app *app.ApplicationContext) string {
+	footerData := footerTemplateData{
+		ownerName:        app.Config.EmailTemplate.JellyfinOwnerName,
+		unsubscribeEmail: app.Config.EmailTemplate.UnsubscribeEmail,
+	}
+	tmpl := template.Must(template.New("footer").Parse(label))
+	var buf bytes.Buffer
+	tmpl.Execute(&buf, footerData)
+
+	return buf.String()
+}
+
 func buildNewMediaTemplateData(
 	newMovies *[]jellyfin.MovieItem,
 	newSeries *[]jellyfin.NewlyAddedSeriesItem,
@@ -287,7 +304,7 @@ func buildNewMediaTemplateData(
 		SeriesCount:                  strconv.Itoa(int(episodesCount)),
 		MoviesLabel:                  app.Localizer.Localize("movies", int(movieCount)),
 		SeriesLabel:                  app.Localizer.Localize("episode", int(episodesCount)),
-		FooterLabel:                  app.Localizer.Localize("footer_label"),
+		FooterLabel:                  buildFooterLabel(app.Localizer.Localize("footer_label"), app),
 		FooterProjectLinkLabel:       "Jellyfin Newsletter",
 		FooterOpenSourceProjectLabel: app.Localizer.Localize("footer_project_open_source"),
 		FooterDevelopedByLabel:       app.Localizer.Localize("footer_developed_by"),
@@ -320,5 +337,4 @@ func BuildNewMediaEmailHTML(
 	}
 
 	return buf.String(), nil
-
 }
