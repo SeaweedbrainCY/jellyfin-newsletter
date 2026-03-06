@@ -34,7 +34,6 @@ type EmailTemplateConfig struct {
 	JellyfinOwnerName       string
 	DisplayOverviewMaxItems int
 	SortMode                string
-	AvailableLanguages      []string
 }
 
 type SMTPConfig struct {

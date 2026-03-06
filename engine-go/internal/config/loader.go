@@ -119,7 +119,6 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplate
 		Theme:                   "classic",
 		DisplayOverviewMaxItems: defaultDisplayOverviewMaxItem,
 		SortMode:                "date_desc",
-		AvailableLanguages:      []string{"en", "fr", "he", "ca", "es", "it"},
 	}
 
 	if yamlParsedConfig.EmailTemplate.Theme != "" {
