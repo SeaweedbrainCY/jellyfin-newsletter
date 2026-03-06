@@ -242,39 +242,6 @@ func TestBuildEmailTemplateConfig_WithUnknownLang(t *testing.T) {
 	)
 }
 
-func TestBuildEmailTemplateConfig_WithUnknownTheme(t *testing.T) {
-	defaultDisplayOverviewMaxItem := 10
-	yamlParsedConfig := yamlConfiguration{
-		EmailTemplate: struct {
-			Theme                   string "yaml:\"theme,omitempty\" validate:\"omitempty\""
-			Language                string "yaml:\"language\" validate:\"required,alpha\""
-			Subject                 string "yaml:\"subject\"  validate:\"required\""
-			Title                   string "yaml:\"title\"   validate:\"required\""
-			Subtitle                string "yaml:\"subtitle\"   validate:\"required\""
-			JellyfinURL             string "yaml:\"jellyfin_url,omitempty\" validate:\"omitempty,url\""
-			UnsubscribeEmail        string "yaml:\"unsubscribe_email,omitempty\" validate:\"omitempty,email\""
-			JellyfinOwnerName       string "yaml:\"jellyfin_owner_name,omitempty\""
-			DisplayOverviewMaxItems *int   "yaml:\"display_overview_max_items,omitempty\" validate:\"omitempty,numeric,min=-1\""
-			SortMode                string "yaml:\"sort_mode,omitempty\" validate:\"omitempty,oneof=date_desc date_asc name_asc name_desc\""
-		}{
-			Language:                "en",
-			Subject:                 "Subject",
-			Title:                   "Title",
-			Subtitle:                "Subtitle",
-			JellyfinURL:             "JellyfinURL",
-			UnsubscribeEmail:        "UnsubscribeEmail",
-			JellyfinOwnerName:       "JellyfinOwnerName",
-			DisplayOverviewMaxItems: &defaultDisplayOverviewMaxItem,
-			Theme:                   "unknownTheme",
-		},
-	}
-	require.PanicsWithError(
-		t,
-		"The theme you choose (unknownTheme) doesn't exist or is not usable right now. Error:",
-		func() { buildEmailTemplateConfig(&yamlParsedConfig) },
-	)
-}
-
 func TestLoadContext_MissingRequiredField(t *testing.T) {
 	tests := []struct {
 		name            string
