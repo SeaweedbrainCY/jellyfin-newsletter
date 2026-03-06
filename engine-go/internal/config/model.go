@@ -85,7 +85,7 @@ type yamlConfiguration struct {
 		APIKey Secret `yaml:"api_key" validate:"required,jwt"`
 	} `yaml:"tmdb"                validate:"required"`
 	EmailTemplate struct {
-		Theme                   string `yaml:"theme,omitempty" validate:"omitempty,oneof=classic"`
+		Theme                   string `yaml:"theme,omitempty" validate:"omitempty"`
 		Language                string `yaml:"language" validate:"required,alpha"`
 		Subject                 string `yaml:"subject"  validate:"required"`
 		Title                   string `yaml:"title"   validate:"required"`
