@@ -210,21 +210,9 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(t, "user2@example.com", config.EmailRecipients[1])
 }
 
-func TestBuildEmailTemplateConfig_WithUnknownLang(t *testing.T) {
-	defaultDisplayOverviewMaxItem := 10
-	yamlParsedConfig := yamlConfiguration{
-		EmailTemplate: struct {
-			Theme                   string "yaml:\"theme,omitempty\" validate:\"omitempty\""
-			Language                string "yaml:\"language\" validate:\"required,alpha\""
-			Subject                 string "yaml:\"subject\"  validate:\"required\""
-			Title                   string "yaml:\"title\"   validate:\"required\""
-			Subtitle                string "yaml:\"subtitle\"   validate:\"required\""
-			JellyfinURL             string "yaml:\"jellyfin_url,omitempty\" validate:\"omitempty,url\""
-			UnsubscribeEmail        string "yaml:\"unsubscribe_email,omitempty\" validate:\"omitempty,email\""
-			JellyfinOwnerName       string "yaml:\"jellyfin_owner_name,omitempty\""
-			DisplayOverviewMaxItems *int   "yaml:\"display_overview_max_items,omitempty\" validate:\"omitempty,numeric,min=-1\""
-			SortMode                string "yaml:\"sort_mode,omitempty\" validate:\"omitempty,oneof=date_desc date_asc name_asc name_desc\""
-		}{
+func TestTestConfig_WithUnknownLang(t *testing.T) {
+	conf := Configuration{
+		EmailTemplate: EmailTemplateConfig{
 			Language:                "zz",
 			Subject:                 "Subject",
 			Title:                   "Title",
@@ -232,14 +220,13 @@ func TestBuildEmailTemplateConfig_WithUnknownLang(t *testing.T) {
 			JellyfinURL:             "JellyfinURL",
 			UnsubscribeEmail:        "UnsubscribeEmail",
 			JellyfinOwnerName:       "JellyfinOwnerName",
-			DisplayOverviewMaxItems: &defaultDisplayOverviewMaxItem,
+			DisplayOverviewMaxItems: 10,
 		},
 	}
-	require.PanicsWithError(
-		t,
-		"zz is not a supported language.",
-		func() { buildEmailTemplateConfig(&yamlParsedConfig) },
-	)
+
+	err := testConfig(&conf)
+
+	assert.Error(t, err)
 }
 
 func TestLoadContext_MissingRequiredField(t *testing.T) {
