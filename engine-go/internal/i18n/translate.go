@@ -2,6 +2,8 @@ package i18n
 
 import (
 	"embed"
+	"errors"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -15,23 +17,6 @@ type Localizer struct {
 //go:embed *.toml
 var translationFS embed.FS
 
-func GetSupportedLang() []string {
-	bundle := i18n.NewBundle(language.English)
-	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
-
-	entries, _ := translationFS.ReadDir(".")
-	for _, e := range entries {
-		bundle.LoadMessageFileFS(translationFS, e.Name())
-	}
-
-	supportedLangs := []string{}
-
-	for _, t := range bundle.LanguageTags() {
-		supportedLangs = append(supportedLangs, t.String())
-	}
-	return supportedLangs
-}
-
 func NewLocalizer(lang string) (*Localizer, error) {
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
@@ -44,9 +29,22 @@ func NewLocalizer(lang string) (*Localizer, error) {
 		bundle.LoadMessageFileFS(translationFS, e.Name())
 	}
 
+	supportedLangs := []string{}
+	isLangAvailable := false
+	for _, t := range bundle.LanguageTags() {
+		supportedLangs = append(supportedLangs, t.String())
+		if t.String() == lang {
+			isLangAvailable = true
+		}
+	}
+
+	if !isLangAvailable {
+		err = errors.New(lang + " is not a supported language. Supported languages are " + strings.Join(supportedLangs, ", "))
+	}
+
 	return &Localizer{
 		i18n.NewLocalizer(bundle, lang, "en"),
-	}, nil
+	}, err
 }
 
 func (l *Localizer) Localize(keyName string, pluralCount ...int) string {
