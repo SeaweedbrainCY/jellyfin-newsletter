@@ -48,16 +48,20 @@ func NewLocalizer(lang string) (*Localizer, error) {
 }
 
 func (l *Localizer) Localize(keyName string, pluralCount ...int) string {
-	count := 1 // default
-	if len(pluralCount) > 0 {
-		count = pluralCount[0]
+	localizeConfig := &i18n.LocalizeConfig{
+		MessageID: keyName,
 	}
-	translation, err := l.Localizer.Localize(&i18n.LocalizeConfig{
-		MessageID:   keyName,
-		PluralCount: count,
-	})
 
-	if err != nil {
+	if len(pluralCount) > 0 {
+		localizeConfig.PluralCount = pluralCount[0]
+	}
+
+	translation, _ := l.Localizer.Localize(localizeConfig)
+
+	// i18n does its best to return a string. If there is a risk its grammatically incorrect, it will return an err and return a fallback string.
+	// example https://github.com/nicksnyder/go-i18n/issues/241
+	// For Jellyfin-Newsletter we prefer to have something incorrect but to have a string anyway instead of the placeholder.
+	if translation == "" {
 		return "{" + keyName + "}"
 	}
 
