@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -15,9 +16,26 @@ import (
 func LoadConfig(configPath string) (*Configuration, error) {
 	file, err := os.Open(configPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read configuration file: %w", err)
+		return nil, err
 	}
-	return loadConfigFromReader(file)
+	conf, err := loadConfigFromReader(file)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := testConfig(conf); err != nil {
+		return nil, err
+	}
+
+	return conf, nil
+}
+
+func testConfig(conf *Configuration) error {
+	err := checkIfLangIsSupported(conf.EmailTemplate.Language)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func loadConfigFromReader(r io.Reader) (*Configuration, error) {
@@ -109,11 +127,14 @@ func buildTMDBConfig(yamlParsedConfig *yamlConfiguration) TMDBConfig {
 }
 
 // Checks if the provided language is currently supported. If not, panics.
-func checkIfLangIsSupported(lang string) {
+func checkIfLangIsSupported(lang string) error {
 	supportedLang := i18n.GetSupportedLang()
 	if !slices.Contains(supportedLang, lang) {
-		panic(lang + " is not a supported language. Supported languages are: " + strings.Join(supportedLang, ", "))
+		return errors.New(
+			lang + " is not a supported language. Supported languages are: " + strings.Join(supportedLang, ", "),
+		)
 	}
+	return nil
 }
 
 func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplateConfig {
@@ -131,8 +152,6 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplate
 		DisplayOverviewMaxItems: defaultDisplayOverviewMaxItem,
 		SortMode:                "date_desc",
 	}
-
-	checkIfLangIsSupported(emailTemplateConfig.Language)
 
 	if yamlParsedConfig.EmailTemplate.Theme != "" {
 		emailTemplateConfig.Theme = yamlParsedConfig.EmailTemplate.Theme
