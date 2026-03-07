@@ -32,18 +32,21 @@ func GetSupportedLang() []string {
 	return supportedLangs
 }
 
-func NewLocalizer(lang string) *Localizer {
+func NewLocalizer(lang string) (*Localizer, error) {
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 
-	entries, _ := translationFS.ReadDir(".")
+	entries, err := translationFS.ReadDir(".")
+	if err != nil {
+		return nil, err
+	}
 	for _, e := range entries {
 		bundle.LoadMessageFileFS(translationFS, e.Name())
 	}
 
 	return &Localizer{
 		i18n.NewLocalizer(bundle, lang, "en"),
-	}
+	}, nil
 }
 
 func (l *Localizer) Localize(keyName string, pluralCount ...int) string {
