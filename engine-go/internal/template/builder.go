@@ -17,9 +17,6 @@ import (
 	"go.uber.org/zap"
 )
 
-//go:embed themes
-var themeFS embed.FS
-
 type newMovieItemTemplateData struct {
 	PosterURL    string
 	Name         string
@@ -81,8 +78,7 @@ type footerTemplateData struct {
 	unsubscribeEmail string
 }
 
-// CheckIfThemeIsAvailable: If themes not available, panics.
-func CheckIfThemeIsAvailable(app *app.ApplicationContext) {
+func CheckIfThemeIsAvailable(themeFS embed.FS, app *app.ApplicationContext) error {
 	filePath := filepath.Join(
 		"themes",
 		"new_media",
@@ -90,15 +86,16 @@ func CheckIfThemeIsAvailable(app *app.ApplicationContext) {
 		app.Config.EmailTemplate.Theme+".html",
 	)
 	if _, err := template.ParseFS(themeFS, filePath); err != nil {
-		app.Logger.Fatal(
-			"Chosen theme doesn't exist or is not usable right now.",
-			zap.String("Theme name", app.Config.EmailTemplate.Theme),
-			zap.Error(err),
-		)
+		return err
 	}
+	return nil
 }
 
-func getNewMediaHTMLTemplate(themesType string, app *app.ApplicationContext) (*template.Template, error) {
+func getNewMediaHTMLTemplate(
+	themesType string,
+	themeFS embed.FS,
+	app *app.ApplicationContext,
+) (*template.Template, error) {
 	filePath := filepath.Join(
 		"themes",
 		themesType,
@@ -344,8 +341,9 @@ func BuildNewMediaEmailHTML(
 	movieCount int32,
 	episodesCount int32,
 	app *app.ApplicationContext,
+	themeFS embed.FS,
 ) (string, error) {
-	tmpl, err := getNewMediaHTMLTemplate("new_media", app)
+	tmpl, err := getNewMediaHTMLTemplate("new_media", themeFS, app)
 
 	if err != nil {
 		// Error already logged
