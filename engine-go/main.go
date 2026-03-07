@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 
@@ -12,6 +13,9 @@ import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
 	"go.uber.org/zap"
 )
+
+//go:embed themes/*/*/*.html
+var templateHTMLThemesFS embed.FS
 
 var version = "dev" // Will be set during build time
 
@@ -29,10 +33,21 @@ func main() {
 		panic("an error occured while loading logger : " + err.Error())
 	}
 
-	localizer := i18n.NewLocalizer(config.EmailTemplate.Language)
+	localizer, err := i18n.NewLocalizer(config.EmailTemplate.Language)
+	if err != nil {
+		logger.Fatal("Failed to load Localizer", zap.Error(err))
+	}
 
 	app := app.InitApplicationContext(config, logger, localizer)
-	template.CheckIfThemeIsAvailable(app)
+	
+	err = template.CheckIfThemeIsAvailable(templateHTMLThemesFS, app)
+	if err != nil {
+		app.Logger.Fatal(
+			"Chosen theme doesn't exist or is not usable right now.",
+			zap.String("Theme name", app.Config.EmailTemplate.Theme),
+			zap.Error(err),
+		)
+	}
 
 	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
 	app.Logger.Info("Configuration loaded successfully")
