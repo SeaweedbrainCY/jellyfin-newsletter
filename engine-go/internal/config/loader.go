@@ -1,14 +1,10 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
-	"slices"
-	"strings"
 
-	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
 	"github.com/go-playground/validator/v10"
 	"github.com/goccy/go-yaml"
 )
@@ -23,19 +19,7 @@ func LoadConfig(configPath string) (*Configuration, error) {
 		return nil, err
 	}
 
-	if err := testConfig(conf); err != nil {
-		return nil, err
-	}
-
 	return conf, nil
-}
-
-func testConfig(conf *Configuration) error {
-	err := checkIfLangIsSupported(conf.EmailTemplate.Language)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func loadConfigFromReader(r io.Reader) (*Configuration, error) {
@@ -124,17 +108,6 @@ func buildTMDBConfig(yamlParsedConfig *yamlConfiguration) TMDBConfig {
 	return TMDBConfig{
 		APIKey: yamlParsedConfig.TMDB.APIKey,
 	}
-}
-
-// Checks if the provided language is currently supported. If not, panics.
-func checkIfLangIsSupported(lang string) error {
-	supportedLang := i18n.GetSupportedLang()
-	if !slices.Contains(supportedLang, lang) {
-		return errors.New(
-			lang + " is not a supported language. Supported languages are: " + strings.Join(supportedLang, ", "),
-		)
-	}
-	return nil
 }
 
 func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplateConfig {

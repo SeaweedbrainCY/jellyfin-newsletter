@@ -210,24 +210,7 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(t, "user2@example.com", config.EmailRecipients[1])
 }
 
-func TestTestConfig_WithUnknownLang(t *testing.T) {
-	conf := Configuration{
-		EmailTemplate: EmailTemplateConfig{
-			Language:                "zz",
-			Subject:                 "Subject",
-			Title:                   "Title",
-			Subtitle:                "Subtitle",
-			JellyfinURL:             "JellyfinURL",
-			UnsubscribeEmail:        "UnsubscribeEmail",
-			JellyfinOwnerName:       "JellyfinOwnerName",
-			DisplayOverviewMaxItems: 10,
-		},
-	}
 
-	err := testConfig(&conf)
-
-	assert.Error(t, err)
-}
 
 func TestLoadContext_MissingRequiredField(t *testing.T) {
 	tests := []struct {
