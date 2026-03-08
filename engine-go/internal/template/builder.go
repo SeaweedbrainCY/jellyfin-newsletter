@@ -266,8 +266,8 @@ func buildFooterLabel(label string, app *app.ApplicationContext) string {
 }
 
 func buildNewMediaTemplateData(
-	newMovies *[]jellyfin.MovieItem,
-	newSeries *[]jellyfin.NewlyAddedSeriesItem,
+	newJellyfinMovies *[]jellyfin.MovieItem,
+	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem,
 	movieCount int32,
 	episodesCount int32,
 	app *app.ApplicationContext) newMediaTemplateData {
@@ -282,7 +282,39 @@ func buildNewMediaTemplateData(
 		HTMLdir = "rtl"
 	}
 
-	for _, newMovieItem := range *newMovies {
+	newJellyfinMoviesSorted := slices.Clone(*newJellyfinMovies)
+	slices.SortFunc(newJellyfinMoviesSorted, func(a, b jellyfin.MovieItem) int {
+		switch app.Config.EmailTemplate.SortMode {
+		case "name_asc":
+			return strings.Compare(a.Name, b.Name)
+		case "name_desc":
+			return strings.Compare(b.Name, a.Name)
+		case "date_desc":
+			return b.AdditionDate.Compare(*a.AdditionDate)
+		// date_asc is the default option
+		default:
+			return a.AdditionDate.Compare(*b.AdditionDate)
+		}
+
+	})
+
+	newJellyfinSeriesSorted := slices.Clone(*newJellyfinSeries)
+	slices.SortFunc(newJellyfinSeriesSorted, func(a, b jellyfin.NewlyAddedSeriesItem) int {
+		switch app.Config.EmailTemplate.SortMode {
+		case "name_asc":
+			return strings.Compare(a.SeriesName, b.SeriesName)
+		case "name_desc":
+			return strings.Compare(b.SeriesName, a.SeriesName)
+		case "date_desc":
+			return b.AdditionDate.Compare(a.AdditionDate)
+		// date_asc is the default option
+		default:
+			return a.AdditionDate.Compare(b.AdditionDate)
+		}
+
+	})
+
+	for _, newMovieItem := range newJellyfinMoviesSorted {
 		newMoviesData = append(newMoviesData, newMovieItemTemplateData{
 			PosterURL:    newMovieItem.PosterURL,
 			Name:         newMovieItem.Name,
@@ -292,7 +324,7 @@ func buildNewMediaTemplateData(
 		})
 	}
 
-	for _, newSeriesItem := range *newSeries {
+	for _, newSeriesItem := range newJellyfinSeriesSorted {
 		newSeriesData = append(newSeriesData, newSeriesItemTemplateData{
 			PosterURL:      newSeriesItem.PosterURL,
 			SeriesName:     newSeriesItem.SeriesName,
