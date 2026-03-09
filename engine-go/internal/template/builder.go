@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"go.uber.org/zap"
 )
@@ -199,52 +200,56 @@ func buildNewSeriesItemFromSeriesNewItems(item jellyfin.NewlyAddedSeriesItem, ap
 	return title
 }
 
-func buildStringTemplateWithPlaceholders(titleTemplate string, observedPeriodDays int) string {
+func buildStringTemplateWithPlaceholders(
+	titleTemplate string,
+	observedPeriodDays int,
+	localizer *i18n.Localizer,
+) string {
 	today := time.Now()
-	todayDayNumber := today.Format("2")
-	todayMonthNumber := today.Format("1")
+	todayDayNumber := int(today.Weekday())
+	todayMonthNumber := int(today.Month())
 
 	startDate := time.Now().Add(time.Duration(observedPeriodDays) * -1)
-	startDayNumber := startDate.Format("2")
-	startMonthNumber := startDate.Format("1")
+	startDayNumber := int(startDate.Weekday())
+	startMonthNumber := int(startDate.Month())
 
-	daysName := map[string]string{
-		"1": "monday",
-		"2": "tuesday",
-		"3": "wednesday",
-		"4": "thursday",
-		"5": "friday",
-		"6": "saturday",
-		"7": "sunday",
+	daysName := map[int]string{
+		0: "sunday",
+		1: "monday",
+		2: "tuesday",
+		3: "wednesday",
+		4: "thursday",
+		5: "friday",
+		6: "saturday",
 	}
 
-	monthsName := map[string]string{
-		"1":  "january",
-		"2":  "february",
-		"3":  "march",
-		"4":  "april",
-		"5":  "may",
-		"6":  "june",
-		"7":  "july",
-		"8":  "august",
-		"9":  "september",
-		"10": "october",
-		"11": "november",
-		"12": "december",
+	monthsName := map[int]string{
+		1:  "january",
+		2:  "february",
+		3:  "march",
+		4:  "april",
+		5:  "may",
+		6:  "june",
+		7:  "july",
+		8:  "august",
+		9:  "september",
+		10: "october",
+		11: "november",
+		12: "december",
 	}
 
 	placeholders := titlePlaceholders{
 		Date:             today.Format("2006-01-02"),
-		DayName:          daysName[todayDayNumber],
-		DayNumber:        todayDayNumber,
-		MonthName:        monthsName[todayMonthNumber],
-		MonthNumber:      todayMonthNumber,
+		DayName:          localizer.Localize(daysName[todayDayNumber]),
+		DayNumber:        strconv.Itoa(todayDayNumber),
+		MonthName:        localizer.Localize(monthsName[todayMonthNumber]),
+		MonthNumber:      strconv.Itoa(todayMonthNumber),
 		Year:             today.Format("2006"),
 		StartDate:        startDate.Format("2006-01-02"),
-		StartDayName:     daysName[startDayNumber],
-		StartDayNumber:   todayDayNumber,
-		StartMonthName:   monthsName[startMonthNumber],
-		StartMonthNumber: todayMonthNumber,
+		StartDayName:     localizer.Localize(daysName[startDayNumber]),
+		StartDayNumber:   strconv.Itoa(todayDayNumber),
+		StartMonthName:   localizer.Localize(monthsName[startMonthNumber]),
+		StartMonthNumber: strconv.Itoa(todayMonthNumber),
 		StartYear:        startDate.Format("2006"),
 	}
 
@@ -394,10 +399,12 @@ func buildNewMediaTemplateData(
 		Title: buildStringTemplateWithPlaceholders(
 			app.Config.EmailTemplate.Title,
 			app.Config.Jellyfin.ObservedPeriodDays,
+			app.Localizer,
 		),
 		Subtitle: buildStringTemplateWithPlaceholders(
 			app.Config.EmailTemplate.Subtitle,
 			app.Config.Jellyfin.ObservedPeriodDays,
+			app.Localizer,
 		),
 		JellyfinURL:                  app.Config.EmailTemplate.JellyfinURL,
 		DiscoverNowLabel:             app.Localizer.Localize("discover_now"),
