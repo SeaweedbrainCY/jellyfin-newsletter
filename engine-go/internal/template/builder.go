@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
-	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"go.uber.org/zap"
 )
@@ -105,7 +104,7 @@ func getNewMediaHTMLTemplate(
 		app.Config.EmailTemplate.Theme,
 		app.Config.EmailTemplate.Theme+".html",
 	)
-	tmpl, err := template.ParseFS(themeFS, filePath)
+	tmpl, err := template.New("Email").Option("missingkey=zero").ParseFS(themeFS, filePath)
 
 	if err != nil {
 		app.Logger.Error(
@@ -201,10 +200,10 @@ func buildNewSeriesItemFromSeriesNewItems(item jellyfin.NewlyAddedSeriesItem, ap
 }
 
 func buildStringTemplateWithPlaceholders(
-	titleTemplate string,
+	templateStr string,
 	observedPeriodDays int,
-	localizer *i18n.Localizer,
-) string {
+	app *app.ApplicationContext,
+) (string, error) {
 	today := time.Now()
 	todayDayNumber := int(today.Weekday())
 	todayMonthNumber := int(today.Month())
@@ -240,36 +239,44 @@ func buildStringTemplateWithPlaceholders(
 
 	placeholders := titlePlaceholders{
 		Date:             today.Format("2006-01-02"),
-		DayName:          localizer.Localize(daysName[todayDayNumber]),
+		DayName:          app.Localizer.Localize(daysName[todayDayNumber]),
 		DayNumber:        strconv.Itoa(todayDayNumber),
-		MonthName:        localizer.Localize(monthsName[todayMonthNumber]),
+		MonthName:        app.Localizer.Localize(monthsName[todayMonthNumber]),
 		MonthNumber:      strconv.Itoa(todayMonthNumber),
 		Year:             today.Format("2006"),
 		StartDate:        startDate.Format("2006-01-02"),
-		StartDayName:     localizer.Localize(daysName[startDayNumber]),
-		StartDayNumber:   strconv.Itoa(todayDayNumber),
-		StartMonthName:   localizer.Localize(monthsName[startMonthNumber]),
+		StartDayName:     app.Localizer.Localize(daysName[startDayNumber]),
+		StartDayNumber:   strconv.Itoa(startDayNumber),
+		StartMonthName:   app.Localizer.Localize(monthsName[startMonthNumber]),
 		StartMonthNumber: strconv.Itoa(todayMonthNumber),
 		StartYear:        startDate.Format("2006"),
 	}
 
-	tmpl := template.Must(template.New("title").Parse(titleTemplate))
+	tmpl, err := template.New("title").Option("missingkey=zero").Parse(templateStr)
+	if err != nil {
+		app.Logger.Debug("Error while building title template", zap.String("templateStr", templateStr), zap.Error(err))
+		return "", err
+	}
 	var buf bytes.Buffer
 	tmpl.Execute(&buf, placeholders)
 
-	return buf.String()
+	return buf.String(), nil
 }
 
-func buildFooterLabel(label string, app *app.ApplicationContext) string {
+func buildFooterLabel(label string, app *app.ApplicationContext) (string, error) {
 	footerData := footerTemplateData{
 		ownerName:        app.Config.EmailTemplate.JellyfinOwnerName,
 		unsubscribeEmail: app.Config.EmailTemplate.UnsubscribeEmail,
 	}
-	tmpl := template.Must(template.New("footer").Parse(label))
+	tmpl, err := template.New("footer").Option("missingkey=zero").Parse(label)
+	if err != nil {
+		app.Logger.Debug("Error while building footer template", zap.String("label", label), zap.Error(err))
+		return "", err
+	}
 	var buf bytes.Buffer
 	tmpl.Execute(&buf, footerData)
 
-	return buf.String()
+	return buf.String(), nil
 }
 
 func sortJellyfinNewMovies(newJellyfinMovies *[]jellyfin.MovieItem, app *app.ApplicationContext) []jellyfin.MovieItem {
@@ -351,7 +358,7 @@ func buildNewMediaTemplateData(
 	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem,
 	movieCount int32,
 	episodesCount int32,
-	app *app.ApplicationContext) newMediaTemplateData {
+	app *app.ApplicationContext) (*newMediaTemplateData, error) {
 	newMoviesData := []newMovieItemTemplateData{}
 	newSeriesData := []newSeriesItemTemplateData{}
 
@@ -393,19 +400,34 @@ func buildNewMediaTemplateData(
 		})
 	}
 
-	return newMediaTemplateData{
-		HTMLLang: app.Config.EmailTemplate.Language,
-		HTMLDir:  HTMLdir,
-		Title: buildStringTemplateWithPlaceholders(
-			app.Config.EmailTemplate.Title,
-			app.Config.Jellyfin.ObservedPeriodDays,
-			app.Localizer,
-		),
-		Subtitle: buildStringTemplateWithPlaceholders(
-			app.Config.EmailTemplate.Subtitle,
-			app.Config.Jellyfin.ObservedPeriodDays,
-			app.Localizer,
-		),
+	title, err := buildStringTemplateWithPlaceholders(
+		app.Config.EmailTemplate.Title,
+		app.Config.Jellyfin.ObservedPeriodDays,
+		app,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	subtitle, err := buildStringTemplateWithPlaceholders(
+		app.Config.EmailTemplate.Subtitle,
+		app.Config.Jellyfin.ObservedPeriodDays,
+		app,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	footer, err := buildFooterLabel(app.Localizer.Localize("footer_label"), app)
+	if err != nil {
+		return nil, err
+	}
+
+	data := newMediaTemplateData{
+		HTMLLang:                     app.Config.EmailTemplate.Language,
+		HTMLDir:                      HTMLdir,
+		Title:                        title,
+		Subtitle:                     subtitle,
 		JellyfinURL:                  app.Config.EmailTemplate.JellyfinURL,
 		DiscoverNowLabel:             app.Localizer.Localize("discover_now"),
 		DisplayNewMovies:             len(newMoviesData) > 0,
@@ -419,12 +441,13 @@ func buildNewMediaTemplateData(
 		SeriesCount:                  strconv.Itoa(int(episodesCount)),
 		MoviesLabel:                  app.Localizer.Localize("movies", int(movieCount)),
 		SeriesLabel:                  app.Localizer.Localize("episode", int(episodesCount)),
-		FooterLabel:                  buildFooterLabel(app.Localizer.Localize("footer_label"), app),
+		FooterLabel:                  footer,
 		FooterProjectLinkLabel:       "Jellyfin Newsletter",
 		FooterOpenSourceProjectLabel: app.Localizer.Localize("footer_project_open_source"),
 		FooterDevelopedByLabel:       app.Localizer.Localize("footer_developed_by"),
 		FooterLicenceAndCopyright:    app.Localizer.Localize("license_and_copyright"),
 	}
+	return &data, nil
 }
 
 func BuildNewMediaEmailHTML(
@@ -442,7 +465,10 @@ func BuildNewMediaEmailHTML(
 		return "", err
 	}
 
-	tmplData := buildNewMediaTemplateData(newMovies, newSeries, movieCount, episodesCount, app)
+	tmplData, err := buildNewMediaTemplateData(newMovies, newSeries, movieCount, episodesCount, app)
+	if err != nil {
+		return "", err
+	}
 
 	var buf bytes.Buffer
 	err = tmpl.Execute(&buf, tmplData)
