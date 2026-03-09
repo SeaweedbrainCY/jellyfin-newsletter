@@ -267,6 +267,45 @@ func buildFooterLabel(label string, app *app.ApplicationContext) string {
 	return buf.String()
 }
 
+func sortJellyfinNewMovies(newJellyfinMovies *[]jellyfin.MovieItem, app *app.ApplicationContext) []jellyfin.MovieItem {
+	newJellyfinMoviesSorted := slices.Clone(*newJellyfinMovies)
+	slices.SortFunc(newJellyfinMoviesSorted, func(a, b jellyfin.MovieItem) int {
+		switch app.Config.EmailTemplate.SortMode {
+		case "name_asc":
+			return strings.Compare(a.Name, b.Name)
+		case "name_desc":
+			return strings.Compare(b.Name, a.Name)
+		case "date_desc":
+			return b.AdditionDate.Compare(*a.AdditionDate)
+		// date_asc is the default option
+		default:
+			return a.AdditionDate.Compare(*b.AdditionDate)
+		}
+	})
+	return newJellyfinMoviesSorted
+}
+
+func sortJellyfinNewSeriesItems(
+	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem,
+	app *app.ApplicationContext,
+) []jellyfin.NewlyAddedSeriesItem {
+	newJellyfinSeriesSorted := slices.Clone(*newJellyfinSeries)
+	slices.SortFunc(newJellyfinSeriesSorted, func(a, b jellyfin.NewlyAddedSeriesItem) int {
+		switch app.Config.EmailTemplate.SortMode {
+		case "name_asc":
+			return strings.Compare(a.SeriesName, b.SeriesName)
+		case "name_desc":
+			return strings.Compare(b.SeriesName, a.SeriesName)
+		case "date_desc":
+			return b.AdditionDate.Compare(a.AdditionDate)
+		// date_asc is the default option
+		default:
+			return a.AdditionDate.Compare(b.AdditionDate)
+		}
+	})
+	return newJellyfinSeriesSorted
+}
+
 func shouldOverviewsBeDisplayed(itemsCount int, app *app.ApplicationContext) bool {
 	if app.Config.EmailTemplate.DisplayOverviewMaxItems == 0 {
 		return true
@@ -275,6 +314,31 @@ func shouldOverviewsBeDisplayed(itemsCount int, app *app.ApplicationContext) boo
 	}
 
 	return itemsCount < app.Config.EmailTemplate.DisplayOverviewMaxItems
+}
+
+// The addition date is not necessarily the series's addition date.
+// If the new element is a season or an episode, it's its addition date that we want
+// If there are several new elements, the newest date is kept
+func getAdditionDateForSeries(seriesItem jellyfin.NewlyAddedSeriesItem) time.Time {
+	if seriesItem.IsSeriesNew {
+		return seriesItem.AdditionDate
+	}
+	additionDate := time.Date(1970, 01, 01, 00, 00, 0, 0, time.UTC)
+	for _, season := range seriesItem.NewSeasons {
+		if season.IsSeasonNew {
+			if season.AdditionDate.After(additionDate) {
+				additionDate = season.AdditionDate
+			}
+			continue
+		}
+		// Not a new season
+		for _, episode := range season.Episodes {
+			if episode.AdditionDate.After(additionDate) {
+				additionDate = episode.AdditionDate
+			}
+		}
+	}
+	return additionDate
 }
 
 func buildNewMediaTemplateData(
@@ -294,36 +358,9 @@ func buildNewMediaTemplateData(
 		HTMLdir = "rtl"
 	}
 
-	newJellyfinMoviesSorted := slices.Clone(*newJellyfinMovies)
-	slices.SortFunc(newJellyfinMoviesSorted, func(a, b jellyfin.MovieItem) int {
-		switch app.Config.EmailTemplate.SortMode {
-		case "name_asc":
-			return strings.Compare(a.Name, b.Name)
-		case "name_desc":
-			return strings.Compare(b.Name, a.Name)
-		case "date_desc":
-			return b.AdditionDate.Compare(*a.AdditionDate)
-		// date_asc is the default option
-		default:
-			return a.AdditionDate.Compare(*b.AdditionDate)
-		}
+	newJellyfinMoviesSorted := sortJellyfinNewMovies(newJellyfinMovies, app)
 
-	})
-
-	newJellyfinSeriesSorted := slices.Clone(*newJellyfinSeries)
-	slices.SortFunc(newJellyfinSeriesSorted, func(a, b jellyfin.NewlyAddedSeriesItem) int {
-		switch app.Config.EmailTemplate.SortMode {
-		case "name_asc":
-			return strings.Compare(a.SeriesName, b.SeriesName)
-		case "name_desc":
-			return strings.Compare(b.SeriesName, a.SeriesName)
-		case "date_desc":
-			return b.AdditionDate.Compare(a.AdditionDate)
-		// date_asc is the default option
-		default:
-			return a.AdditionDate.Compare(b.AdditionDate)
-		}
-	})
+	newJellyfinSeriesSorted := sortJellyfinNewSeriesItems(newJellyfinSeries, app)
 
 	displayMovieOverviews := shouldOverviewsBeDisplayed(len(newJellyfinMoviesSorted), app)
 	displaySeriesOverviews := shouldOverviewsBeDisplayed(len(newJellyfinSeriesSorted), app)
@@ -344,7 +381,7 @@ func buildNewMediaTemplateData(
 			PosterURL:            newSeriesItem.PosterURL,
 			SeriesName:           newSeriesItem.SeriesName,
 			AddedOnLabel:         app.Localizer.Localize("added_on"),
-			AdditionDate:         newSeriesItem.AdditionDate.Format("2006-01-02"),
+			AdditionDate:         getAdditionDateForSeries(newSeriesItem).Format("2006-01-02"),
 			Overview:             newSeriesItem.Overview,
 			NewSeriesTitle:       buildNewSeriesItemFromSeriesNewItems(newSeriesItem, app),
 			IncludeItemOverviews: displaySeriesOverviews,
