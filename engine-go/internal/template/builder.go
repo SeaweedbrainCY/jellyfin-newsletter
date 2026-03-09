@@ -208,7 +208,7 @@ func buildStringTemplateWithPlaceholders(
 	todayDayNumber := int(today.Weekday())
 	todayMonthNumber := int(today.Month())
 
-	startDate := time.Now().Add(time.Duration(observedPeriodDays) * -1)
+	startDate := time.Now().AddDate(0, 0, observedPeriodDays*-1)
 	startDayNumber := int(startDate.Weekday())
 	startMonthNumber := int(startDate.Month())
 
