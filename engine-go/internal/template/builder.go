@@ -18,19 +18,21 @@ import (
 )
 
 type newMovieItemTemplateData struct {
-	PosterURL    string
-	Name         string
-	AddedOnLabel string
-	AdditionDate string
-	Overview     string
+	PosterURL            string
+	Name                 string
+	AddedOnLabel         string
+	AdditionDate         string
+	Overview             string
+	IncludeItemOverviews bool
 }
 type newSeriesItemTemplateData struct {
-	PosterURL      string
-	SeriesName     string
-	AddedOnLabel   string
-	AdditionDate   string
-	Overview       string
-	NewSeriesTitle string
+	PosterURL            string
+	SeriesName           string
+	AddedOnLabel         string
+	AdditionDate         string
+	Overview             string
+	NewSeriesTitle       string
+	IncludeItemOverviews bool
 }
 
 type newMediaTemplateData struct {
@@ -265,6 +267,16 @@ func buildFooterLabel(label string, app *app.ApplicationContext) string {
 	return buf.String()
 }
 
+func shouldOverviewsBeDisplayed(itemsCount int, app *app.ApplicationContext) bool {
+	if app.Config.EmailTemplate.DisplayOverviewMaxItems == 0 {
+		return true
+	} else if app.Config.EmailTemplate.DisplayOverviewMaxItems == -1 {
+		return false
+	}
+
+	return itemsCount < app.Config.EmailTemplate.DisplayOverviewMaxItems
+}
+
 func buildNewMediaTemplateData(
 	newJellyfinMovies *[]jellyfin.MovieItem,
 	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem,
@@ -311,27 +323,31 @@ func buildNewMediaTemplateData(
 		default:
 			return a.AdditionDate.Compare(b.AdditionDate)
 		}
-
 	})
+
+	displayMovieOverviews := shouldOverviewsBeDisplayed(len(newJellyfinMoviesSorted), app)
+	displaySeriesOverviews := shouldOverviewsBeDisplayed(len(newJellyfinSeriesSorted), app)
 
 	for _, newMovieItem := range newJellyfinMoviesSorted {
 		newMoviesData = append(newMoviesData, newMovieItemTemplateData{
-			PosterURL:    newMovieItem.PosterURL,
-			Name:         newMovieItem.Name,
-			AdditionDate: newMovieItem.AdditionDate.Format("2006-01-02"),
-			Overview:     newMovieItem.Overview,
-			AddedOnLabel: app.Localizer.Localize("added_on"),
+			PosterURL:            newMovieItem.PosterURL,
+			Name:                 newMovieItem.Name,
+			AdditionDate:         newMovieItem.AdditionDate.Format("2006-01-02"),
+			Overview:             newMovieItem.Overview,
+			AddedOnLabel:         app.Localizer.Localize("added_on"),
+			IncludeItemOverviews: displayMovieOverviews,
 		})
 	}
 
 	for _, newSeriesItem := range newJellyfinSeriesSorted {
 		newSeriesData = append(newSeriesData, newSeriesItemTemplateData{
-			PosterURL:      newSeriesItem.PosterURL,
-			SeriesName:     newSeriesItem.SeriesName,
-			AddedOnLabel:   app.Localizer.Localize("added_on"),
-			AdditionDate:   newSeriesItem.AdditionDate.Format("2006-01-02"),
-			Overview:       newSeriesItem.Overview,
-			NewSeriesTitle: buildNewSeriesItemFromSeriesNewItems(newSeriesItem, app),
+			PosterURL:            newSeriesItem.PosterURL,
+			SeriesName:           newSeriesItem.SeriesName,
+			AddedOnLabel:         app.Localizer.Localize("added_on"),
+			AdditionDate:         newSeriesItem.AdditionDate.Format("2006-01-02"),
+			Overview:             newSeriesItem.Overview,
+			NewSeriesTitle:       buildNewSeriesItemFromSeriesNewItems(newSeriesItem, app),
+			IncludeItemOverviews: displaySeriesOverviews,
 		})
 	}
 
