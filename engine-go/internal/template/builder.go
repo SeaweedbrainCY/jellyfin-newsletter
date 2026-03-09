@@ -76,8 +76,8 @@ type titlePlaceholders struct {
 }
 
 type footerTemplateData struct {
-	ownerName        string
-	unsubscribeEmail string
+	JellyfinOwnerName string
+	UnsubscribeEmail  string
 }
 
 func CheckIfThemeIsAvailable(themeFS embed.FS, app *app.ApplicationContext) error {
@@ -176,7 +176,7 @@ func buildNewSeriesItemFromSeriesNewItems(item jellyfin.NewlyAddedSeriesItem, ap
 		return item.SeriesName
 	}
 
-	localizedSeason := app.Localizer.Localize("season", len(item.NewSeasons))
+	localizedSeason := app.Localizer.LocalizeWithPlural("season", len(item.NewSeasons))
 
 	newSeasonsNumber := []int{}
 	newSeasonID := []string{}
@@ -192,7 +192,7 @@ func buildNewSeriesItemFromSeriesNewItems(item jellyfin.NewlyAddedSeriesItem, ap
 		for _, episode := range item.NewSeasons[newSeasonID[0]].Episodes {
 			newEpisodeNumber = append(newEpisodeNumber, int(episode.EpisodeNumber))
 		}
-		localizedEpisode := app.Localizer.Localize("episode", len(newEpisodeNumber))
+		localizedEpisode := app.Localizer.LocalizeWithPlural("episode", len(newEpisodeNumber))
 		title += " " + localizedEpisode + " " + compressNumbers(newEpisodeNumber)
 	}
 
@@ -265,8 +265,8 @@ func buildStringTemplateWithPlaceholders(
 
 func buildFooterLabel(label string, app *app.ApplicationContext) (string, error) {
 	footerData := footerTemplateData{
-		ownerName:        app.Config.EmailTemplate.JellyfinOwnerName,
-		unsubscribeEmail: app.Config.EmailTemplate.UnsubscribeEmail,
+		JellyfinOwnerName: app.Config.EmailTemplate.JellyfinOwnerName,
+		UnsubscribeEmail:  app.Config.EmailTemplate.UnsubscribeEmail,
 	}
 	tmpl, err := template.New("footer").Option("missingkey=zero").Parse(label)
 	if err != nil {
@@ -439,8 +439,8 @@ func buildNewMediaTemplateData(
 		CurrentlyAvailableLabel:      app.Localizer.Localize("currently_available"),
 		MoviesCount:                  strconv.Itoa(int(movieCount)),
 		SeriesCount:                  strconv.Itoa(int(episodesCount)),
-		MoviesLabel:                  app.Localizer.Localize("movies", int(movieCount)),
-		SeriesLabel:                  app.Localizer.Localize("episode", int(episodesCount)),
+		MoviesLabel:                  app.Localizer.LocalizeWithPlural("movies", int(movieCount)),
+		SeriesLabel:                  app.Localizer.LocalizeWithPlural("episode", int(episodesCount)),
 		FooterLabel:                  footer,
 		FooterProjectLinkLabel:       "Jellyfin Newsletter",
 		FooterOpenSourceProjectLabel: app.Localizer.Localize("footer_project_open_source"),
