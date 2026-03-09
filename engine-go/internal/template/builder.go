@@ -309,10 +309,10 @@ func sortJellyfinNewSeriesItems(
 		case "name_desc":
 			return strings.Compare(b.SeriesName, a.SeriesName)
 		case "date_desc":
-			return b.AdditionDate.Compare(a.AdditionDate)
+			return getAdditionDateForSeries(b).Compare(getAdditionDateForSeries(a))
 		// date_asc is the default option
 		default:
-			return a.AdditionDate.Compare(b.AdditionDate)
+			return getAdditionDateForSeries(a).Compare(getAdditionDateForSeries(b))
 		}
 	})
 	return newJellyfinSeriesSorted
