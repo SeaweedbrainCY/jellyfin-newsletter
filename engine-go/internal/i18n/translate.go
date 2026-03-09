@@ -39,7 +39,9 @@ func NewLocalizer(lang string) (*Localizer, error) {
 	}
 
 	if !isLangAvailable {
-		err = errors.New(lang + " is not a supported language. Supported languages are " + strings.Join(supportedLangs, ", "))
+		err = errors.New(
+			lang + " is not a supported language. Supported languages are " + strings.Join(supportedLangs, ", "),
+		)
 	}
 
 	return &Localizer{
@@ -47,23 +49,38 @@ func NewLocalizer(lang string) (*Localizer, error) {
 	}, err
 }
 
-func (l *Localizer) Localize(keyName string, pluralCount ...int) string {
-	localizeConfig := &i18n.LocalizeConfig{
-		MessageID: keyName,
-	}
-
-	if len(pluralCount) > 0 {
-		localizeConfig.PluralCount = pluralCount[0]
-	}
-
-	translation, _ := l.Localizer.Localize(localizeConfig)
+func (l *Localizer) getLocalization(config *i18n.LocalizeConfig) string {
+	translation, _ := l.Localizer.Localize(config)
 
 	// i18n does its best to return a string. If there is a risk its grammatically incorrect, it will return an err and return a fallback string.
 	// example https://github.com/nicksnyder/go-i18n/issues/241
 	// For Jellyfin-Newsletter we prefer to have something incorrect but to have a string anyway instead of the placeholder.
 	if translation == "" {
-		return "{" + keyName + "}"
+		return "{" + config.MessageID + "}"
 	}
 
 	return translation
+}
+
+func (l *Localizer) LocalizeWithTemplate(keyName string, templateData interface{}) string {
+	localizeConfig := &i18n.LocalizeConfig{
+		MessageID:    keyName,
+		TemplateData: templateData,
+	}
+	return l.getLocalization(localizeConfig)
+}
+
+func (l *Localizer) LocalizeWithPlural(keyName string, pluralCount int) string {
+	localizeConfig := &i18n.LocalizeConfig{
+		MessageID:   keyName,
+		PluralCount: pluralCount,
+	}
+	return l.getLocalization(localizeConfig)
+}
+
+func (l *Localizer) Localize(keyName string) string {
+	localizeConfig := &i18n.LocalizeConfig{
+		MessageID: keyName,
+	}
+	return l.getLocalization(localizeConfig)
 }
