@@ -129,3 +129,11 @@ func TestLocalizeUnknownKey(t *testing.T) {
 	localizedStr := l.Localize("thisKeyDoesntExist")
 	assert.Equal(t, "{thisKeyDoesntExist}", localizedStr)
 }
+
+func TestLocalizeWithPlural(t *testing.T) {
+
+}
+
+func TestLocalizeWithTemplateData(t *testing.T) {
+
+}
