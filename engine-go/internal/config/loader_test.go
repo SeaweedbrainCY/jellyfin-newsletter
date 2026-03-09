@@ -191,7 +191,7 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(t, "pass", string(config.SMTP.Password))
 	assert.Equal(t, "Jellyfin", config.SMTP.SenderName)
 	assert.Equal(t, "classic", config.EmailTemplate.Theme)
-	assert.Equal(t, "en", config.EmailTemplate.Language)
+	assert.Equal(t, "fr", config.EmailTemplate.Language)
 	assert.Equal(t, "New releases", config.EmailTemplate.Subject)
 	assert.Equal(t, "Newsletter", config.EmailTemplate.Title)
 	assert.Equal(t, "This week", config.EmailTemplate.Subtitle)
@@ -209,8 +209,6 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(t, "user1@example.com", config.EmailRecipients[0])
 	assert.Equal(t, "user2@example.com", config.EmailRecipients[1])
 }
-
-
 
 func TestLoadContext_MissingRequiredField(t *testing.T) {
 	tests := []struct {
@@ -321,7 +319,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
-  33 |   language: en
+  33 |   language: fr
   34 |   title: Newsletter
   35 |   `,
 		},
@@ -336,7 +334,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
-  33 |   language: en
+  33 |   language: fr
   34 |   subject: New releases
   35 |   `,
 		},
@@ -351,7 +349,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
-  33 |   language: en
+  33 |   language: fr
   34 |   subject: New releases
   35 |   `,
 		},
