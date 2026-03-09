@@ -119,9 +119,27 @@ func getAppContext() *app.ApplicationContext {
 }
 
 func TestBuildNewMediaTemplateData(t *testing.T) {
+	tests := []struct {
+		name                            string
+		getAppContextFunc                   func() *app.ApplicationContext
+		getExpectedNewMediaTemplateDataFunc func() newMediaTemplateData
+	}{
+		{
+			name:                            "Valid data",
+			getAppContextFunc:                   getAppContext,
+			getExpectedNewMediaTemplateDataFunc: getExpectedNewMediaTemplateData,
+		},
+	}
 
+	for _, test := range tests { 
+		t.Run(test.name, func(t *testing.T) {
+			app := test.getAppContextFunc()
+			expectedTemplateData := test.getExpectedNewMediaTemplateDataFunc()
+			templateData := buildNewMediaTemplateData()
+		})
+	}
 }
 
-func TestCheckIfThemeIsAvailable(t *testing.T) {
-
-}
+//func TestCheckIfThemeIsAvailable(t *testing.T) {
+//
+//}
