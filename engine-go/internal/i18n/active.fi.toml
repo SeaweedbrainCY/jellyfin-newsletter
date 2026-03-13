@@ -36,3 +36,64 @@ other = "Kehitetty ❤️:lla <a href=\"https://github.com/SeaweedbrainCY/\" cla
 
 [license_and_copyright]
 other = "Copyright © 2025 Nathan Stchepinsky, lisensoitu AGPLv3-lisenssillä."
+
+[season]
+one = "Kausi"
+other = "Kaudet"
+
+[monday]
+other = "Maanantai"
+
+[tuesday]
+other = "Tiistai"
+
+[wednesday]
+other = "Keskiviikko"
+
+[thursday]
+other = "Torstai"
+
+[friday]
+other = "Perjantai"
+
+[saturday]
+other = "Lauantai"
+
+[sunday]
+other = "Sunnuntai"
+
+[january]
+other = "Tammikuu"
+
+[february]
+other = "Helmikuu"
+
+[march]
+other = "Maaliskuu"
+
+[april]
+other = "Huhtikuu"
+
+[may]
+other = "Toukokuu"
+
+[june]
+other = "Kesäkuu"
+
+[july]
+other = "Heinäkuu"
+
+[august]
+other = "Elokuu"
+
+[september]
+other = "Syyskuu"
+
+[october]
+other = "Lokakuu"
+
+[november]
+other = "Marraskuu"
+
+[december]
+other = "Joulukuu"
