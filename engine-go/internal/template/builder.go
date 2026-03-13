@@ -187,13 +187,14 @@ func buildNewSeriesItemFromSeriesNewItems(item jellyfin.NewlyAddedSeriesItem, ap
 
 	title := item.SeriesName + ": " + localizedSeason + " " + compressNumbers(newSeasonsNumber)
 
+	// Add episodes items
 	if len(newSeasonID) == 1 && !item.NewSeasons[newSeasonID[0]].IsSeasonNew {
 		newEpisodeNumber := []int{}
 		for _, episode := range item.NewSeasons[newSeasonID[0]].Episodes {
 			newEpisodeNumber = append(newEpisodeNumber, int(episode.EpisodeNumber))
 		}
 		localizedEpisode := app.Localizer.LocalizeWithPlural("episode", len(newEpisodeNumber))
-		title += " " + localizedEpisode + " " + compressNumbers(newEpisodeNumber)
+		title += ", " + localizedEpisode + " " + compressNumbers(newEpisodeNumber)
 	}
 
 	return title
