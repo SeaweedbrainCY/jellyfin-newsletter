@@ -20,7 +20,7 @@ other = "You are recieving this email because you are using {{.JellyfinOwnerName
 [added_on]
 other = "Added on"
 
-[episodes]
+[episode]
 one = "Episode"
 other = "Episodes"
 
