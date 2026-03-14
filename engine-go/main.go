@@ -39,7 +39,7 @@ func main() {
 	}
 
 	app := app.InitApplicationContext(config, logger, localizer)
-	
+
 	err = template.CheckIfThemeIsAvailable(templateHTMLThemesFS, app)
 	if err != nil {
 		app.Logger.Fatal(

@@ -319,6 +319,6 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 	}
 }
 
-//func TestCheckIfThemeIsAvailable(t *testing.T) {
+// func TestCheckIfThemeIsAvailable(t *testing.T) {
 //
-//}
+// }
