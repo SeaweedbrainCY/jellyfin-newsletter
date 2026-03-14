@@ -264,20 +264,13 @@ func buildStringTemplateWithPlaceholders(
 	return buf.String(), nil
 }
 
-func buildFooterLabel(label string, app *app.ApplicationContext) (string, error) {
+func buildFooterLabel(app *app.ApplicationContext) string {
 	footerData := footerTemplateData{
 		JellyfinOwnerName: app.Config.EmailTemplate.JellyfinOwnerName,
 		UnsubscribeEmail:  app.Config.EmailTemplate.UnsubscribeEmail,
 	}
-	tmpl, err := template.New("footer").Option("missingkey=zero").Parse(label)
-	if err != nil {
-		app.Logger.Debug("Error while building footer template", zap.String("label", label), zap.Error(err))
-		return "", err
-	}
-	var buf bytes.Buffer
-	tmpl.Execute(&buf, footerData)
 
-	return buf.String(), nil
+	return app.Localizer.LocalizeWithTemplate("footer_label", footerData)
 }
 
 func sortJellyfinNewMovies(newJellyfinMovies *[]jellyfin.MovieItem, app *app.ApplicationContext) []jellyfin.MovieItem {
@@ -419,11 +412,6 @@ func buildNewMediaTemplateData(
 		return nil, err
 	}
 
-	footer, err := buildFooterLabel(app.Localizer.Localize("footer_label"), app)
-	if err != nil {
-		return nil, err
-	}
-
 	data := newMediaTemplateData{
 		HTMLLang:                     app.Config.EmailTemplate.Language,
 		HTMLDir:                      HTMLdir,
@@ -442,7 +430,7 @@ func buildNewMediaTemplateData(
 		SeriesCount:                  strconv.Itoa(int(episodesCount)),
 		MoviesLabel:                  app.Localizer.LocalizeWithPlural("movies", int(movieCount)),
 		SeriesLabel:                  app.Localizer.LocalizeWithPlural("episode", int(episodesCount)),
-		FooterLabel:                  footer,
+		FooterLabel:                  buildFooterLabel(app),
 		FooterProjectLinkLabel:       "Jellyfin Newsletter",
 		FooterOpenSourceProjectLabel: app.Localizer.Localize("footer_project_open_source"),
 		FooterDevelopedByLabel:       app.Localizer.Localize("footer_developed_by"),
