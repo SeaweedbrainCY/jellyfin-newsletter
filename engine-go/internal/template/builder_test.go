@@ -296,6 +296,28 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			movieCount:                          54,
 			episodeCount:                        1253,
 		},
+		{
+			name: "Never display overview",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.DisplayOverviewMaxItems = -1
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expected := getExpectedNewMediaTemplateData()
+				for i := range expected.NewMovies {
+					expected.NewMovies[i].IncludeItemOverviews = false
+				}
+				for i := range expected.NewSeries {
+					expected.NewSeries[i].IncludeItemOverviews = false
+				}
+				return expected
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+		},
 	}
 
 	for _, test := range tests {
