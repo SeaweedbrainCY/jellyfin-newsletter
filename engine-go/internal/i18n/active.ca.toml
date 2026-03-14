@@ -36,3 +36,64 @@ other = "Rebeu aquest correu electrònic perquè utilitzeu el servidor Jellyfin 
 
 [added_on]
 other = "Afegit el"
+
+[season]
+one = "Temporada"
+other = "Temporades"
+
+[monday]
+other = "Dilluns"
+
+[tuesday]
+other = "Dimarts"
+
+[wednesday]
+other = "Dimecres"
+
+[thursday]
+other = "Dijous"
+
+[friday]
+other = "Divendres"
+
+[saturday]
+other = "Dissabte"
+
+[sunday]
+other = "Diumenge"
+
+[january]
+other = "Gener"
+
+[february]
+other = "Febrer"
+
+[march]
+other = "Març"
+
+[april]
+other = "Abril"
+
+[may]
+other = "Maig"
+
+[june]
+other = "Juny"
+
+[july]
+other = "Juliol"
+
+[august]
+other = "Agost"
+
+[september]
+other = "Setembre"
+
+[october]
+other = "Octubre"
+
+[november]
+other = "Novembre"
+
+[december]
+other = "Desembre"
