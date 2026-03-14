@@ -259,7 +259,10 @@ func buildStringTemplateWithPlaceholders(
 		return "", err
 	}
 	var buf bytes.Buffer
-	tmpl.Execute(&buf, placeholders)
+	err = tmpl.Execute(&buf, placeholders)
+	if err != nil {
+		return "", err
+	}
 
 	return buf.String(), nil
 }

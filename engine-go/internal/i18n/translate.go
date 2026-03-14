@@ -26,7 +26,10 @@ func NewLocalizer(lang string) (*Localizer, error) {
 		return nil, err
 	}
 	for _, e := range entries {
-		bundle.LoadMessageFileFS(translationFS, e.Name())
+		_, err := bundle.LoadMessageFileFS(translationFS, e.Name())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	supportedLangs := []string{}
