@@ -26,7 +26,7 @@ func NewLocalizer(lang string) (*Localizer, error) {
 		return nil, err
 	}
 	for _, e := range entries {
-		_, err := bundle.LoadMessageFileFS(translationFS, e.Name())
+		_, err = bundle.LoadMessageFileFS(translationFS, e.Name())
 		if err != nil {
 			return nil, err
 		}
@@ -65,7 +65,7 @@ func (l *Localizer) getLocalization(config *i18n.LocalizeConfig) string {
 	return translation
 }
 
-func (l *Localizer) LocalizeWithTemplate(keyName string, templateData interface{}) string {
+func (l *Localizer) LocalizeWithTemplate(keyName string, templateData any) string {
 	localizeConfig := &i18n.LocalizeConfig{
 		MessageID:    keyName,
 		TemplateData: templateData,
