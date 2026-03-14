@@ -156,7 +156,7 @@ func compressNumbers(nums []int) string {
 
 func formatRange(start, end int) string {
 	if start == end {
-		return fmt.Sprintf("%d", start)
+		return strconv.Itoa(start)
 	}
 	return fmt.Sprintf("%d-%d", start, end)
 }
@@ -316,13 +316,14 @@ func sortJellyfinNewSeriesItems(
 }
 
 func shouldOverviewsBeDisplayed(itemsCount int, app *app.ApplicationContext) bool {
-	if app.Config.EmailTemplate.DisplayOverviewMaxItems == 0 {
-		return true
-	} else if app.Config.EmailTemplate.DisplayOverviewMaxItems == -1 {
+	switch app.Config.EmailTemplate.DisplayOverviewMaxItems {
+	case -1:
 		return false
+	case 0:
+		return true
+	default:
+		return itemsCount < app.Config.EmailTemplate.DisplayOverviewMaxItems
 	}
-
-	return itemsCount < app.Config.EmailTemplate.DisplayOverviewMaxItems
 }
 
 // The addition date is not necessarily the series's addition date.
