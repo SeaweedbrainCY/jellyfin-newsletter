@@ -327,7 +327,7 @@ func shouldOverviewsBeDisplayed(itemsCount int, app *app.ApplicationContext) boo
 
 // The addition date is not necessarily the series's addition date.
 // If the new element is a season or an episode, it's its addition date that we want
-// If there are several new elements, the newest date is kept
+// If there are several new elements, the newest date is kept.
 func getAdditionDateForSeries(seriesItem jellyfin.NewlyAddedSeriesItem) time.Time {
 	if seriesItem.IsSeriesNew {
 		return seriesItem.AdditionDate
@@ -359,12 +359,12 @@ func buildNewMediaTemplateData(
 	newMoviesData := []newMovieItemTemplateData{}
 	newSeriesData := []newSeriesItemTemplateData{}
 
-	HTMLdir := "ltr"
+	htmlDir := "ltr"
 	if slices.Contains(
 		[]string{"ar", "he", "fa", "ur", "ku", "ps", "yi", "dv", "qrc"},
 		app.Config.EmailTemplate.Language,
 	) {
-		HTMLdir = "rtl"
+		htmlDir = "rtl"
 	}
 
 	newJellyfinMoviesSorted := sortJellyfinNewMovies(newJellyfinMovies, app)
@@ -417,7 +417,7 @@ func buildNewMediaTemplateData(
 
 	data := newMediaTemplateData{
 		HTMLLang:                     app.Config.EmailTemplate.Language,
-		HTMLDir:                      HTMLdir,
+		HTMLDir:                      htmlDir,
 		Title:                        title,
 		Subtitle:                     subtitle,
 		JellyfinURL:                  app.Config.EmailTemplate.JellyfinURL,
