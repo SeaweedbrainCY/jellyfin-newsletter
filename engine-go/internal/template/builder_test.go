@@ -190,7 +190,7 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 			AdditionDate:         "2026-01-03",
 			Overview:             "Seven noble families fight for control of the mythical land of Westeros. Friction between the houses leads to full-scale war. All while a very ancient evil awakens in the farthest north. Amidst the war, a neglected military order of misfits, the Night's Watch, is all that stands between the realms of men and icy horrors beyond.",
 			AddedOnLabel:         "Added on",
-			NewSeriesTitle:       "Game of thrones: Seasons 1-8",
+			NewSeriesTitle:       "Game of thrones",
 			IncludeItemOverviews: true,
 		},
 		{
@@ -242,7 +242,7 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 		MoviesCount:                  strconv.Itoa(54),
 		SeriesCount:                  strconv.Itoa(1253),
 		MoviesLabel:                  "Movies",
-		SeriesLabel:                  "Series",
+		SeriesLabel:                  "Episodes",
 		FooterLabel:                  "You are recieving this email because you are using seaweedbrain's Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying stop@example.com.",
 		FooterProjectLinkLabel:       "Jellyfin Newsletter",
 		FooterOpenSourceProjectLabel: "is an open source project.",
