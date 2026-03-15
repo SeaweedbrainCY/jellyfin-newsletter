@@ -318,6 +318,67 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			movieCount:                54,
 			episodeCount:              1253,
 		},
+		{
+			name: "Display overview, threshold reached",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.DisplayOverviewMaxItems = 1
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expected := getExpectedNewMediaTemplateData()
+				for i := range expected.NewMovies {
+					expected.NewMovies[i].IncludeItemOverviews = false
+				}
+				for i := range expected.NewSeries {
+					expected.NewSeries[i].IncludeItemOverviews = false
+				}
+				return expected
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+		},
+		{
+			name: "Display overview, threshold not reached",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.DisplayOverviewMaxItems = 10
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: getExpectedNewMediaTemplateData,
+			getJellyfinNewMovies:                getJellyfinNewMovies,
+			getJellyfinNewSeriesItems:           getJellyfinNewSeriesItems,
+			movieCount:                          54,
+			episodeCount:                        1253,
+		},
+		{
+			name: "Sorting, date asc",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.SortMode = "date_asc"
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: getExpectedNewMediaTemplateData,
+			getJellyfinNewMovies:                getJellyfinNewMovies,
+			getJellyfinNewSeriesItems:           getJellyfinNewSeriesItems,
+			movieCount:                          54,
+			episodeCount:                        1253,
+		},
+		{
+			name: "Sorting, unknown sort mode",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.SortMode = "unknown"
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: getExpectedNewMediaTemplateData,
+			getJellyfinNewMovies:                getJellyfinNewMovies,
+			getJellyfinNewSeriesItems:           getJellyfinNewSeriesItems,
+			movieCount:                          54,
+			episodeCount:                        1253,
+		},
 	}
 
 	for _, test := range tests {
