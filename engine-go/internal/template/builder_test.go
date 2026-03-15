@@ -379,6 +379,36 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			movieCount:                          54,
 			episodeCount:                        1253,
 		},
+		{
+			name: "Sorting, date desc",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.SortMode = "date_desc"
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expected := getExpectedNewMediaTemplateData()
+				newMovies := []newMovieItemTemplateData{}
+				newSeries := []newSeriesItemTemplateData{}
+				newMoviesLen := len(expected.NewMovies)
+				newSeriesLen := len(expected.NewSeries)
+
+				for i := range expected.NewMovies {
+					newMovies = append(newMovies, expected.NewMovies[newMoviesLen-i-1])
+				}
+
+				for i := range expected.NewSeries {
+					newSeries = append(newSeries, expected.NewSeries[newSeriesLen-i-1])
+				}
+				expected.NewMovies = newMovies
+				expected.NewSeries = newSeries
+				return expected
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+		},
 	}
 
 	for _, test := range tests {
