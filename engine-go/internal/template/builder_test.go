@@ -606,3 +606,19 @@ func TestCheckIfUnknownThemeIsAvailable(t *testing.T) {
 	app.Config.EmailTemplate.Theme = "Unknown"
 	assert.Error(t, CheckIfThemeIsAvailable(app))
 }
+
+func TestBuildNewMediaEmailHTML(t *testing.T) {
+	newMovies := getJellyfinNewMovies()
+	newSeries := getJellyfinNewSeriesItems()
+	movieCount := int32(32)
+	seriesCount := int32(1000)
+	app, _ := getAppContext()
+
+	html, err := BuildNewMediaEmailHTML(&newMovies, &newSeries, movieCount, seriesCount, app)
+
+	require.NoError(t, err)
+
+	assert.NotContains(t, html, "{{")
+	assert.NotContains(t, html, "}}")
+
+}
