@@ -7,8 +7,9 @@ import (
 )
 
 func enrichSeriesItemWithDefaultInfos(jellyfinSeriesItem *jellyfin.NewlyAddedSeriesItem) {
-	jellyfinSeriesItem.Overview = "No description available."
-	jellyfinSeriesItem.PosterURL = "https://placehold.co/200"
+	default_details := getDefaultItemDetails()
+	jellyfinSeriesItem.Overview = default_details.Overview
+	jellyfinSeriesItem.PosterURL = default_details.PosterURL
 }
 
 func EnrichSeriesItem(
