@@ -96,17 +96,16 @@ func CheckIfThemeIsAvailable(app *app.ApplicationContext) error {
 }
 
 func getNewMediaHTMLTemplate(
-	themesType string,
 	themeFS embed.FS,
 	app *app.ApplicationContext,
 ) (*template.Template, error) {
+	filename := app.Config.EmailTemplate.Theme + ".html"
 	filePath := filepath.Join(
 		"themes",
-		themesType,
 		app.Config.EmailTemplate.Theme,
-		app.Config.EmailTemplate.Theme+".html",
+		filename,
 	)
-	tmpl, err := template.New("Email").Option("missingkey=zero").ParseFS(themeFS, filePath)
+	tmpl, err := template.New(filename).Option("missingkey=zero").ParseFS(themeFS, filePath)
 
 	if err != nil {
 		app.Logger.Error(
@@ -451,9 +450,8 @@ func BuildNewMediaEmailHTML(
 	movieCount int32,
 	episodesCount int32,
 	app *app.ApplicationContext,
-	themeFS embed.FS,
 ) (string, error) {
-	tmpl, err := getNewMediaHTMLTemplate("new_media", themeFS, app)
+	tmpl, err := getNewMediaHTMLTemplate(templateHTMLThemesFS, app)
 
 	if err != nil {
 		// Error already logged
