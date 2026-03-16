@@ -97,3 +97,7 @@ other = "Noviembre"
 
 [december]
 other = "Diciembre"
+
+[episode]
+one = "Episodio"
+other = "Episodios"
