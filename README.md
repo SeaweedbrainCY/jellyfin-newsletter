@@ -48,9 +48,16 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 - Support for English, French, Spanish, Catalan, Italian and Hebrew (RTL-aware template)
 - Configure the list of recipients
 - Configure specific folders to watch for new items
+- Support themes 
 
 A Go implementation is being developed in parallel.
 Python remains the stable reference.
+
+### Create a new theme
+You can create and propose a new theme by following the [theme creation guide](engine-go/internal/template/themes/README.md).
+
+Currently available themes:
+- `Classic`
 
 ## Recommended installation: Docker
 ### Requirements
