@@ -86,7 +86,6 @@ var templateHTMLThemesFS embed.FS
 func CheckIfThemeIsAvailable(app *app.ApplicationContext) error {
 	filePath := filepath.Join(
 		"themes",
-		"new_media",
 		app.Config.EmailTemplate.Theme,
 		app.Config.EmailTemplate.Theme+".html",
 	)
