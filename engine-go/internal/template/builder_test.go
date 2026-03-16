@@ -1,6 +1,7 @@
 package template
 
 import (
+	"html"
 	"strconv"
 	"testing"
 	"time"
@@ -610,15 +611,50 @@ func TestCheckIfUnknownThemeIsAvailable(t *testing.T) {
 func TestBuildNewMediaEmailHTML(t *testing.T) {
 	newMovies := getJellyfinNewMovies()
 	newSeries := getJellyfinNewSeriesItems()
-	movieCount := int32(32)
-	seriesCount := int32(1000)
+	movieCount := int32(54)
+	seriesCount := int32(1253)
 	app, _ := getAppContext()
+	expectedTemplateData := getExpectedNewMediaTemplateData()
 
-	html, err := BuildNewMediaEmailHTML(&newMovies, &newSeries, movieCount, seriesCount, app)
+	escaped_html, err := BuildNewMediaEmailHTML(&newMovies, &newSeries, movieCount, seriesCount, app)
+	unescaped_html := html.UnescapeString(escaped_html)
 
 	require.NoError(t, err)
 
-	assert.NotContains(t, html, "{{")
-	assert.NotContains(t, html, "}}")
+	assert.NotContains(t, unescaped_html, "{{")
+	assert.NotContains(t, unescaped_html, "}}")
+	assert.Contains(t, unescaped_html, expectedTemplateData.HTMLLang)
+	assert.Contains(t, unescaped_html, expectedTemplateData.HTMLDir)
+	assert.Contains(t, unescaped_html, expectedTemplateData.Title)
+	assert.Contains(t, unescaped_html, expectedTemplateData.Subtitle)
+	assert.Contains(t, unescaped_html, expectedTemplateData.JellyfinURL)
+	assert.Contains(t, unescaped_html, expectedTemplateData.DiscoverNowLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.NewFilmLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.NewSeriesLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.CurrentlyAvailableLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.MoviesCount)
+	assert.Contains(t, unescaped_html, expectedTemplateData.MoviesLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.SeriesCount)
+	assert.Contains(t, unescaped_html, expectedTemplateData.SeriesLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.FooterLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.FooterProjectLinkLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.FooterOpenSourceProjectLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.FooterDevelopedByLabel)
+	assert.Contains(t, unescaped_html, expectedTemplateData.FooterLicenceAndCopyright)
+	for _, movies := range expectedTemplateData.NewMovies {
+		assert.Contains(t, unescaped_html, movies.PosterURL)
+		assert.Contains(t, unescaped_html, movies.Name)
+		assert.Contains(t, unescaped_html, movies.AddedOnLabel)
+		assert.Contains(t, unescaped_html, movies.AdditionDate)
+		assert.Contains(t, unescaped_html, movies.Overview)
+	}
 
+	for _, series := range expectedTemplateData.NewSeries {
+		assert.Contains(t, unescaped_html, series.PosterURL)
+		assert.Contains(t, unescaped_html, series.SeriesName)
+		assert.Contains(t, unescaped_html, series.AddedOnLabel)
+		assert.Contains(t, unescaped_html, series.AdditionDate)
+		assert.Contains(t, unescaped_html, series.Overview)
+		assert.Contains(t, unescaped_html, series.NewSeriesTitle)
+	}
 }
