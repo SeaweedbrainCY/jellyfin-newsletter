@@ -14,9 +14,6 @@ import (
 	"go.uber.org/zap"
 )
 
-//go:embed themes/*/*/*.html
-var templateHTMLThemesFS embed.FS
-
 var version = "dev" // Will be set during build time
 
 func main() {
@@ -40,7 +37,7 @@ func main() {
 
 	app := app.InitApplicationContext(config, logger, localizer)
 
-	err = template.CheckIfThemeIsAvailable(templateHTMLThemesFS, app)
+	err = template.CheckIfThemeIsAvailable(app)
 	if err != nil {
 		app.Logger.Fatal(
 			"Chosen theme doesn't exist or is not usable right now.",
