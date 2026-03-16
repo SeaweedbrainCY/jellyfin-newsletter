@@ -590,6 +590,19 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 	}
 }
 
-func TestCheckIfThemeIsAvailable(t *testing.T) {
+func TestCheckIfValidThemeIsAvailable(t *testing.T) {
+	validThemeList := []string{"classic"}
+	app, _ := getAppContext()
+	for _, theme := range validThemeList {
+		t.Run("Check is theme "+theme+" is available", func(t *testing.T) {
+			app.Config.EmailTemplate.Theme = theme
+			assert.NoError(t, CheckIfThemeIsAvailable(app))
+		})
+	}
+}
 
+func TestCheckIfUnknownThemeIsAvailable(t *testing.T) {
+	app, _ := getAppContext()
+	app.Config.EmailTemplate.Theme = "Unknown"
+	assert.Error(t, CheckIfThemeIsAvailable(app))
 }
