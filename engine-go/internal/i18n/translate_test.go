@@ -131,9 +131,20 @@ func TestLocalizeUnknownKey(t *testing.T) {
 }
 
 func TestLocalizeWithPlural(t *testing.T) {
-
+	l, _ := NewLocalizer("fr")
+	localizedStr := l.LocalizeWithPlural("movies", 2)
+	assert.Equal(t, "Films", localizedStr)
 }
 
 func TestLocalizeWithTemplateData(t *testing.T) {
-
+	data := struct {
+		JellyfinOwnerName string
+		UnsubscribeEmail  string
+	}{
+		JellyfinOwnerName: "Test Owner",
+		UnsubscribeEmail:  "owner@test.com",
+	}
+	l, _ := NewLocalizer("fr")
+	localizedStr := l.LocalizeWithTemplate("footer_label", data)
+	assert.Equal(t, "Vous recevez cet email car vous utilisez le serveur Jellyfin de Test Owner. Si vous ne souhaitez plus recevoir ces emails, vous pouvez vous désinscrire en notifiant owner@test.com.", localizedStr)
 }
