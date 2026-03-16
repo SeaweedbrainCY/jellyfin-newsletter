@@ -7,9 +7,9 @@ import (
 )
 
 func enrichSeriesItemWithDefaultInfos(jellyfinSeriesItem *jellyfin.NewlyAddedSeriesItem) {
-	default_details := getDefaultItemDetails()
-	jellyfinSeriesItem.Overview = default_details.Overview
-	jellyfinSeriesItem.PosterURL = default_details.PosterURL
+	defaultDetails := getDefaultItemDetails()
+	jellyfinSeriesItem.Overview = defaultDetails.Overview
+	jellyfinSeriesItem.PosterURL = defaultDetails.PosterURL
 }
 
 func EnrichSeriesItem(
