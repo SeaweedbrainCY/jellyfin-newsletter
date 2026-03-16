@@ -1,0 +1,483 @@
+<!-- 
+Template: Classic 
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="{{.HTMLLang}}" dir="{{.HTMLDir}}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Gmail-specific meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="date=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="email=no">
+    <style>
+        /* Reset for email clients */
+        body,
+        table,
+        td,
+        p,
+        a,
+        h1,
+        h2,
+        h3 {
+            font-family: Arial, Helvetica, sans-serif;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            color: #ffffff !important;
+        }
+
+        body {
+            background: #000011;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-table {
+            width: 100%;
+            max-width: 600px;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        .content-cell {
+            padding: 15px;
+        }
+
+        .title {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        h1 {
+            color: #00ccff !important;
+            font-size: 24px !important;
+            margin: 0 0 10px !important;
+        }
+
+        p {
+            font-size: 16px !important;
+            line-height: 1.4 !important;
+            margin: 0 0 15px !important;
+            color: #dddddd !important;
+        }
+
+        .button {
+            background-color: #00ccff;
+            color: #ffffff !important;
+            display: inline-block;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .movie-container {
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .movie_bg {
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+        }
+
+        .movie {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .movie-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #444;
+            border-radius: 10px;
+            margin: 0 0 15px;
+            overflow: hidden;
+        }
+
+        .movie-content {
+            padding: 15px;
+        }
+
+        .movie-image {
+            text-align: center;
+            padding: 15px;
+            width: 120px;
+        }
+
+        .movie-image img {
+            max-width: 100px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .movie-title {
+            font-size: 18px !important;
+            margin: 0 0 5px !important;
+            color: #ffffff !important;
+        }
+
+        .movie-date {
+            color: #dddddd !important;
+            font-size: 14px !important;
+            margin: 0 0 10px !important;
+        }
+
+        .movie-description {
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+            color: #dddddd !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            max-width: 100% !important;
+            word-break: break-word !important;
+        }
+
+        .section-title {
+            color: #00ccff !important;
+            font-size: 20px !important;
+            padding: 10px 15px;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .stats-cell {
+            padding: 15px;
+            width: 50%;
+        }
+
+        .stats-number {
+            font-size: 28px !important;
+            margin: 0 0 5px !important;
+            color: #00ccff !important;
+        }
+
+        .stats-label {
+            font-size: 14px !important;
+            color: #dddddd !important;
+        }
+
+        .divider {
+            border-top: 1px solid #333;
+            margin: 30px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 12px !important;
+            color: #aaaaaa !important;
+        }
+
+        .footer-link,
+        .footer-link:visited {
+            color: #4287f5 !important;
+            text-decoration: underline !important;
+        }
+
+        /* Gmail-specific fixes */
+        u+.body a {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+
+        /* Mobile spacing container */
+        .mobile-text-container {
+            /* No changes needed for desktop */
+        }
+
+        /* Mobile-specific spacing */
+        @media screen and (max-width: 600px) {
+            .mobile-text-container {
+                margin-top: 20px;
+                /* Increased space above text */
+            }
+
+            .movie-image {
+                padding-bottom: 0 !important;
+            }
+
+            .movie-content-cell {
+                padding-top: 5px !important;
+                /* Reduced cell padding */
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+        }
+
+        /* RTL adjustments */
+        [dir="rtl"] h1,
+        [dir="rtl"] h2,
+        [dir="rtl"] p,
+        [dir="rtl"] .movie-date,
+        [dir="rtl"] .movie-description,
+        [dir="rtl"] .section-title {
+            text-align: right !important;
+        }
+
+        /* Keep title section centered even in RTL */
+        [dir="rtl"] .title h1,
+        [dir="rtl"] .title p {
+            text-align: center !important;
+        }
+
+        /* Keep stats section title centered even in RTL */
+        [dir="rtl"] h2[style*="text-align: center"] {
+            text-align: center !important;
+        }
+
+        [dir="rtl"] .movie-content-cell {
+            direction: rtl !important;
+        }
+
+        /* RTL row ordering - reverse content and image cells */
+        [dir="rtl"] .movie-row {
+            display: flex !important;
+            flex-direction: row-reverse !important;
+        }
+
+        [dir="rtl"] .movie-row td {
+            display: block !important;
+        }
+
+        /* Specific RTL footer handling - keep center alignment but RTL direction */
+        [dir="rtl"] footer {
+            text-align: center !important;
+            direction: rtl !important;
+        }
+
+        [dir="rtl"] footer p {
+            direction: rtl !important;
+        }
+
+        /* Media Queries */
+        @media screen and (max-width: 600px) {
+            .movie-card-table {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .movie-image,
+            .movie-content-cell {
+                display: block !important;
+                width: 100% !important;
+                text-align: center !important;
+                padding: 10px !important;
+                box-sizing: border-box;
+            }
+
+            .movie-image {
+                padding-bottom: 0 !important;
+            }
+
+            .movie-image img {
+                margin: 0 auto !important;
+            }
+
+            .movie-content-cell {
+                padding-top: 0 !important;
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+
+            .movie-description {
+                font-size: 13px !important;
+            }
+
+            .movie_container {
+                margin: 0 10px 15px;
+            }
+
+            .main-table {
+                width: 100% !important;
+            }
+
+            .content-cell {
+                padding: 10px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hidden content to prevent Gmail clipping -->
+    <div style="display: none; max-height: 0px; overflow: hidden;">
+    </div>
+
+    <center>
+        <table class="main-table" role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td class="content-cell" bgcolor="#000011">
+                    <!-- Title Section -->
+                    <table width="100%" role="presentation" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="title" style="text-align: center;">
+                                <h1>{{.Title}}</h1>
+                                <p>{{.Subtitle}}</p>
+                                <br>
+                                <a href="{{.JellyfinURL}}" class="button">{{.DiscoverNowLabel}}</a>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Movies Section -->
+                    {{if .DisplayNewMovies}}
+                    <div>
+                        <h2 class="section-title">{{.NewFilmLabel}}</h2>
+                        <div class="movie-container">
+                            {{range .NewMovies}}
+                            <div class="movie_container" style="margin-bottom: 15px;">
+                                <div class="movie_bg"
+                                    style="background: url('{{.PosterURL}}') no-repeat center center; background-size: cover; border-radius: 10px;">
+                                    <table class="movie" width="100%" role="presentation" cellpadding="0"
+                                        cellspacing="0"
+                                        style="background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;">
+                                        <tr>
+                                            <td class="movie-image" valign="middle"
+                                                style="padding: 15px; text-align: center; width: 120px;">
+                                                <img src="{{.PosterURL}}" alt="{{.Name}}"
+                                                    style="max-width: 100px; height: auto; display: block; margin: 0 auto;">
+                                            </td>
+                                            <td class="movie-content-cell" valign="middle" style="padding: 15px;">
+                                                <div class="mobile-text-container">
+                                                    <h3 class="movie-title"
+                                                        style="color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;">
+                                                        {{.Name}}</h3>
+                                                    <div class="movie-date"
+                                                        style="color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;">
+                                                        {{.AddedOnLabel}} {{.AdditionDate}}
+                                                    </div>
+                                                    {{if .IncludeItemOverviews}}
+                                                    <div class="movie-description"
+                                                        style="color: #dddddd !important; font-size: 14px !important; line-height: 1.4 !important; ">
+                                                        {{.Overview}}
+                                                    </div>
+                                                    {{end}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
+
+                    {{if .DisplayNewSeries}}
+                    <!-- TV Shows Section -->
+                    <div>
+                        <h2 class="section-title">{{.NewSeriesLabel}}</h2>
+                        <div class="movie-container">
+                            {{range .NewSeries}}
+                            <div class="movie_container" style="margin-bottom: 15px;">
+                                <div class="movie_bg"
+                                    style="background: url('{{.PosterURL}}') no-repeat center center; background-size: cover; border-radius: 10px;">
+                                    <table class="movie" width="100%" role="presentation" cellpadding="0"
+                                        cellspacing="0"
+                                        style="background: rgba(0, 0, 0, 0.7); border-radius: 10px; width: 100%;">
+                                        <tr>
+                                            <td class="movie-image" valign="middle"
+                                                style="padding: 15px; text-align: center; width: 120px;">
+                                                <img src="{{.PosterURL}}" alt="{{.SeriesName}}"
+                                                    style="max-width: 100px; height: auto; display: block; margin: 0 auto;">
+                                            </td>
+                                            <td class="movie-content-cell" valign="middle" style="padding: 15px;">
+                                                <div class="mobile-text-container">
+                                                    <h3 class="movie-title"
+                                                        style="color: #ffffff !important; margin: 0 0 5px !important; font-size: 18px !important;">
+                                                        {{.NewSeriesTitle}}</h3>
+                                                    <div class="movie-date"
+                                                        style="color: #dddddd !important; font-size: 14px !important; margin: 0 0 10px !important;">
+                                                        {{.AddedOnLabel}} {{.AdditionDate}}
+                                                    </div>
+                                                    {{if .IncludeItemOverviews}}
+                                                    <div class="movie-description"
+                                                        style="color: #dddddd !important; font-size: 14px !important; line-height: 1.4 !important;">
+                                                         {{.Overview}}
+                                                    </div>
+                                                    {{end}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
+
+                    <!-- Stats Section -->
+                    <div class="divider"></div>
+                    <h2 class="section-title" style="text-align: center;">{{.CurrentlyAvailableLabel}}</h2>
+                    <table class="stats-table" role="presentation">
+                        <tr>
+                            <td class="stats-cell">
+                                <div class="stats-number">{{.MoviesCount}}</div>
+                                <div class="stats-label">{{.MoviesLabel}}</div>
+                            </td>
+                            <td class="stats-cell">
+                                <div class="stats-number">{{.SeriesCount}}</div>
+                                <div class="stats-label">{{.SeriesLabel}}</div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Footer -->
+                    <footer>
+                       {{.FooterLabel}}
+                        <br><br><br>
+
+                        <!--
+                            BEFORE EDITING ANYTHING BELOW THIS LINE, PLEASE READ THE FOLLOWING:
+                            While the AGPLv3 license allows modification and redistribution, I kindly ask that the footer attribution remain intact to acknowledge the original project and its contributors. This helps support the open-source community and gives credit where it's due.
+
+                            Thanks !
+                        -->
+                        <a href="https://github.com/SeaweedbrainCY/jellyfin-newsletter"
+                            class="footer-link">{{.FooterProjectLinkLabel}}</a>
+                       {{.FooterOpenSourceProjectLabel}}
+                        <bdi>{{.FooterDevelopedByLabel}}</bdi>
+                        <br>
+                        {{.FooterLicenceAndCopyright}}
+                    </footer>
+                </td>
+            </tr>
+        </table>
+    </center>
+
+    <!-- Prevent Gmail clipping -->
+    <div style="display: none; white-space: nowrap; font: 15px courier; line-height: 0;">
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    </div>
+</body>
+
+</html>

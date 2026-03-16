@@ -80,14 +80,17 @@ type footerTemplateData struct {
 	UnsubscribeEmail  string
 }
 
-func CheckIfThemeIsAvailable(themeFS embed.FS, app *app.ApplicationContext) error {
+//go:embed themes/*/*.html
+var templateHTMLThemesFS embed.FS
+
+func CheckIfThemeIsAvailable(app *app.ApplicationContext) error {
 	filePath := filepath.Join(
 		"themes",
 		"new_media",
 		app.Config.EmailTemplate.Theme,
 		app.Config.EmailTemplate.Theme+".html",
 	)
-	if _, err := template.ParseFS(themeFS, filePath); err != nil {
+	if _, err := template.ParseFS(templateHTMLThemesFS, filePath); err != nil {
 		return err
 	}
 	return nil
