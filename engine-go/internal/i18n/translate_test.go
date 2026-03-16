@@ -146,5 +146,9 @@ func TestLocalizeWithTemplateData(t *testing.T) {
 	}
 	l, _ := NewLocalizer("fr")
 	localizedStr := l.LocalizeWithTemplate("footer_label", data)
-	assert.Equal(t, "Vous recevez cet email car vous utilisez le serveur Jellyfin de Test Owner. Si vous ne souhaitez plus recevoir ces emails, vous pouvez vous désinscrire en notifiant owner@test.com.", localizedStr)
+	assert.Equal(
+		t,
+		"Vous recevez cet email car vous utilisez le serveur Jellyfin de Test Owner. Si vous ne souhaitez plus recevoir ces emails, vous pouvez vous désinscrire en notifiant owner@test.com.",
+		localizedStr,
+	)
 }
