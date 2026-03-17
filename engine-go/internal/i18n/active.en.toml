@@ -34,8 +34,14 @@ other = "new episodes"
 [footer_project_open_source]
 other = "is an open source project."
 
-[footer_developed_by]
-other = "Developed with ❤️ by <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> and <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">contributors</a>."
+[footer_developed_with_hearth]
+other = "Developed with ❤️ by"
+
+[and]
+other = "and"
+
+[the_contributors]
+other = "the contributors"
 
 [license_and_copyright]
 other = "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3."
