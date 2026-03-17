@@ -167,8 +167,8 @@ func buildDryRunConfig(yamlParsedConfig *yamlConfiguration) DryRunConfig {
 			Enabled: true,
 			TestSMTPConnection: yamlParsedConfig.DryRun.TestSMTPConnection != nil &&
 				*yamlParsedConfig.DryRun.TestSMTPConnection,
-			OutputDirectory: "./previews/",
-			OutputFilename:  "newsletter_{date}_{time}.html",
+			OutputDirectory: "/app/config/previews/",
+			OutputFilename:  "newsletter_{{.Datetime}}.html",
 			IncludeMetadata: yamlParsedConfig.DryRun.IncludeMetadata != nil && *yamlParsedConfig.DryRun.IncludeMetadata,
 			SaveEmailData:   yamlParsedConfig.DryRun.SaveEmailData != nil && *yamlParsedConfig.DryRun.SaveEmailData,
 		}
