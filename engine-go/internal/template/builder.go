@@ -58,6 +58,8 @@ type newMediaTemplateData struct {
 	FooterOpenSourceProjectLabel string
 	FooterDevelopedByLabel       string
 	FooterLicenceAndCopyright    string
+	AndLocalized                 string
+	TheContributorsLabel         string
 }
 
 type titlePlaceholders struct {
@@ -438,8 +440,10 @@ func buildNewMediaTemplateData(
 		FooterLabel:                  buildFooterLabel(app),
 		FooterProjectLinkLabel:       "Jellyfin Newsletter",
 		FooterOpenSourceProjectLabel: app.Localizer.Localize("footer_project_open_source"),
-		FooterDevelopedByLabel:       app.Localizer.Localize("footer_developed_by"),
+		FooterDevelopedByLabel:       app.Localizer.Localize("footer_developed_with_hearth"),
 		FooterLicenceAndCopyright:    app.Localizer.Localize("license_and_copyright"),
+		AndLocalized:                 app.Localizer.Localize("and"),
+		TheContributorsLabel:         app.Localizer.Localize("the_contributors"),
 	}
 	return &data, nil
 }
