@@ -107,7 +107,7 @@ type yamlConfiguration struct {
 	DryRun *struct {
 		Enabled            bool   `yaml:"enabled" validate:"boolean"`
 		TestSMTPConnection *bool  `yaml:"test_smtp_connection,omitempty" validate:"omitempty,boolean"`
-		OutputDirectory    string `yaml:"output_directory,omitempty" validate:"omitempty,dirpath"`
+		OutputDirectory    string `yaml:"output_directory,omitempty" validate:"required_if=Enabled true,dirpath"`
 		OutputFilename     string `yaml:"output_filename,omitempty" `
 		IncludeMetadata    *bool  `yaml:"include_metadata,omitempty" validate:"omitempty,boolean"`
 		SaveEmailData      *bool  `yaml:"save_email_data,omitempty" validate:"omitempty,boolean"`

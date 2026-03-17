@@ -434,6 +434,19 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			yamlKeyToRemove: "recipients",
 			expectedError:   `failed to decode configuration file: Key: 'yamlConfiguration.Recipients' Error:Field validation for 'Recipients' failed on the 'required' tag`,
 		},
+		{
+			name:            "Missing dry-run.output_directory",
+			yamlKeyToRemove: "dry-run.output_directory",
+			expectedError:   `failed to decode configuration file: [43:8] Key: 'OutputDirectory' Error:Field validation for 'OutputDirectory' failed on the 'required_if' tag
+  40 |   sort_mode: "date_asc"
+  41 |   display_overview_max_items: 10
+  42 | 
+> 43 | dry-run:
+              ^
+  44 |   enabled: true
+  45 |   test_smtp_connection: false
+  46 |   output_filename: "newsletter_{date}.html"`,
+		},
 	}
 
 	finalTests := ""
