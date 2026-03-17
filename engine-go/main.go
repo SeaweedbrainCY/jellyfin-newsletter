@@ -52,12 +52,26 @@ func main() {
 
 	err = jellyfinAPIClient.TestConnection(app)
 	if err != nil {
-		app.Logger.Debug("An error occurred while connecting to Jellyfin.", zap.Error(err))
-		app.Logger.Fatal("Jellyfin newsletter startup failed. Switch to debug to display Go error message")
+		app.Logger.Fatal("Jellyfin newsletter startup failed. An error occurred while connecting to Jellyfin.", zap.Error(err))
 	}
 
 	recentlyAddedMovies := jellyfinAPIClient.GetRecentlyAddedMovies(app)
 	app.Logger.Info("movies", zap.Any("movies", recentlyAddedMovies))
 	recentlyAddedSeries := jellyfinAPIClient.GetNewlyAddedSeries(app)
 	app.Logger.Info("series", zap.Any("series", recentlyAddedSeries))
+
+	moviesCount, episodesCount, err := jellyfinAPIClient.LibraryAPI.GetItemsStats(app)
+	if err != nil {
+		app.Logger.Fatal("Failed to get Jellyfin items statistics.", zap.Error(err))
+	}
+
+	emailHTML, err := template.BuildNewMediaEmailHTML(recentlyAddedMovies, recentlyAddedSeries, moviesCount, episodesCount, app)
+	if  err != nil {
+		app.Logger.Fatal("Failed to build email HTML template.", zap.Error(err))
+	}
+
+	if config.DryRun.Enabled {
+		
+	}
+
 }
