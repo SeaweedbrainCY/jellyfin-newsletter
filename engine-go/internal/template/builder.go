@@ -203,7 +203,7 @@ func buildNewSeriesItemFromSeriesNewItems(item jellyfin.NewlyAddedSeriesItem, ap
 	return title
 }
 
-func buildStringTemplateWithPlaceholders(
+func BuildEmailTitleWithPlaceholders(
 	templateStr string,
 	observedPeriodDays int,
 	app *app.ApplicationContext,
@@ -401,7 +401,7 @@ func buildNewMediaTemplateData(
 		})
 	}
 
-	title, err := buildStringTemplateWithPlaceholders(
+	title, err := BuildEmailTtitleWithPlaceholders(
 		app.Config.EmailTemplate.Title,
 		app.Config.Jellyfin.ObservedPeriodDays,
 		app,
@@ -410,7 +410,7 @@ func buildNewMediaTemplateData(
 		return nil, err
 	}
 
-	subtitle, err := buildStringTemplateWithPlaceholders(
+	subtitle, err := BuildEmailTtitleWithPlaceholders(
 		app.Config.EmailTemplate.Subtitle,
 		app.Config.Jellyfin.ObservedPeriodDays,
 		app,
