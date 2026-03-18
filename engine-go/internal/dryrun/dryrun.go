@@ -94,13 +94,13 @@ func saveMetadataAsJSONFile(outputDirectory, outputFilename string, newJellyfinM
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(filePath, metadataMarshalled, 0644)
+	err = os.WriteFile(filePath, metadataMarshalled, 0600)
 	return err
 }
 
 func saveHTMLFile(outputDirectory, outputFilename, emailHTML string) error {
 	filePath := filepath.Join(outputDirectory, outputFilename)
-	return os.WriteFile(filePath, []byte(emailHTML), 0644)
+	return os.WriteFile(filePath, []byte(emailHTML), 0600)
 }
 
 func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
@@ -114,7 +114,7 @@ func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
 	}
 
 	if app.Config.DryRun.SaveEmailData {
-		filename := strings.Replace(outputFilename, ".html", ".json", -1)
+		filename := strings.ReplaceAll(outputFilename, ".html", ".json")
 		err := saveMetadataAsJSONFile(
 			app.Config.DryRun.OutputDirectory,
 			filename,
