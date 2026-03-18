@@ -401,7 +401,7 @@ func buildNewMediaTemplateData(
 		})
 	}
 
-	title, err := BuildEmailTtitleWithPlaceholders(
+	title, err := BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Title,
 		app.Config.Jellyfin.ObservedPeriodDays,
 		app,
@@ -410,7 +410,7 @@ func buildNewMediaTemplateData(
 		return nil, err
 	}
 
-	subtitle, err := BuildEmailTtitleWithPlaceholders(
+	subtitle, err := BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Subtitle,
 		app.Config.Jellyfin.ObservedPeriodDays,
 		app,
