@@ -39,7 +39,7 @@ email:
 
 email_template:
   theme: "classic"
-  language: en
+  language: fr
   subject: New releases
   title: Newsletter
   subtitle: This week
@@ -191,7 +191,7 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(t, "pass", string(config.SMTP.Password))
 	assert.Equal(t, "Jellyfin", config.SMTP.SenderName)
 	assert.Equal(t, "classic", config.EmailTemplate.Theme)
-	assert.Equal(t, "en", config.EmailTemplate.Language)
+	assert.Equal(t, "fr", config.EmailTemplate.Language)
 	assert.Equal(t, "New releases", config.EmailTemplate.Subject)
 	assert.Equal(t, "Newsletter", config.EmailTemplate.Title)
 	assert.Equal(t, "This week", config.EmailTemplate.Subtitle)
@@ -319,7 +319,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
-  33 |   language: en
+  33 |   language: fr
   34 |   title: Newsletter
   35 |   `,
 		},
@@ -334,7 +334,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
-  33 |   language: en
+  33 |   language: fr
   34 |   subject: New releases
   35 |   `,
 		},
@@ -349,7 +349,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
-  33 |   language: en
+  33 |   language: fr
   34 |   subject: New releases
   35 |   `,
 		},
@@ -433,6 +433,19 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			name:            "Missing recipients",
 			yamlKeyToRemove: "recipients",
 			expectedError:   `failed to decode configuration file: Key: 'yamlConfiguration.Recipients' Error:Field validation for 'Recipients' failed on the 'required' tag`,
+		},
+		{
+			name:            "Missing dry-run.output_directory",
+			yamlKeyToRemove: "dry-run.output_directory",
+			expectedError: `failed to decode configuration file: [43:8] Key: 'OutputDirectory' Error:Field validation for 'OutputDirectory' failed on the 'required_if' tag
+  40 |   sort_mode: "date_asc"
+  41 |   display_overview_max_items: 10
+  42 | 
+> 43 | dry-run:
+              ^
+  44 |   enabled: true
+  45 |   test_smtp_connection: false
+  46 |   output_filename: "newsletter_{date}.html"`,
 		},
 	}
 

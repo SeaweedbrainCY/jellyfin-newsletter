@@ -6,20 +6,30 @@ import (
 	"go.uber.org/zap"
 )
 
-func GetMovieDetails(
+func enrichMovieWithDefaultInfos(jellyfinSeriesItem *jellyfin.MovieItem) {
+	defaultDetails := getDefaultItemDetails()
+	jellyfinSeriesItem.Overview = defaultDetails.Overview
+	jellyfinSeriesItem.PosterURL = defaultDetails.PosterURL
+}
+
+func EnrichMovieItem(
+	jellyfinMovieItem *jellyfin.MovieItem,
 	tmdbAPIClient APIInterface,
-	jellyfinMovieItem jellyfin.MovieItem,
-	app app.ApplicationContext,
-) *ItemDetails {
+	app *app.ApplicationContext,
+) {
 	if jellyfinMovieItem.TMDBId != "" {
 		parsedHTTPResponse, err := tmdbAPIClient.GetMediaByID(jellyfinMovieItem.TMDBId, MediaTypeMovie)
 
 		if err != nil {
 			// Error is already logged by GetMediaByID
-			return getDefaultItemDetails()
+			enrichMovieWithDefaultInfos(jellyfinMovieItem)
+			return
 		}
 
-		return getItemDetailsFromHTTPResponse(parsedHTTPResponse)
+		details := getItemDetailsFromHTTPResponse(parsedHTTPResponse)
+		jellyfinMovieItem.Overview = details.Overview
+		jellyfinMovieItem.PosterURL = details.PosterURL
+		return
 	}
 	// No TMDB id, we perform a search by name and select the item with the highest popularity
 	app.Logger.Debug(
@@ -36,8 +46,21 @@ func GetMovieDetails(
 
 	if err != nil {
 		// Error is already logged by SearchMediaByName
-		return getDefaultItemDetails()
+		enrichMovieWithDefaultInfos(jellyfinMovieItem)
+		return
 	}
 
-	return getItemDetailsFromSearchResult(searchResult)
+	details := getItemDetailsFromSearchResult(searchResult)
+	jellyfinMovieItem.Overview = details.Overview
+	jellyfinMovieItem.PosterURL = details.PosterURL
+}
+
+func EnrichMovieItemsList(
+	jellyfinMovieItem *[]jellyfin.MovieItem,
+	tmdbAPIClient APIInterface,
+	app *app.ApplicationContext,
+) {
+	for i := range *jellyfinMovieItem {
+		EnrichMovieItem(&(*jellyfinMovieItem)[i], tmdbAPIClient, app)
+	}
 }

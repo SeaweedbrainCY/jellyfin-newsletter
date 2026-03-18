@@ -20,9 +20,13 @@ other = "You are recieving this email because you are using {{.JellyfinOwnerName
 [added_on]
 other = "Added on"
 
-[episodes]
+[episode]
 one = "Episode"
 other = "Episodes"
+
+[season]
+one = "Season"
+other = "Seasons"
 
 [new_episodes]
 other = "new episodes"
@@ -30,8 +34,71 @@ other = "new episodes"
 [footer_project_open_source]
 other = "is an open source project."
 
-[footer_developed_by]
-other = "Developed with ❤️ by <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> and <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">contributors</a>."
+[footer_developed_with_hearth]
+other = "Developed with ❤️ by"
+
+[and]
+other = "and"
+
+[the_contributors]
+other = "the contributors"
 
 [license_and_copyright]
 other = "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3."
+
+[monday]
+other = "Monday"
+
+[tuesday]
+other = "Tuesday"
+
+[wednesday]
+other = "Wednesday"
+
+[thursday]
+other = "Thursday"
+
+[friday]
+other = "Friday"
+
+[saturday]
+other = "Saturday"
+
+[sunday]
+other = "Sunday"
+
+[january]
+other = "January"
+
+[february]
+other = "February"
+
+[march]
+other = "March"
+
+[april]
+other = "April"
+
+[may]
+other = "May"
+
+[june]
+other = "June"
+
+[july]
+other = "July"
+
+[august]
+other = "August"
+
+[september]
+other = "September"
+
+[october]
+other = "October"
+
+[november]
+other = "November"
+
+[december]
+other = "December"

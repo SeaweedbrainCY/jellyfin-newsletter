@@ -12,9 +12,14 @@ import (
 func LoadConfig(configPath string) (*Configuration, error) {
 	file, err := os.Open(configPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read configuration file: %w", err)
+		return nil, err
 	}
-	return loadConfigFromReader(file)
+	conf, err := loadConfigFromReader(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return conf, nil
 }
 
 func loadConfigFromReader(r io.Reader) (*Configuration, error) {
@@ -119,11 +124,11 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplate
 		Theme:                   "classic",
 		DisplayOverviewMaxItems: defaultDisplayOverviewMaxItem,
 		SortMode:                "date_desc",
-		AvailableLanguages:      []string{"en", "fr", "he", "ca", "es", "it"},
 	}
 
 	if yamlParsedConfig.EmailTemplate.Theme != "" {
 		emailTemplateConfig.Theme = yamlParsedConfig.EmailTemplate.Theme
+		// Theme availability will be tested by main
 	}
 
 	if yamlParsedConfig.EmailTemplate.DisplayOverviewMaxItems != nil {
@@ -162,8 +167,8 @@ func buildDryRunConfig(yamlParsedConfig *yamlConfiguration) DryRunConfig {
 			Enabled: true,
 			TestSMTPConnection: yamlParsedConfig.DryRun.TestSMTPConnection != nil &&
 				*yamlParsedConfig.DryRun.TestSMTPConnection,
-			OutputDirectory: "./previews/",
-			OutputFilename:  "newsletter_{date}_{time}.html",
+			OutputDirectory: "/app/config/previews/",
+			OutputFilename:  "newsletter_{{.Datetime}}.html",
 			IncludeMetadata: yamlParsedConfig.DryRun.IncludeMetadata != nil && *yamlParsedConfig.DryRun.IncludeMetadata,
 			SaveEmailData:   yamlParsedConfig.DryRun.SaveEmailData != nil && *yamlParsedConfig.DryRun.SaveEmailData,
 		}

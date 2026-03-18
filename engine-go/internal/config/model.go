@@ -34,7 +34,6 @@ type EmailTemplateConfig struct {
 	JellyfinOwnerName       string
 	DisplayOverviewMaxItems int
 	SortMode                string
-	AvailableLanguages      []string
 }
 
 type SMTPConfig struct {
@@ -86,7 +85,7 @@ type yamlConfiguration struct {
 		APIKey Secret `yaml:"api_key" validate:"required,jwt"`
 	} `yaml:"tmdb"                validate:"required"`
 	EmailTemplate struct {
-		Theme                   string `yaml:"theme,omitempty" validate:"omitempty,oneof=classic"`
+		Theme                   string `yaml:"theme,omitempty" validate:"omitempty"`
 		Language                string `yaml:"language" validate:"required,alpha"`
 		Subject                 string `yaml:"subject"  validate:"required"`
 		Title                   string `yaml:"title"   validate:"required"`
@@ -108,7 +107,7 @@ type yamlConfiguration struct {
 	DryRun *struct {
 		Enabled            bool   `yaml:"enabled" validate:"boolean"`
 		TestSMTPConnection *bool  `yaml:"test_smtp_connection,omitempty" validate:"omitempty,boolean"`
-		OutputDirectory    string `yaml:"output_directory,omitempty" validate:"omitempty,dirpath"`
+		OutputDirectory    string `yaml:"output_directory,omitempty" validate:"required_if=Enabled true,dirpath"`
 		OutputFilename     string `yaml:"output_filename,omitempty" `
 		IncludeMetadata    *bool  `yaml:"include_metadata,omitempty" validate:"omitempty,boolean"`
 		SaveEmailData      *bool  `yaml:"save_email_data,omitempty" validate:"omitempty,boolean"`
