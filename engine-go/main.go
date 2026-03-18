@@ -54,7 +54,10 @@ func main() {
 
 	err = jellyfinAPIClient.TestConnection(app)
 	if err != nil {
-		app.Logger.Fatal("Jellyfin newsletter startup failed. An error occurred while connecting to Jellyfin.", zap.Error(err))
+		app.Logger.Fatal(
+			"Jellyfin newsletter startup failed. An error occurred while connecting to Jellyfin.",
+			zap.Error(err),
+		)
 	}
 
 	recentlyAddedMovies := jellyfinAPIClient.GetRecentlyAddedMovies(app)
@@ -69,7 +72,13 @@ func main() {
 		app.Logger.Fatal("Failed to get Jellyfin items statistics.", zap.Error(err))
 	}
 
-	emailHTML, err := template.BuildNewMediaEmailHTML(recentlyAddedMovies, recentlyAddedSeries, moviesCount, episodesCount, app)
+	emailHTML, err := template.BuildNewMediaEmailHTML(
+		recentlyAddedMovies,
+		recentlyAddedSeries,
+		moviesCount,
+		episodesCount,
+		app,
+	)
 	if err != nil {
 		app.Logger.Fatal("Failed to build email HTML template.", zap.Error(err))
 	}

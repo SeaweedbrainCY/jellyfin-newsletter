@@ -30,13 +30,25 @@ func fillFilenameTemplate(filename string, app *app.ApplicationContext) string {
 	}
 	tmpl, err := template.New("filename").Option("missingkey=zero").Parse(filename)
 	if err != nil {
-		app.Logger.Debug("An error occured while filling the dry-run output filename template", zap.String("step", "create"), zap.String("filename", filename), zap.String("datetime", templateData.Datetime), zap.Error(err))
+		app.Logger.Debug(
+			"An error occured while filling the dry-run output filename template",
+			zap.String("step", "create"),
+			zap.String("filename", filename),
+			zap.String("datetime", templateData.Datetime),
+			zap.Error(err),
+		)
 		return filename
 	}
 	var buf bytes.Buffer
 	err = tmpl.Execute(&buf, templateData)
 	if err != nil {
-		app.Logger.Debug("An error occured while filling the dry-run output filename template", zap.String("step", "execute"), zap.String("filename", filename), zap.String("datetime", templateData.Datetime), zap.Error(err))
+		app.Logger.Debug(
+			"An error occured while filling the dry-run output filename template",
+			zap.String("step", "execute"),
+			zap.String("filename", filename),
+			zap.String("datetime", templateData.Datetime),
+			zap.Error(err),
+		)
 		return filename
 	}
 
@@ -58,7 +70,13 @@ func addMetadataToHTML(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem
 		smtpTestResult = "Not tested"
 	}
 
-	metadata := fmt.Sprintf("<!--\nJellyfin-newsletter dry run\nGenerated at: %s\nSMTP test result:%s\nNew movies detected: %s\nNew series detected: %s\n-->\n\n", time.Now().Format("2006-01-02T15:04:05Z07:00"), smtpTestResult, marshalNewItems(newJellyfinMovies), marshalNewItems(newJellyfinSeries))
+	metadata := fmt.Sprintf(
+		"<!--\nJellyfin-newsletter dry run\nGenerated at: %s\nSMTP test result:%s\nNew movies detected: %s\nNew series detected: %s\n-->\n\n",
+		time.Now().Format("2006-01-02T15:04:05Z07:00"),
+		smtpTestResult,
+		marshalNewItems(newJellyfinMovies),
+		marshalNewItems(newJellyfinSeries),
+	)
 	return metadata + emailHTML
 }
 
@@ -97,15 +115,31 @@ func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
 
 	if app.Config.DryRun.SaveEmailData {
 		filename := strings.Replace(outputFilename, ".html", ".json", -1)
-		err := saveMetadataAsJSONFile(app.Config.DryRun.OutputDirectory, filename, newJellyfinMovies, newJellyfinSeries, smtpTestResult)
+		err := saveMetadataAsJSONFile(
+			app.Config.DryRun.OutputDirectory,
+			filename,
+			newJellyfinMovies,
+			newJellyfinSeries,
+			smtpTestResult,
+		)
 		if err != nil {
-			app.Logger.Error("Impossible to write metadata in json file.", zap.String("output directory", app.Config.DryRun.OutputDirectory), zap.String("filename", filename), zap.Error(err))
+			app.Logger.Error(
+				"Impossible to write metadata in json file.",
+				zap.String("output directory", app.Config.DryRun.OutputDirectory),
+				zap.String("filename", filename),
+				zap.Error(err),
+			)
 		}
 	}
 
 	err := saveHTMLFile(app.Config.DryRun.OutputDirectory, outputFilename, emailHTML)
 	if err != nil {
-		app.Logger.Error("An error occurred while saving the HTML email file.", zap.String("output directory", app.Config.DryRun.OutputDirectory), zap.String("filename", outputFilename), zap.Error(err))
+		app.Logger.Error(
+			"An error occurred while saving the HTML email file.",
+			zap.String("output directory", app.Config.DryRun.OutputDirectory),
+			zap.String("filename", outputFilename),
+			zap.Error(err),
+		)
 	}
 
 }
