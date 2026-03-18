@@ -90,6 +90,7 @@ func saveMetadataAsJSONFile(outputDirectory, outputFilename string, newJellyfinM
 	}
 
 	filePath := filepath.Join(outputDirectory, outputFilename)
+	//nolint:musttag // It's debugging data, data consistency is not important
 	metadataMarshalled, err := json.MarshalIndent(metadata, "", "  ")
 	if err != nil {
 		return err
@@ -105,7 +106,6 @@ func saveHTMLFile(outputDirectory, outputFilename, emailHTML string) error {
 
 func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
 	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, app *app.ApplicationContext) {
-
 	outputFilename := fillFilenameTemplate(app.Config.DryRun.OutputFilename, app)
 	smtpTestResult := "To be implemented"
 
@@ -141,5 +141,4 @@ func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
 			zap.Error(err),
 		)
 	}
-
 }
