@@ -36,3 +36,64 @@ other = "Sviluppato con ❤️ da <a href=\"https://github.com/SeaweedbrainCY/\"
 
 [license_and_copyright]
 other = "Copyright © 2025 Nathan Stchepinsky, con licenza AGPLv3."
+
+[season]
+one = "Stagione"
+other = "Stagioni"
+
+[monday]
+other = "Lunedì"
+
+[tuesday]
+other = "Martedì"
+
+[wednesday]
+other = "Mercoledì"
+
+[thursday]
+other = "Giovedì"
+
+[friday]
+other = "Venerdì"
+
+[saturday]
+other = "Sabato"
+
+[sunday]
+other = "Domenica"
+
+[january]
+other = "Gennaio"
+
+[february]
+other = "Febbraio"
+
+[march]
+other = "Marzo"
+
+[april]
+other = "Aprile"
+
+[may]
+other = "Maggio"
+
+[june]
+other = "Giugno"
+
+[july]
+other = "Luglio"
+
+[august]
+other = "Agosto"
+
+[september]
+other = "Settembre"
+
+[october]
+other = "Ottobre"
+
+[november]
+other = "Novembre"
+
+[december]
+other = "Dicembre"
