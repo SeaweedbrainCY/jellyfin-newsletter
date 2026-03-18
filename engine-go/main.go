@@ -10,6 +10,7 @@ import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/smtp"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/tmdb"
 	"go.uber.org/zap"
@@ -86,6 +87,8 @@ func main() {
 	if config.DryRun.Enabled {
 		dryrun.SaveDryRunEmail(emailHTML, recentlyAddedMovies, recentlyAddedSeries, app)
 		app.Logger.Info("Successfully generated the newsletter (dry run).")
+	} else {
+		smtp.SendEmailToAllRecipients(emailHTML, app)
 	}
 
 	app.Logger.Info("Thanks for using Jellyfin-Newsletter !")

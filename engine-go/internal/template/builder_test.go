@@ -16,16 +16,12 @@ import (
 	"go.uber.org/zap/zaptest/observer"
 )
 
-func timePtr(t time.Time) *time.Time {
-	return &t
-}
-
 func getJellyfinNewMovies() []jellyfin.MovieItem {
 	return []jellyfin.MovieItem{
 		{
 			ID:             "fd9416da-9026-4219-95b4-0dae418d2b5d",
 			Name:           "Oppenheimer",
-			AdditionDate:   timePtr(time.Date(2026, 01, 02, 01, 01, 0, 0, time.UTC)),
+			AdditionDate:   new(time.Date(2026, 01, 02, 01, 01, 0, 0, time.UTC)),
 			TMDBId:         "1273",
 			ProductionYear: int32(2023),
 			Overview:       "The story of J. Robert Oppenheimer's role in the development of the atomic bomb during World War II.",
@@ -34,7 +30,7 @@ func getJellyfinNewMovies() []jellyfin.MovieItem {
 		{
 			ID:             "7dcf7149-f710-46d5-a50c-626e3486259b",
 			Name:           "Star Wars: Episode II - Attack of the Clones",
-			AdditionDate:   timePtr(time.Date(2026, 01, 01, 01, 01, 0, 0, time.UTC)),
+			AdditionDate:   new(time.Date(2026, 01, 01, 01, 01, 0, 0, time.UTC)),
 			TMDBId:         "1274",
 			ProductionYear: int32(2025),
 			Overview:       "Following an assassination attempt on Senator Padmé Amidala, Jedi Knights Anakin Skywalker and Obi-Wan Kenobi investigate a mysterious plot into the heart of the Separatist movement and the beginning of the Clone Wars.",

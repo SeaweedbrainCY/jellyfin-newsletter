@@ -17,6 +17,13 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	SortModeDateAsc  = "date_asc"
+	SortModeDateDesc = "date_desc"
+	SortModeNameAsc  = "name_asc"
+	SortModeNameDesc = "name_desc"
+)
+
 type newMovieItemTemplateData struct {
 	PosterURL            string
 	Name                 string
@@ -203,7 +210,7 @@ func buildNewSeriesItemFromSeriesNewItems(item jellyfin.NewlyAddedSeriesItem, ap
 	return title
 }
 
-func buildStringTemplateWithPlaceholders(
+func BuildEmailTitleWithPlaceholders(
 	templateStr string,
 	observedPeriodDays int,
 	app *app.ApplicationContext,
@@ -283,11 +290,11 @@ func sortJellyfinNewMovies(newJellyfinMovies *[]jellyfin.MovieItem, app *app.App
 	newJellyfinMoviesSorted := slices.Clone(*newJellyfinMovies)
 	slices.SortFunc(newJellyfinMoviesSorted, func(a, b jellyfin.MovieItem) int {
 		switch app.Config.EmailTemplate.SortMode {
-		case "name_asc":
+		case SortModeNameAsc:
 			return strings.Compare(a.Name, b.Name)
-		case "name_desc":
+		case SortModeNameDesc:
 			return strings.Compare(b.Name, a.Name)
-		case "date_desc":
+		case SortModeDateDesc:
 			return b.AdditionDate.Compare(*a.AdditionDate)
 		// date_asc is the default option
 		default:
@@ -304,11 +311,11 @@ func sortJellyfinNewSeriesItems(
 	newJellyfinSeriesSorted := slices.Clone(*newJellyfinSeries)
 	slices.SortFunc(newJellyfinSeriesSorted, func(a, b jellyfin.NewlyAddedSeriesItem) int {
 		switch app.Config.EmailTemplate.SortMode {
-		case "name_asc":
+		case SortModeNameAsc:
 			return strings.Compare(a.SeriesName, b.SeriesName)
-		case "name_desc":
+		case SortModeNameDesc:
 			return strings.Compare(b.SeriesName, a.SeriesName)
-		case "date_desc":
+		case SortModeDateDesc:
 			return getAdditionDateForSeries(b).Compare(getAdditionDateForSeries(a))
 		// date_asc is the default option
 		default:
@@ -401,7 +408,7 @@ func buildNewMediaTemplateData(
 		})
 	}
 
-	title, err := buildStringTemplateWithPlaceholders(
+	title, err := BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Title,
 		app.Config.Jellyfin.ObservedPeriodDays,
 		app,
@@ -410,7 +417,7 @@ func buildNewMediaTemplateData(
 		return nil, err
 	}
 
-	subtitle, err := buildStringTemplateWithPlaceholders(
+	subtitle, err := BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Subtitle,
 		app.Config.Jellyfin.ObservedPeriodDays,
 		app,
