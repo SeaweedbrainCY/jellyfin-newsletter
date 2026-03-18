@@ -52,10 +52,10 @@ func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.Applic
 	}()
 
 	if err = client.Mail(emailData.From); err != nil {
-		return fmt.Errorf("MAIL FROM: %w", err)
+		return fmt.Errorf("MAIL FROM: %w. Given value:%s", err, emailData.From)
 	}
 	if err = client.Rcpt(emailData.To); err != nil {
-		return fmt.Errorf("RCPT TO: %w", err)
+		return fmt.Errorf("RCPT TO: %w. Given value:%s", err, emailData.To)
 	}
 
 	wc, err := client.Data()
