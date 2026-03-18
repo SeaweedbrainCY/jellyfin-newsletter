@@ -1,6 +1,7 @@
 package smtp
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -27,7 +28,7 @@ func buildMIMEMessage(email EmailData) []byte {
 	return []byte(sb.String())
 }
 
-func sendEmail(recipient, emailHTML string, app *app.ApplicationContext) error {
+func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.ApplicationContext) error {
 	emailSubject, err := template.BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Subject,
 		app.Config.Jellyfin.ObservedPeriodDays,
@@ -42,7 +43,7 @@ func sendEmail(recipient, emailHTML string, app *app.ApplicationContext) error {
 		Subject: emailSubject,
 		HTML:    emailHTML,
 	}
-	client, err := newSMTPClient(app)
+	client, err := newSMTPClient(ctx, app)
 	if err != nil {
 		return err
 	}

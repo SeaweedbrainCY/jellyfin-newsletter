@@ -2,6 +2,7 @@ package dryrun
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -111,7 +112,7 @@ func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
 	smtpTestResult := "SMTP connection not tested."
 	if app.Config.DryRun.TestSMTPConnection {
 		app.Logger.Info("Testing SMTP connection ...")
-		smtpTestErr := smtp.TestSMTPConnection(app)
+		smtpTestErr := smtp.TestSMTPConnection(context.Background(), app)
 		if smtpTestErr != nil {
 			app.Logger.Warn("SMTP connection FAILED. No email sent.", zap.Error(smtpTestErr))
 			smtpTestResult = "SMTP connection FAILED. No email sent. Error: " + smtpTestErr.Error()
