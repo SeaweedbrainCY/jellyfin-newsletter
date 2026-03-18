@@ -3,10 +3,12 @@ package smtp
 import (
 	"context"
 	"fmt"
+	"net/mail"
 	"strings"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
+	"go.uber.org/zap"
 )
 
 type EmailData struct {
@@ -28,6 +30,15 @@ func buildMIMEMessage(email EmailData) []byte {
 	return []byte(sb.String())
 }
 
+// SMTP MAIL FROM command expects the email to be a@b.c and doesn't access a <a@b.c> or <a@b.c>. This utility extract a@b.c from a <a@b.c> or <a@b.c>. If not found, it returns an error.
+func getEmailAddressFromFriendlyName(emailFriendlyName string) (string, error) {
+	parsedAddress, err := mail.ParseAddress(emailFriendlyName)
+	if err != nil {
+		return "", err
+	}
+	return parsedAddress.Address, nil
+}
+
 func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.ApplicationContext) error {
 	emailSubject, err := template.BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Subject,
@@ -37,12 +48,17 @@ func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.Applic
 	if err != nil {
 		return fmt.Errorf("error while building email's subject: %w", err)
 	}
-	emailData := EmailData{
-		From:    app.Config.SMTP.SenderName,
-		To:      recipient,
-		Subject: emailSubject,
-		HTML:    emailHTML,
+
+	cleanedFromEmailAddr, err := getEmailAddressFromFriendlyName(app.Config.SMTP.SenderName)
+	if err != nil {
+		return fmt.Errorf("Fatal error while parsing the FROM sender address. Sender address: %s. Error: %w.", app.Config.SMTP.SenderName, err)
 	}
+
+	cleanedRecipientEmailAddr, err := getEmailAddressFromFriendlyName(recipient)
+	if err != nil {
+		return fmt.Errorf("Fatal error while parsing the RCPT recipient address. Recipient address: %s. Error: %w.", recipient, err)
+	}
+
 	client, err := newSMTPClient(ctx, app)
 	if err != nil {
 		return err
@@ -51,11 +67,11 @@ func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.Applic
 		_ = client.Quit()
 	}()
 
-	if err = client.Mail(emailData.From); err != nil {
-		return fmt.Errorf("MAIL FROM: %w. Given value:%s", err, emailData.From)
+	if err = client.Mail(cleanedFromEmailAddr); err != nil {
+		return fmt.Errorf("MAIL FROM: %w. Given value:%s", err, cleanedFromEmailAddr)
 	}
-	if err = client.Rcpt(emailData.To); err != nil {
-		return fmt.Errorf("RCPT TO: %w. Given value:%s", err, emailData.To)
+	if err = client.Rcpt(cleanedRecipientEmailAddr); err != nil {
+		return fmt.Errorf("RCPT TO: %w. Given value:%s", err, cleanedRecipientEmailAddr)
 	}
 
 	wc, err := client.Data()
@@ -63,6 +79,13 @@ func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.Applic
 		return fmt.Errorf("DATA: %w", err)
 	}
 	defer wc.Close()
+
+	emailData := EmailData{
+		From:    app.Config.SMTP.SenderName,
+		To:      recipient,
+		Subject: emailSubject,
+		HTML:    emailHTML,
+	}
 
 	_, err = wc.Write(buildMIMEMessage(emailData))
 	return err
