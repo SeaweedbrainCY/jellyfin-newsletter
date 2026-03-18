@@ -1,13 +1,13 @@
-name: GO code testing and, security and quality scanning 
+name: GO code testing and, security and quality scanning
 
-on: 
+on:
   workflow_call:
   push:
     branches:
-      - '*'
-      - '**'
-      - '*/*'
-      - '**/**'
+      - "*"
+      - "**"
+      - "*/*"
+      - "**/**"
   pull_request:
 
 permissions:
@@ -15,59 +15,53 @@ permissions:
   pull-requests: write
 
 jobs:
-    semgrep_scan:
-        name: Semgrep scan
-        runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: ./engine-go
-        steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
-        
-        - name: Set up Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: 3.x
-        
-        - name: Install semgrep
-          run: python3 -m pip install semgrep
-        
-        - name: Run semgrep
-          run:  semgrep scan --error 
-    
-    golangci:
-      name: Go lint
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v5
-        - uses: actions/setup-go@v6
-          with:
-            go-version: '1.25.x'
-        - name: golangci-lint
-          uses: golangci/golangci-lint-action@v9
-          with:
-            version: v2.8
-            working-directory: ./engine-go
+  semgrep_scan:
+    name: Semgrep scan
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./engine-go
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    go_test:
-      name: "Go test"
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v5
-          with:
-            fetch-depth: 10
-        - uses: actions/setup-go@v6
-          with:
-            go-version: '1.25.x'
-        - uses: gwatts/go-coverage-action@v2
-          name: "Run go test and generate coverage report"
-          with:
-            working-directory: ./engine-go
-            cover-pkg: ./...
-          
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
 
-        
+      - name: Install semgrep
+        run: python3 -m pip install semgrep
 
+      - name: Run semgrep
+        run: semgrep scan --error
 
-    
+  golangci:
+    name: Go lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.26.x"
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.11
+          working-directory: ./engine-go
+
+  go_test:
+    name: "Go test"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 10
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.26.x"
+      - uses: gwatts/go-coverage-action@v2
+        name: "Run go test and generate coverage report"
+        with:
+          working-directory: ./engine-go
+          cover-pkg: ./...
