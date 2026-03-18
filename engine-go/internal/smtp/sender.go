@@ -67,3 +67,14 @@ func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.Applic
 	_, err = wc.Write(buildMIMEMessage(emailData))
 	return err
 }
+
+func SendEmailToAllRecipients(emailHTML string, app *app.ApplicationContext) {
+	for _, recipient := range app.Config.EmailRecipients {
+		err := sendEmail(context.Background(), recipient, emailHTML, app)
+		if err != nil {
+			app.Logger.Error("Failed to send email to "+recipient, zap.String("recipient", recipient), zap.Error(err))
+		} else {
+			app.Logger.Info("Successfully sent newsletter to " + recipient)
+		}
+	}
+}
