@@ -247,7 +247,9 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 		FooterLabel:                  "You are recieving this email because you are using seaweedbrain's Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying stop@example.com.",
 		FooterProjectLinkLabel:       "Jellyfin Newsletter",
 		FooterOpenSourceProjectLabel: "is an open source project.",
-		FooterDevelopedByLabel:       "Developed with ❤️ by <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> and <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">contributors</a>.",
+		FooterDevelopedByLabel:       "Developed with ❤️ by",
+		AndLocalized:                 "and",
+		TheContributorsLabel:         "the contributors",
 		FooterLicenceAndCopyright:    "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3.",
 	}
 }
