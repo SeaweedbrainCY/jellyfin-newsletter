@@ -8,14 +8,14 @@ import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
 )
 
-type emailData struct {
+type EmailData struct {
 	From    string
 	To      string
 	Subject string
 	HTML    string
 }
 
-func buildMIMEMessage(email emailData) []byte {
+func buildMIMEMessage(email EmailData) []byte {
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "MIME-Version: 1.0\r\n")
 	fmt.Fprintf(&sb, "From: %s\r\n", email.From)
@@ -36,7 +36,7 @@ func sendEmail(recipient, emailHTML string, app *app.ApplicationContext) error {
 	if err != nil {
 		return fmt.Errorf("error while building email's subject: %w", err)
 	}
-	emailData := emailData{
+	emailData := EmailData{
 		From:    app.Config.SMTP.SenderName,
 		To:      recipient,
 		Subject: emailSubject,
@@ -46,7 +46,9 @@ func sendEmail(recipient, emailHTML string, app *app.ApplicationContext) error {
 	if err != nil {
 		return err
 	}
-	defer client.Quit()
+	defer func() {
+		_ = client.Quit()
+	}()
 
 	if err = client.Mail(emailData.From); err != nil {
 		return fmt.Errorf("MAIL FROM: %w", err)
