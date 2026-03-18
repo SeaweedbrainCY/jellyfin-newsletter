@@ -15,7 +15,7 @@ func enrichSeriesItemWithDefaultInfos(jellyfinSeriesItem *jellyfin.NewlyAddedSer
 func EnrichSeriesItem(
 	jellyfinSeriesItem *jellyfin.NewlyAddedSeriesItem,
 	tmdbAPIClient APIInterface,
-	app app.ApplicationContext,
+	app *app.ApplicationContext,
 ) {
 	if jellyfinSeriesItem.TMDBId != "" {
 		parsedHTTPResponse, err := tmdbAPIClient.GetMediaByID(jellyfinSeriesItem.TMDBId, MediaTypeSeries)
@@ -54,4 +54,14 @@ func EnrichSeriesItem(
 
 	jellyfinSeriesItem.Overview = details.Overview
 	jellyfinSeriesItem.PosterURL = details.PosterURL
+}
+
+func EnrichSeriesItemsList(
+	jellyfinSeriesItem *[]jellyfin.NewlyAddedSeriesItem,
+	tmdbAPIClient APIInterface,
+	app *app.ApplicationContext,
+) {
+	for i := range *jellyfinSeriesItem {
+		EnrichSeriesItem(&(*jellyfinSeriesItem)[i], tmdbAPIClient, app)
+	}
 }

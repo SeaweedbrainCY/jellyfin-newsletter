@@ -207,7 +207,7 @@ func TestGetSeriesDetailsWithTMDBID(t *testing.T) {
 			app := app.ApplicationContext{
 				Logger: logger,
 			}
-			EnrichSeriesItem(&jellyfinSeriesItem, client, app)
+			EnrichSeriesItem(&jellyfinSeriesItem, client, &app)
 			if testCase.expectErr {
 				assert.NotEmpty(t, recordedLogs.All())
 			} else {
@@ -436,7 +436,7 @@ func TestGetSeriesDetailsWithSearchByName(t *testing.T) {
 			app := app.ApplicationContext{
 				Logger: logger,
 			}
-			EnrichSeriesItem(&jellyfinSeriesItem, client, app)
+			EnrichSeriesItem(&jellyfinSeriesItem, client, &app)
 			if testCase.expectErr {
 				assert.NotEmpty(t, recordedLogs.All())
 			} else {

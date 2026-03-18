@@ -15,7 +15,7 @@ func enrichMovieWithDefaultInfos(jellyfinSeriesItem *jellyfin.MovieItem) {
 func EnrichMovieItem(
 	jellyfinMovieItem *jellyfin.MovieItem,
 	tmdbAPIClient APIInterface,
-	app app.ApplicationContext,
+	app *app.ApplicationContext,
 ) {
 	if jellyfinMovieItem.TMDBId != "" {
 		parsedHTTPResponse, err := tmdbAPIClient.GetMediaByID(jellyfinMovieItem.TMDBId, MediaTypeMovie)
@@ -53,4 +53,14 @@ func EnrichMovieItem(
 	details := getItemDetailsFromSearchResult(searchResult)
 	jellyfinMovieItem.Overview = details.Overview
 	jellyfinMovieItem.PosterURL = details.PosterURL
+}
+
+func EnrichMovieItemsList(
+	jellyfinMovieItem *[]jellyfin.MovieItem,
+	tmdbAPIClient APIInterface,
+	app *app.ApplicationContext,
+) {
+	for i := range *jellyfinMovieItem {
+		EnrichMovieItem(&(*jellyfinMovieItem)[i], tmdbAPIClient, app)
+	}
 }

@@ -207,7 +207,7 @@ func TestGetMovieDetailsWithTMDBID(t *testing.T) {
 			app := app.ApplicationContext{
 				Logger: logger,
 			}
-			EnrichMovieItem(&jellyfinMovieItem, client, app)
+			EnrichMovieItem(&jellyfinMovieItem, client, &app)
 			if testCase.expectErr {
 				assert.NotEmpty(t, recordedLogs.All())
 			} else {
@@ -436,7 +436,7 @@ func TestGetMovieDetailsWithSearchByName(t *testing.T) {
 			app := app.ApplicationContext{
 				Logger: logger,
 			}
-			EnrichMovieItem(&jellyfinMovieItem, client, app)
+			EnrichMovieItem(&jellyfinMovieItem, client, &app)
 			if testCase.expectErr {
 				assert.NotEmpty(t, recordedLogs.All())
 			} else {
