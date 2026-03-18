@@ -12,6 +12,7 @@ import (
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/smtp"
 	"go.uber.org/zap"
 )
 
@@ -107,7 +108,18 @@ func saveHTMLFile(outputDirectory, outputFilename, emailHTML string) error {
 func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
 	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, app *app.ApplicationContext) {
 	outputFilename := fillFilenameTemplate(app.Config.DryRun.OutputFilename, app)
-	smtpTestResult := "To be implemented"
+	smtpTestResult := "SMTP connection not tested."
+	if app.Config.DryRun.TestSMTPConnection {
+		app.Logger.Info("Testing SMTP connection ...")
+		smtpTestErr := smtp.TestSMTPConnection(app)
+		if smtpTestErr != nil {
+			app.Logger.Warn("SMTP connection FAILED. No email sent.", zap.Error(smtpTestErr))
+			smtpTestResult = "SMTP connection FAILED. No email sent. Error: " + smtpTestErr.Error()
+		} else {
+			app.Logger.Info("SMTP connection SUCCESSFUL. No email sent.")
+			smtpTestResult = "SMTP connection SUCCESSFUL. No email sent."
+		}
+	}
 
 	if app.Config.DryRun.IncludeMetadata {
 		emailHTML = addMetadataToHTML(emailHTML, newJellyfinMovies, newJellyfinSeries, smtpTestResult)
