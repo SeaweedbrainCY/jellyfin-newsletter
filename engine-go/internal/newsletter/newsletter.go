@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Connects to Jellyfin to retrieve the latest items and send the newsletter to the configured recipients.
+// TriggerNewsletterWorkflow connects to Jellyfin to retrieve the latest items and send the newsletter to the configured recipients.
 func TriggerNewsletterWorkflow(app *app.ApplicationContext) {
 	app.Logger.Info("Gathering new items and sending the newsletter ...")
 	jellyfinAPIClient := jellyfin.NewJellyfinAPIClient(app)

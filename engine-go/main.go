@@ -11,6 +11,7 @@ import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/newsletter"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
+	"github.com/go-co-op/gocron/v2"
 	"go.uber.org/zap"
 )
 
@@ -51,11 +52,12 @@ func main() {
 	app.Logger.Info("Configuration loaded successfully")
 
 	if app.Config.Scheduler.Enabled {
-		scheduler, err := cron.CreateNewsletterScheduler(app)
+		var scheduler gocron.Scheduler
+		scheduler, err = cron.CreateNewsletterScheduler(app)
 		if err != nil {
 			app.Logger.Fatal("Error while creating the scheduler. Exiting now.", zap.Error(err))
 		}
-		(*scheduler).Start()
+		scheduler.Start()
 		// Block forever (or until signal)
 		select {}
 	}

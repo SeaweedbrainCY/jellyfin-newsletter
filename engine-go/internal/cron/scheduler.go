@@ -7,13 +7,16 @@ import (
 	"go.uber.org/zap"
 )
 
-func CreateNewsletterScheduler(app *app.ApplicationContext) (*gocron.Scheduler, error) {
+func CreateNewsletterScheduler(app *app.ApplicationContext) (gocron.Scheduler, error) {
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
 		return nil, err
 	}
 
-	job, err := scheduler.NewJob(gocron.CronJob(app.Config.Scheduler.CronExpr, false), gocron.NewTask(newsletter.TriggerNewsletterWorkflow, app))
+	job, err := scheduler.NewJob(
+		gocron.CronJob(app.Config.Scheduler.CronExpr, false),
+		gocron.NewTask(newsletter.TriggerNewsletterWorkflow, app),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +27,12 @@ func CreateNewsletterScheduler(app *app.ApplicationContext) (*gocron.Scheduler, 
 		jobNextRunStr = nextRunDatetime.Format("2006-01-02T15:04:05Z07:00")
 	}
 
-	app.Logger.Info("Scheduler created.", zap.String("job_id", job.ID().String()), zap.String("Cron expression", app.Config.Scheduler.CronExpr), zap.String("Next run", jobNextRunStr))
+	app.Logger.Info(
+		"Scheduler created.",
+		zap.String("job_id", job.ID().String()),
+		zap.String("Cron expression", app.Config.Scheduler.CronExpr),
+		zap.String("Next run", jobNextRunStr),
+	)
 
-	return &scheduler, nil
+	return scheduler, nil
 }
