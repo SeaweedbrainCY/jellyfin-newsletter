@@ -29,7 +29,3 @@ func (m MockJellyfinItemsAPI) GetAllItemsByFolderID(
 func (m MockJellyfinItemsAPI) GetRootFolderIDByName(_ string, _ *app.ApplicationContext) (string, error) {
 	return m.ExecuteGetRootFolderIDByName()
 }
-
-func Ptr[T any](v T) *T {
-	return &v
-}
