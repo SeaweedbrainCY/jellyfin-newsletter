@@ -28,11 +28,11 @@ func newSMTPClientWithSTARTTLS(addr string, auth smtp.Auth, tlsCfg *tls.Config, 
 	}
 	ok, _ := client.Extension("STARTTLS")
 	if !ok {
-		client.Close()
+		_ = client.Close()
 		return nil, fmt.Errorf("server does not advertise STARTTLS")
 	}
 	if err = client.StartTLS(tlsCfg); err != nil {
-		client.Close()
+		_ = client.Close()
 		return nil, fmt.Errorf("STARTTLS handshake failed: %w", err)
 	}
 	return client, nil
