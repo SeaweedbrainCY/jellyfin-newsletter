@@ -36,8 +36,7 @@ func newSMTPClientWithSTARTTLS(
 	tlsCfg *tls.Config,
 	app *app.ApplicationContext,
 ) (*smtp.Client, error) {
-	dialer := &tls.Dialer{NetDialer: &net.Dialer{}, Config: tlsCfg}
-	conn, err := dialer.DialContext(ctx, "tcp", addr)
+	conn, err := (&net.Dialer{}).DialContext(ctx, "tcp", addr)
 	if err != nil {
 		return nil, fmt.Errorf("TLS connect failed: %w", err)
 	}
