@@ -6,10 +6,12 @@ import (
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/dryrun"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/tmdb"
 	"go.uber.org/zap"
 )
 
@@ -56,9 +58,11 @@ func main() {
 	}
 
 	recentlyAddedMovies := jellyfinAPIClient.GetRecentlyAddedMovies(app)
-	app.Logger.Info("movies", zap.Any("movies", recentlyAddedMovies))
 	recentlyAddedSeries := jellyfinAPIClient.GetNewlyAddedSeries(app)
-	app.Logger.Info("series", zap.Any("series", recentlyAddedSeries))
+
+	tmdbClient := tmdb.InitTMDBApiClient(app)
+	tmdb.EnrichMovieItemsList(recentlyAddedMovies, tmdbClient, app)
+	tmdb.EnrichSeriesItemsList(recentlyAddedSeries, tmdbClient, app)
 
 	moviesCount, episodesCount, err := jellyfinAPIClient.LibraryAPI.GetItemsStats(app)
 	if err != nil {
@@ -66,12 +70,15 @@ func main() {
 	}
 
 	emailHTML, err := template.BuildNewMediaEmailHTML(recentlyAddedMovies, recentlyAddedSeries, moviesCount, episodesCount, app)
-	if  err != nil {
+	if err != nil {
 		app.Logger.Fatal("Failed to build email HTML template.", zap.Error(err))
 	}
 
 	if config.DryRun.Enabled {
-		
+		dryrun.SaveDryRunEmail(emailHTML, recentlyAddedMovies, recentlyAddedSeries, app)
+		app.Logger.Info("Successfully generated the newsletter (dry run).")
 	}
 
+	app.Logger.Info("Thanks for using Jellyfin-Newsletter !")
+	app.Logger.Info("Copyright (C) 2025 Nathan Stchepinsky (Seaweedbrain). Licensed under the AGPLv3.0")
 }
