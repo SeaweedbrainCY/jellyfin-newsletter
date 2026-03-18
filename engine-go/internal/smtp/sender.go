@@ -17,15 +17,13 @@ type emailData struct {
 
 func buildMIMEMessage(email emailData) []byte {
 	var sb strings.Builder
-
-	sb.WriteString("MIME-Version: 1.0\r\n")
-	sb.WriteString(fmt.Sprintf("From: %s\r\n", email.From))
-	sb.WriteString(fmt.Sprintf("To: %s\r\n", email.To))
-	sb.WriteString(fmt.Sprintf("Subject: %s\r\n", email.Subject))
-	sb.WriteString("Content-Type: text/html; charset=\"UTF-8\"\r\n")
-	sb.WriteString("\r\n") // blank line separates headers from body
-	sb.WriteString(email.HTML)
-
+	fmt.Fprintf(&sb, "MIME-Version: 1.0\r\n")
+	fmt.Fprintf(&sb, "From: %s\r\n", email.From)
+	fmt.Fprintf(&sb, "To: %s\r\n", email.To)
+	fmt.Fprintf(&sb, "Subject: %s\r\n", email.Subject)
+	fmt.Fprintf(&sb, "Content-Type: text/html; charset=\"UTF-8\"\r\n")
+	fmt.Fprintf(&sb, "\r\n")
+	fmt.Fprintf(&sb, "%s", email.HTML)
 	return []byte(sb.String())
 }
 
