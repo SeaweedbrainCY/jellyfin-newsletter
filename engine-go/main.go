@@ -6,13 +6,11 @@ import (
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
-	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/dryrun"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/cron"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
-	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
-	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/smtp"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/newsletter"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
-	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/tmdb"
 	"go.uber.org/zap"
 )
 
@@ -49,48 +47,21 @@ func main() {
 	}
 
 	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
+	app.Logger.Info("Copyright (C) 2025 Nathan Stchepinsky (Seaweedbrain). Licensed under the AGPLv3.0")
 	app.Logger.Info("Configuration loaded successfully")
 
-	jellyfinAPIClient := jellyfin.NewJellyfinAPIClient(app)
-
-	err = jellyfinAPIClient.TestConnection(app)
-	if err != nil {
-		app.Logger.Fatal(
-			"Jellyfin newsletter startup failed. An error occurred while connecting to Jellyfin.",
-			zap.Error(err),
-		)
+	if app.Config.Scheduler.Enabled {
+		scheduler, err := cron.CreateNewsletterScheduler(app)
+		if err != nil {
+			app.Logger.Fatal("Error while creating the scheduler. Exiting now.", zap.Error(err))
+		}
+		(*scheduler).Start()
+		// Block forever (or until signal)
+		select {}
 	}
 
-	recentlyAddedMovies := jellyfinAPIClient.GetRecentlyAddedMovies(app)
-	recentlyAddedSeries := jellyfinAPIClient.GetNewlyAddedSeries(app)
+	// One time trigger
+	newsletter.TriggerNewsletterWorkflow(app)
 
-	tmdbClient := tmdb.InitTMDBApiClient(app)
-	tmdb.EnrichMovieItemsList(recentlyAddedMovies, tmdbClient, app)
-	tmdb.EnrichSeriesItemsList(recentlyAddedSeries, tmdbClient, app)
-
-	moviesCount, episodesCount, err := jellyfinAPIClient.LibraryAPI.GetItemsStats(app)
-	if err != nil {
-		app.Logger.Fatal("Failed to get Jellyfin items statistics.", zap.Error(err))
-	}
-
-	emailHTML, err := template.BuildNewMediaEmailHTML(
-		recentlyAddedMovies,
-		recentlyAddedSeries,
-		moviesCount,
-		episodesCount,
-		app,
-	)
-	if err != nil {
-		app.Logger.Fatal("Failed to build email HTML template.", zap.Error(err))
-	}
-
-	if config.DryRun.Enabled {
-		dryrun.SaveDryRunEmail(emailHTML, recentlyAddedMovies, recentlyAddedSeries, app)
-		app.Logger.Info("Successfully generated the newsletter (dry run).")
-	} else {
-		smtp.SendEmailToAllRecipients(emailHTML, app)
-	}
-
-	app.Logger.Info("Thanks for using Jellyfin-Newsletter !")
-	app.Logger.Info("Copyright (C) 2025 Nathan Stchepinsky (Seaweedbrain). Licensed under the AGPLv3.0")
+	app.Logger.Info("Jellyfin-Newsletter exiting gracefully.")
 }
