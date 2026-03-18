@@ -11,7 +11,12 @@ import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 )
 
-func newSMTPClientWithTLS(ctx context.Context, addr string, tlsCfg *tls.Config, app *app.ApplicationContext) (*smtp.Client, error) {
+func newSMTPClientWithTLS(
+	ctx context.Context,
+	addr string,
+	tlsCfg *tls.Config,
+	app *app.ApplicationContext,
+) (*smtp.Client, error) {
 	dialer := &tls.Dialer{NetDialer: &net.Dialer{}, Config: tlsCfg}
 	conn, err := dialer.DialContext(ctx, "tcp", addr)
 	if err != nil {
@@ -25,7 +30,12 @@ func newSMTPClientWithTLS(ctx context.Context, addr string, tlsCfg *tls.Config, 
 	return client, nil
 }
 
-func newSMTPClientWithSTARTTLS(ctx context.Context, addr string, tlsCfg *tls.Config, app *app.ApplicationContext) (*smtp.Client, error) {
+func newSMTPClientWithSTARTTLS(
+	ctx context.Context,
+	addr string,
+	tlsCfg *tls.Config,
+	app *app.ApplicationContext,
+) (*smtp.Client, error) {
 	dialer := &tls.Dialer{NetDialer: &net.Dialer{}, Config: tlsCfg}
 	conn, err := dialer.DialContext(ctx, "tcp", addr)
 	if err != nil {
