@@ -51,12 +51,12 @@ func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.Applic
 
 	cleanedFromEmailAddr, err := getEmailAddressFromFriendlyName(app.Config.SMTP.SenderName)
 	if err != nil {
-		return fmt.Errorf("fatal error while parsing the FROM sender address. Sender address: %s. Error: %w.", app.Config.SMTP.SenderName, err)
+		return fmt.Errorf("fatal error while parsing the FROM sender address. Sender address: %s. Error: %w", app.Config.SMTP.SenderName, err)
 	}
 
 	cleanedRecipientEmailAddr, err := getEmailAddressFromFriendlyName(recipient)
 	if err != nil {
-		return fmt.Errorf("fatal error while parsing the RCPT recipient address. Recipient address: %s. Error: %w.", recipient, err)
+		return fmt.Errorf("fatal error while parsing the RCPT recipient address. Recipient address: %s. Error: %w", recipient, err)
 	}
 
 	client, err := newSMTPClient(ctx, app)
