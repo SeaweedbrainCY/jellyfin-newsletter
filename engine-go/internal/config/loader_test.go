@@ -437,7 +437,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing dry-run.output_directory",
 			yamlKeyToRemove: "dry-run.output_directory",
-			expectedError:   `failed to decode configuration file: [43:8] Key: 'OutputDirectory' Error:Field validation for 'OutputDirectory' failed on the 'required_if' tag
+			expectedError: `failed to decode configuration file: [43:8] Key: 'OutputDirectory' Error:Field validation for 'OutputDirectory' failed on the 'required_if' tag
   40 |   sort_mode: "date_asc"
   41 |   display_overview_max_items: 10
   42 | 

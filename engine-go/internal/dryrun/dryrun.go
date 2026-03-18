@@ -53,22 +53,22 @@ func marshalNewItems(items any) string {
 }
 
 func addMetadataToHTML(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
-	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, SMTPTestResult string) string {
-	if SMTPTestResult == "" {
-		SMTPTestResult = "Not tested"
+	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string) string {
+	if smtpTestResult == "" {
+		smtpTestResult = "Not tested"
 	}
 
-	metadata := fmt.Sprintf("<!--\nJellyfin-newsletter dry run\nGenerated at: %s\nSMTP test result:%s\nNew movies detected: %s\nNew series detected: %s\n-->\n\n", time.Now().Format("2006-01-02T15:04:05Z07:00"), SMTPTestResult, marshalNewItems(newJellyfinMovies), marshalNewItems(newJellyfinSeries))
+	metadata := fmt.Sprintf("<!--\nJellyfin-newsletter dry run\nGenerated at: %s\nSMTP test result:%s\nNew movies detected: %s\nNew series detected: %s\n-->\n\n", time.Now().Format("2006-01-02T15:04:05Z07:00"), smtpTestResult, marshalNewItems(newJellyfinMovies), marshalNewItems(newJellyfinSeries))
 	return metadata + emailHTML
 }
 
 func saveMetadataAsJSONFile(outputDirectory, outputFilename string, newJellyfinMovies *[]jellyfin.MovieItem,
-	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, SMTPTestResult string) error {
+	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string) error {
 	metadata := metadataJSON{
 		NewDetectedMovies: *newJellyfinMovies,
 		NewDetectedSeries: *newJellyfinSeries,
 		Datetime:          time.Now().Format("2006-01-02T15:04:05Z07:00"),
-		SMTPTestResult:    SMTPTestResult,
+		SMTPTestResult:    smtpTestResult,
 	}
 
 	filePath := filepath.Join(outputDirectory, outputFilename)
@@ -89,15 +89,15 @@ func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
 	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, app *app.ApplicationContext) {
 
 	outputFilename := fillFilenameTemplate(app.Config.DryRun.OutputFilename, app)
-	SMTPResult := "To be implemented"
+	smtpTestResult := "To be implemented"
 
 	if app.Config.DryRun.IncludeMetadata {
-		emailHTML = addMetadataToHTML(emailHTML, newJellyfinMovies, newJellyfinSeries, SMTPResult)
+		emailHTML = addMetadataToHTML(emailHTML, newJellyfinMovies, newJellyfinSeries, smtpTestResult)
 	}
 
 	if app.Config.DryRun.SaveEmailData {
 		filename := strings.Replace(outputFilename, ".html", ".json", -1)
-		err := saveMetadataAsJSONFile(app.Config.DryRun.OutputDirectory, filename, newJellyfinMovies, newJellyfinSeries, SMTPResult)
+		err := saveMetadataAsJSONFile(app.Config.DryRun.OutputDirectory, filename, newJellyfinMovies, newJellyfinSeries, smtpTestResult)
 		if err != nil {
 			app.Logger.Error("Impossible to write metadata in json file.", zap.String("output directory", app.Config.DryRun.OutputDirectory), zap.String("filename", filename), zap.Error(err))
 		}
