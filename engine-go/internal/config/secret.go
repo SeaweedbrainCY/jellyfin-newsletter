@@ -9,7 +9,7 @@ type Secret string
 
 func (s Secret) SafeString() string { return string(s) }
 
-// To avoid logging secrets when using widespread .String(). To get secret, use safeString().
+// String: To avoid logging secrets when using widespread .String(). To get secret, use safeString().
 func (s Secret) String() string { return "[REDACTED]" }
 
 func (s Secret) MarshalJSON() ([]byte, error) {

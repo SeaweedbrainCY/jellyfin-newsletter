@@ -2,6 +2,7 @@ package smtp
 
 import (
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"net/smtp"
 
@@ -15,7 +16,7 @@ func newSMTPClientWithTLS(addr string, auth smtp.Auth, tlsCfg *tls.Config, app *
 	}
 	client, err := smtp.NewClient(conn, app.Config.SMTP.Host)
 	if err != nil {
-		conn.Close()
+		_ = conn.Close()
 		return nil, fmt.Errorf("SMTP handshake failed: %w", err)
 	}
 	return client, nil
@@ -29,7 +30,7 @@ func newSMTPClientWithSTARTTLS(addr string, auth smtp.Auth, tlsCfg *tls.Config, 
 	ok, _ := client.Extension("STARTTLS")
 	if !ok {
 		_ = client.Close()
-		return nil, fmt.Errorf("server does not advertise STARTTLS")
+		return nil, errors.New("server does not advertise STARTTLS")
 	}
 	if err = client.StartTLS(tlsCfg); err != nil {
 		_ = client.Close()
