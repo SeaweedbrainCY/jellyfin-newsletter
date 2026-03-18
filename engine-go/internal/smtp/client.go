@@ -9,7 +9,7 @@ import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 )
 
-func newSMTPClientWithTLS(addr string, auth smtp.Auth, tlsCfg *tls.Config, app *app.ApplicationContext) (*smtp.Client, error) {
+func newSMTPClientWithTLS(addr string, tlsCfg *tls.Config, app *app.ApplicationContext) (*smtp.Client, error) {
 	conn, err := tls.Dial("tcp", addr, tlsCfg)
 	if err != nil {
 		return nil, fmt.Errorf("TLS connect failed: %w", err)
@@ -22,7 +22,7 @@ func newSMTPClientWithTLS(addr string, auth smtp.Auth, tlsCfg *tls.Config, app *
 	return client, nil
 }
 
-func newSMTPClientWithSTARTTLS(addr string, auth smtp.Auth, tlsCfg *tls.Config, app *app.ApplicationContext) (*smtp.Client, error) {
+func newSMTPClientWithSTARTTLS(addr string, tlsCfg *tls.Config) (*smtp.Client, error) {
 	client, err := smtp.Dial(addr)
 	if err != nil {
 		return nil, fmt.Errorf("TCP connect failed: %w", err)
@@ -47,9 +47,9 @@ func newSMTPClient(app *app.ApplicationContext) (*smtp.Client, error) {
 	var client *smtp.Client
 	var err error
 	if app.Config.SMTP.TLSType == "TLS" {
-		client, err = newSMTPClientWithTLS(addr, auth, tlsCfg, app)
+		client, err = newSMTPClientWithTLS(addr, tlsCfg, app)
 	} else {
-		client, err = newSMTPClientWithSTARTTLS(addr, auth, tlsCfg, app)
+		client, err = newSMTPClientWithSTARTTLS(addr, tlsCfg)
 	}
 
 	if err != nil {

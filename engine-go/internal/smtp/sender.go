@@ -28,7 +28,11 @@ func buildMIMEMessage(email emailData) []byte {
 }
 
 func sendEmail(recipient, emailHTML string, app *app.ApplicationContext) error {
-	emailSubject, err := template.BuildEmailTitleWithPlaceholders(app.Config.EmailTemplate.Subject, app.Config.Jellyfin.ObservedPeriodDays, app)
+	emailSubject, err := template.BuildEmailTitleWithPlaceholders(
+		app.Config.EmailTemplate.Subject,
+		app.Config.Jellyfin.ObservedPeriodDays,
+		app,
+	)
 	if err != nil {
 		return fmt.Errorf("error while building email's subject: %w", err)
 	}
