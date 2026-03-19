@@ -63,6 +63,7 @@ type Configuration struct {
 	EmailTemplate   EmailTemplateConfig
 	SMTP            SMTPConfig
 	DryRun          DryRunConfig
+	ConfigFilePath  string
 }
 
 type yamlConfiguration struct {

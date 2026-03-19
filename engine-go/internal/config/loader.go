@@ -14,7 +14,7 @@ func LoadConfig(configPath string) (*Configuration, error) {
 	if err != nil {
 		return nil, err
 	}
-	conf, err := loadConfigFromReader(file)
+	conf, err := loadConfigFromReader(configPath, file)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,7 @@ func LoadConfig(configPath string) (*Configuration, error) {
 	return conf, nil
 }
 
-func loadConfigFromReader(r io.Reader) (*Configuration, error) {
+func loadConfigFromReader(configPath string, r io.Reader) (*Configuration, error) {
 	yamlParsedConfig := &yamlConfiguration{}
 
 	if err := parseYaml(r, yamlParsedConfig); err != nil {
@@ -39,6 +39,7 @@ func loadConfigFromReader(r io.Reader) (*Configuration, error) {
 	config.SMTP = buildSMTPConfig(yamlParsedConfig)
 	config.DryRun = buildDryRunConfig(yamlParsedConfig)
 	config.EmailRecipients = buildRecipientsConfig(yamlParsedConfig)
+	config.ConfigFilePath = configPath
 
 	return config, nil
 }
