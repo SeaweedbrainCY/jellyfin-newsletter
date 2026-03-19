@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
+	persistentdata "github.com/SeaweedbrainCY/jellyfin-newsletter/internal/persistentData"
 	"go.uber.org/zap"
 )
 
@@ -22,9 +23,21 @@ type MovieItem struct {
 // `getRecentlyAddedMoviesByFolder` and returns a slice of
 // `MovieItem` for movies added within the configured observed period.
 func (client *APIClient) GetRecentlyAddedMovies(app *app.ApplicationContext) *[]MovieItem {
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	if app.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter {
+		lastNewsletterDatetime, err := persistentdata.GetLastNewsletterDatetime(app)
+		if err != nil {
+			app.Logger.Warn("An error occured while reading the last newsletter datetime. This can cause items to be sent in 2 consecutive newsletters.", zap.Error(err))
+		} else {
+			if (*lastNewsletterDatetime).After(minimumAdditionDate) {
+				minimumAdditionDate = *lastNewsletterDatetime
+			}
+		}
+	}
+
 	var movieItems = []MovieItem{}
 	for _, folderName := range app.Config.Jellyfin.WatchedFilmFolders {
-		if items, err := client.getRecentlyAddedMoviesByFolder(folderName, app); err == nil {
+		if items, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, folderName, app); err == nil {
 			movieItems = append(movieItems, items...)
 		}
 	}
@@ -37,10 +50,10 @@ func (client *APIClient) GetRecentlyAddedMovies(app *app.ApplicationContext) *[]
 // movies added after the computed cutoff. Movies without a
 // creation date are logged and ignored.
 func (client *APIClient) getRecentlyAddedMoviesByFolder(
+	minimumAdditionDate time.Time,
 	folderName string,
 	app *app.ApplicationContext,
 ) ([]MovieItem, error) {
-	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
 	app.Logger.Debug(
 		"Searching for recently added movies.",
 		zap.String("FolderName", folderName),

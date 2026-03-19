@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
+	persistentdata "github.com/SeaweedbrainCY/jellyfin-newsletter/internal/persistentData"
 	jellyfinAPI "github.com/sj14/jellyfin-go/api"
 	"go.uber.org/zap"
 )
@@ -193,10 +194,10 @@ func updateSeriesWithEpisode(
 // observed period, and returns a slice of `NewlyAddedSeriesItem`
 // representing series, new seasons or episodes added after the cutoff.
 func (client *APIClient) getNewlyAddedSeriesByFolder(
+	minimumAdditionDate time.Time,
 	folderName string,
 	app *app.ApplicationContext,
 ) (*[]NewlyAddedSeriesItem, error) {
-	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
 	app.Logger.Debug(
 		"Searching for recently added series.",
 		zap.String("FolderName", folderName),
@@ -366,8 +367,20 @@ func (client *APIClient) GetNewlyAddedSeries(
 	app *app.ApplicationContext,
 ) *[]NewlyAddedSeriesItem {
 	var seriesItems = []NewlyAddedSeriesItem{}
+	if app.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter {
+
+		minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+		lastNewsletterDatetime, err := persistentdata.GetLastNewsletterDatetime(app)
+		if err != nil {
+			app.Logger.Warn("An error occured while reading the last newsletter datetime. This can cause items to be sent in 2 consecutive newsletters.", zap.Error(err))
+		} else {
+			if (*lastNewsletterDatetime).After(minimumAdditionDate) {
+				minimumAdditionDate = *lastNewsletterDatetime
+			}
+		}
+	}
 	for _, folderName := range app.Config.Jellyfin.WatchedSeriesFolders {
-		if items, err := client.getNewlyAddedSeriesByFolder(folderName, app); err == nil {
+		if items, err := client.getNewlyAddedSeriesByFolder(*lastNewsletterDatetime, folderName, app); err == nil {
 			seriesItems = append(seriesItems, *items...)
 		}
 	}
