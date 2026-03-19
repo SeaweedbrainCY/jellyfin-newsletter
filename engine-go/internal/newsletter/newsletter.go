@@ -62,7 +62,10 @@ func TriggerNewsletterWorkflow(app *app.ApplicationContext) {
 
 	err = persistentdata.UpdateLastNewsletterDatetime(time.Now(), app)
 	if err != nil {
-		app.Logger.Warn("An error occured while saving the last newsletter datetime. This could lead to future error or items sent again.", zap.Error(err))
+		app.Logger.Warn(
+			"An error occured while saving the last newsletter datetime. This could lead to future error or items sent again.",
+			zap.Error(err),
+		)
 	}
 
 	app.Logger.Info("Thanks for using Jellyfin-Newsletter !")

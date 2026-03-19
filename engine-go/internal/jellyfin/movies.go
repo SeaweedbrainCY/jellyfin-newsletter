@@ -27,8 +27,11 @@ func (client *APIClient) GetRecentlyAddedMovies(app *app.ApplicationContext) *[]
 	if app.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter {
 		lastNewsletterDatetime, err := persistentdata.GetLastNewsletterDatetime(app)
 		if err != nil {
-			app.Logger.Warn("An error occured while reading the last newsletter datetime. This can cause items to be sent in 2 consecutive newsletters.", zap.Error(err))
-		} else if (*lastNewsletterDatetime).After(minimumAdditionDate) {
+			app.Logger.Warn(
+				"An error occured while reading the last newsletter datetime. This can cause items to be sent in 2 consecutive newsletters.",
+				zap.Error(err),
+			)
+		} else if lastNewsletterDatetime.After(minimumAdditionDate) {
 			minimumAdditionDate = *lastNewsletterDatetime
 		}
 	}
