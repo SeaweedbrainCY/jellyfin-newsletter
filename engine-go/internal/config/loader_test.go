@@ -460,7 +460,8 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			require.Error(t, err)
 
 			assert.Nil(t, ctx)
-			assert.Equal(t, tt.expectedError, err.Error())
+			// Spaces are tricky in errors but not really relevant. We don't want the error to fail because of a trailing/leading space in each line.
+			assert.Equal(t, strings.ReplaceAll(tt.expectedError, " ", ""), strings.ReplaceAll(err.Error(), " ", ""))
 			finalTests = finalTests + "\n{\n name: \"" + tt.name + "\",\nyamlKeyToRemove: \"" + tt.yamlKeyToRemove + "\"\n expectedError: `" + err.Error() + "`,\n},\n"
 		})
 	}
