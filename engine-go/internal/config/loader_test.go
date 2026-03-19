@@ -11,7 +11,7 @@ import (
 const validConfigYAML = `
 scheduler:
   cron: "0 8 1 * *"
-    
+
 log:
   level: INFO
   format: console
@@ -165,7 +165,7 @@ func RemoveYamlPartHelper(yaml string, fieldDotNotation string) string {
 }
 
 func TestLoadConfig_ValidConfig(t *testing.T) {
-	config, err := loadConfigFromReader(strings.NewReader(validConfigYAML))
+	config, err := loadConfigFromReader("./config/config.yml", strings.NewReader(validConfigYAML))
 
 	require.NoError(t, err)
 	require.NotNil(t, config)
@@ -208,6 +208,7 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.True(t, config.DryRun.SaveEmailData)
 	assert.Equal(t, "user1@example.com", config.EmailRecipients[0])
 	assert.Equal(t, "user2@example.com", config.EmailRecipients[1])
+	assert.Equal(t, "./config/config.yml", config.ConfigFilePath)
 }
 
 func TestLoadContext_MissingRequiredField(t *testing.T) {
@@ -222,7 +223,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [10:9] Key: 'URL' Error:Field validation for 'URL' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
-   9 | 
+   9 |
 > 10 | jellyfin:
                ^
   11 |   api_token: secret
@@ -237,7 +238,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [10:9] Key: 'APIToken' Error:Field validation for 'APIToken' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
-   9 | 
+   9 |
 > 10 | jellyfin:
                ^
   11 |   url: http://localhost:8096
@@ -252,7 +253,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [10:9] Key: 'WatchedFilmFolders' Error:Field validation for 'WatchedFilmFolders' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
-   9 | 
+   9 |
 > 10 | jellyfin:
                ^
   11 |   url: http://localhost:8096
@@ -266,7 +267,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [10:9] Key: 'WatchedSeriesFolders' Error:Field validation for 'WatchedSeriesFolders' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
-   9 | 
+   9 |
 > 10 | jellyfin:
                ^
   11 |   url: http://localhost:8096
@@ -280,7 +281,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [10:9] Key: 'ObservedPeriodDays' Error:Field validation for 'ObservedPeriodDays' failed on the 'required' tag
    7 |   level: INFO
    8 |   format: console
-   9 | 
+   9 |
 > 10 | jellyfin:
                ^
   11 |   url: http://localhost:8096
@@ -300,7 +301,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [31:15] Key: 'Language' Error:Field validation for 'Language' failed on the 'required' tag
   28 |   smtp_sender_email: Jellyfin
   29 |   smtp_tls_type: "TLS"
-  30 | 
+  30 |
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
@@ -315,7 +316,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [31:15] Key: 'Subject' Error:Field validation for 'Subject' failed on the 'required' tag
   28 |   smtp_sender_email: Jellyfin
   29 |   smtp_tls_type: "TLS"
-  30 | 
+  30 |
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
@@ -330,7 +331,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [31:15] Key: 'Title' Error:Field validation for 'Title' failed on the 'required' tag
   28 |   smtp_sender_email: Jellyfin
   29 |   smtp_tls_type: "TLS"
-  30 | 
+  30 |
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
@@ -345,7 +346,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [31:15] Key: 'Subtitle' Error:Field validation for 'Subtitle' failed on the 'required' tag
   28 |   smtp_sender_email: Jellyfin
   29 |   smtp_tls_type: "TLS"
-  30 | 
+  30 |
 > 31 | email_template:
                      ^
   32 |   theme: "classic"
@@ -360,7 +361,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPServer' Error:Field validation for 'SMTPServer' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
-  22 | 
+  22 |
 > 23 | email:
             ^
   24 |   smtp_port: 587
@@ -375,7 +376,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPPort' Error:Field validation for 'SMTPPort' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
-  22 | 
+  22 |
 > 23 | email:
             ^
   24 |   smtp_server: smtp.example.com
@@ -390,7 +391,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPUsername' Error:Field validation for 'SMTPUsername' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
-  22 | 
+  22 |
 > 23 | email:
             ^
   24 |   smtp_server: smtp.example.com
@@ -405,7 +406,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPPassword' Error:Field validation for 'SMTPPassword' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
-  22 | 
+  22 |
 > 23 | email:
             ^
   24 |   smtp_server: smtp.example.com
@@ -420,7 +421,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPSenderName' Error:Field validation for 'SMTPSenderName' failed on the 'required' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
-  22 | 
+  22 |
 > 23 | email:
             ^
   24 |   smtp_server: smtp.example.com
@@ -440,7 +441,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 			expectedError: `failed to decode configuration file: [43:8] Key: 'OutputDirectory' Error:Field validation for 'OutputDirectory' failed on the 'required_if' tag
   40 |   sort_mode: "date_asc"
   41 |   display_overview_max_items: 10
-  42 | 
+  42 |
 > 43 | dry-run:
               ^
   44 |   enabled: true
@@ -454,12 +455,13 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			badYamlConfig := RemoveYamlPartHelper(validConfigYAML, tt.yamlKeyToRemove)
-			ctx, err := loadConfigFromReader(strings.NewReader(badYamlConfig))
+			ctx, err := loadConfigFromReader("./config/config.yml", strings.NewReader(badYamlConfig))
 
 			require.Error(t, err)
 
 			assert.Nil(t, ctx)
-			assert.Equal(t, tt.expectedError, err.Error())
+			// Spaces are tricky in errors but not really relevant. We don't want the error to fail because of a trailing/leading space in each line.
+			assert.Equal(t, strings.ReplaceAll(tt.expectedError, " ", ""), strings.ReplaceAll(err.Error(), " ", ""))
 			finalTests = finalTests + "\n{\n name: \"" + tt.name + "\",\nyamlKeyToRemove: \"" + tt.yamlKeyToRemove + "\"\n expectedError: `" + err.Error() + "`,\n},\n"
 		})
 	}

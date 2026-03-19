@@ -97,7 +97,8 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", mockedApp)
+	minimumAdditionDate := time.Now().AddDate(0, 0, -31)
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", mockedApp)
 
 	require.NoError(t, err)
 	assert.Empty(t, recordedLogs)
@@ -203,7 +204,8 @@ func TestGetRecentlyAddedMoviesByFolderWithMovieNameNull(t *testing.T) {
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", app)
 
 	require.NoError(t, err)
 	assert.Empty(t, recordedLogs)
@@ -233,7 +235,8 @@ func TestGetRecentlyAddedMoviesByFolderWithMovieProductionYearNull(t *testing.T)
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", app)
 
 	require.NoError(t, err)
 	assert.Equal(t, 0, recordedLogs.Len())
@@ -263,7 +266,8 @@ func TestGetRecentlyAddedMoviesByFolderWithNoTMDBID(t *testing.T) {
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", app)
 
 	require.NoError(t, err)
 	assert.Equal(t, 0, recordedLogs.Len())
@@ -293,7 +297,8 @@ func TestGetRecentlyAddedMoviesByFolderWithNoCreationDate(t *testing.T) {
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", app)
 
 	require.NoError(t, err)
 
@@ -321,7 +326,8 @@ func TestGetRecentlyAddedMoviesByFolderWithNoMovies(t *testing.T) {
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", app)
 
 	require.NoError(t, err)
 
@@ -343,7 +349,8 @@ func TestGetRecentlyAddedMoviesByFolderWithErrorWhileRetrievingFolder(t *testing
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	_, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	_, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", app)
 
 	require.Error(t, err)
 }
@@ -361,7 +368,8 @@ func TestGetRecentlyAddedMoviesByFolderWithErrorWhileRetrievingMovies(t *testing
 	client := APIClient{
 		ItemsAPI: mockItemsAPI,
 	}
-	_, err := client.getRecentlyAddedMoviesByFolder("folderName", app)
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	_, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", app)
 
 	require.Error(t, err)
 }
