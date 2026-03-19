@@ -20,7 +20,7 @@ func getLastNewsletterFilepath(app *app.ApplicationContext) string {
 }
 
 // GetLastNewsletterDatetime get the time in the LAST_NEWSLETTER.txt file.
-// If the file doesn't exist, it returns unix epoch date, without error
+// If the file doesn't exist, it returns unix epoch date, without error.
 func GetLastNewsletterDatetime(app *app.ApplicationContext) (*time.Time, error) {
 	lastNewsletterFilepath := getLastNewsletterFilepath(app)
 

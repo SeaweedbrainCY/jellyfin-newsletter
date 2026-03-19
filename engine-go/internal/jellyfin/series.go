@@ -369,7 +369,6 @@ func (client *APIClient) GetNewlyAddedSeries(
 	var seriesItems = []NewlyAddedSeriesItem{}
 	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
 	if app.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter {
-
 		lastNewsletterDatetime, err := persistentdata.GetLastNewsletterDatetime(app)
 		if err != nil {
 			app.Logger.Warn(
