@@ -380,7 +380,7 @@ func (client *APIClient) GetNewlyAddedSeries(
 		}
 	}
 	for _, folderName := range app.Config.Jellyfin.WatchedSeriesFolders {
-		if items, err := client.getNewlyAddedSeriesByFolder(*minimumAdditionDate, folderName, app); err == nil {
+		if items, err := client.getNewlyAddedSeriesByFolder(minimumAdditionDate, folderName, app); err == nil {
 			seriesItems = append(seriesItems, *items...)
 		}
 	}
