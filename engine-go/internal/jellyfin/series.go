@@ -367,9 +367,9 @@ func (client *APIClient) GetNewlyAddedSeries(
 	app *app.ApplicationContext,
 ) *[]NewlyAddedSeriesItem {
 	var seriesItems = []NewlyAddedSeriesItem{}
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
 	if app.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter {
 
-		minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
 		lastNewsletterDatetime, err := persistentdata.GetLastNewsletterDatetime(app)
 		if err != nil {
 			app.Logger.Warn("An error occured while reading the last newsletter datetime. This can cause items to be sent in 2 consecutive newsletters.", zap.Error(err))
@@ -380,7 +380,7 @@ func (client *APIClient) GetNewlyAddedSeries(
 		}
 	}
 	for _, folderName := range app.Config.Jellyfin.WatchedSeriesFolders {
-		if items, err := client.getNewlyAddedSeriesByFolder(*lastNewsletterDatetime, folderName, app); err == nil {
+		if items, err := client.getNewlyAddedSeriesByFolder(*minimumAdditionDate, folderName, app); err == nil {
 			seriesItems = append(seriesItems, *items...)
 		}
 	}
