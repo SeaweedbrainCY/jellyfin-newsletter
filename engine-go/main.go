@@ -8,9 +8,11 @@ import (
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/cron"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/newsletter"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/tmdb"
 	"github.com/go-co-op/gocron/v2"
 	"go.uber.org/zap"
 )
@@ -51,9 +53,18 @@ func main() {
 	app.Logger.Info("Copyright (C) 2025 Nathan Stchepinsky (Seaweedbrain). Licensed under the AGPLv3.0")
 	app.Logger.Info("Configuration loaded successfully")
 
+	if err != nil {
+		app.Logger.Fatal("Impossible to instantiate the SMTP client", zap.Error(err))
+	}
+
+	newsletterWorkflow := newsletter.Workflow{
+		JellyfinClient: jellyfin.NewJellyfinAPIClient(app),
+		TMDBClient:     tmdb.InitTMDBApiClient(app),
+	}
+
 	if app.Config.Scheduler.Enabled {
 		var scheduler gocron.Scheduler
-		scheduler, err = cron.CreateNewsletterScheduler(app)
+		scheduler, err = cron.CreateNewsletterScheduler(newsletterWorkflow, app)
 		if err != nil {
 			app.Logger.Fatal("Error while creating the scheduler. Exiting now.", zap.Error(err))
 		}
@@ -63,7 +74,7 @@ func main() {
 	}
 
 	// One time trigger
-	newsletter.TriggerNewsletterWorkflow(app)
+	newsletterWorkflow.Run(app)
 
 	app.Logger.Info("Jellyfin-Newsletter exiting gracefully.")
 }

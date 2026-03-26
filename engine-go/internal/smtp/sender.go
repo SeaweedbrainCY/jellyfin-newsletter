@@ -4,21 +4,23 @@ import (
 	"context"
 	"fmt"
 	"net/mail"
+	"net/smtp"
 	"strings"
+	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
 	"go.uber.org/zap"
 )
 
-type EmailData struct {
+type EmailMIMEData struct {
 	From    string
 	To      string
 	Subject string
 	HTML    string
 }
 
-func buildMIMEMessage(email EmailData) []byte {
+func buildMIMEMessage(email EmailMIMEData) []byte {
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "MIME-Version: 1.0\r\n")
 	fmt.Fprintf(&sb, "From: %s\r\n", email.From)
@@ -39,7 +41,26 @@ func getEmailAddressFromFriendlyName(emailFriendlyName string) (string, error) {
 	return parsedAddress.Address, nil
 }
 
-func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.ApplicationContext) error {
+func sendEmail(smtpClient *smtp.Client, ctx context.Context, fromEmailAddr, recipientEmailAddr, emailHTML string, emailData EmailMIMEData, app *app.ApplicationContext) error {
+
+	if err := smtpClient.Mail(fromEmailAddr); err != nil {
+		return fmt.Errorf("MAIL FROM: %w. Given value:%s", err, fromEmailAddr)
+	}
+	if err := smtpClient.Rcpt(recipientEmailAddr); err != nil {
+		return fmt.Errorf("RCPT TO: %w. Given value:%s", err, recipientEmailAddr)
+	}
+
+	wc, err := smtpClient.Data()
+	if err != nil {
+		return fmt.Errorf("DATA: %w", err)
+	}
+	defer wc.Close()
+
+	_, err = wc.Write(buildMIMEMessage(emailData))
+	return err
+}
+
+func SendEmailToAllRecipients(emailHTML string, app *app.ApplicationContext) error {
 	emailSubject, err := template.BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Subject,
 		app.Config.Jellyfin.ObservedPeriodDays,
@@ -58,54 +79,33 @@ func sendEmail(ctx context.Context, recipient, emailHTML string, app *app.Applic
 		)
 	}
 
-	cleanedRecipientEmailAddr, err := getEmailAddressFromFriendlyName(recipient)
-	if err != nil {
-		return fmt.Errorf(
-			"fatal error while parsing the RCPT recipient address. Recipient address: %s. Error: %w",
-			recipient,
-			err,
-		)
-	}
-
-	client, err := newSMTPClient(ctx, app)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		_ = client.Quit()
-	}()
-
-	if err = client.Mail(cleanedFromEmailAddr); err != nil {
-		return fmt.Errorf("MAIL FROM: %w. Given value:%s", err, cleanedFromEmailAddr)
-	}
-	if err = client.Rcpt(cleanedRecipientEmailAddr); err != nil {
-		return fmt.Errorf("RCPT TO: %w. Given value:%s", err, cleanedRecipientEmailAddr)
-	}
-
-	wc, err := client.Data()
-	if err != nil {
-		return fmt.Errorf("DATA: %w", err)
-	}
-	defer wc.Close()
-
-	emailData := EmailData{
+	emailData := EmailMIMEData{
 		From:    app.Config.SMTP.SenderName,
-		To:      recipient,
 		Subject: emailSubject,
 		HTML:    emailHTML,
 	}
 
-	_, err = wc.Write(buildMIMEMessage(emailData))
-	return err
-}
+	smtpClient, err := newSMTPClient(context.Background(), app)
+	if err != nil {
+		return err
+	}
 
-func SendEmailToAllRecipients(emailHTML string, app *app.ApplicationContext) {
 	for _, recipient := range app.Config.EmailRecipients {
-		err := sendEmail(context.Background(), recipient, emailHTML, app)
+		cleanedRecipientEmailAddr, err := getEmailAddressFromFriendlyName(recipient)
+		if err != nil {
+			app.Logger.Error("fatal error while parsing the RCPT recipient address.", zap.String("Recipient", recipient), zap.Error(err))
+			continue
+		}
+		emailData.To = recipient
+		err = sendEmail(smtpClient, context.Background(), cleanedFromEmailAddr, cleanedRecipientEmailAddr, emailHTML, emailData, app)
 		if err != nil {
 			app.Logger.Error("Failed to send email to "+recipient, zap.String("recipient", recipient), zap.Error(err))
 		} else {
 			app.Logger.Info("Successfully sent newsletter to " + recipient)
 		}
+		_ = smtpClient.Reset()
+		// We avoid SMTP rate limiting
+		time.Sleep(2 * time.Second)
 	}
+	return nil
 }

@@ -36,6 +36,7 @@ func newSMTPClientWithSTARTTLS(
 	tlsCfg *tls.Config,
 	app *app.ApplicationContext,
 ) (*smtp.Client, error) {
+
 	conn, err := (&net.Dialer{}).DialContext(ctx, "tcp", addr)
 	if err != nil {
 		return nil, fmt.Errorf("TLS connect failed: %w", err)
@@ -62,24 +63,24 @@ func newSMTPClient(ctx context.Context, app *app.ApplicationContext) (*smtp.Clie
 	auth := smtp.PlainAuth("", app.Config.SMTP.Username, app.Config.SMTP.Password.SafeString(), app.Config.SMTP.Host)
 	tlsCfg := &tls.Config{ServerName: app.Config.SMTP.Host, MinVersion: tls.VersionTLS13}
 
-	var client *smtp.Client
+	var netSMTPclient *smtp.Client
 	var err error
 	if app.Config.SMTP.TLSType == "TLS" {
-		client, err = newSMTPClientWithTLS(ctx, addr, tlsCfg, app)
+		netSMTPclient, err = newSMTPClientWithTLS(ctx, addr, tlsCfg, app)
 	} else {
-		client, err = newSMTPClientWithSTARTTLS(ctx, addr, tlsCfg, app)
+		netSMTPclient, err = newSMTPClientWithSTARTTLS(ctx, addr, tlsCfg, app)
 	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	if err = client.Auth(auth); err != nil {
-		_ = client.Close()
-		return nil, fmt.Errorf("authentication failed: %w", err)
+	if err = netSMTPclient.Auth(auth); err != nil {
+		_ = netSMTPclient.Close()
+		return nil, fmt.Errorf("smtp authentication failed: %w", err)
 	}
 
-	return client, nil
+	return netSMTPclient, nil
 }
 
 func TestSMTPConnection(ctx context.Context, app *app.ApplicationContext) error {
