@@ -53,10 +53,6 @@ func main() {
 	app.Logger.Info("Copyright (C) 2025 Nathan Stchepinsky (Seaweedbrain). Licensed under the AGPLv3.0")
 	app.Logger.Info("Configuration loaded successfully")
 
-	if err != nil {
-		app.Logger.Fatal("Impossible to instantiate the SMTP client", zap.Error(err))
-	}
-
 	newsletterWorkflow := newsletter.Workflow{
 		JellyfinClient: jellyfin.NewJellyfinAPIClient(app),
 		TMDBClient:     tmdb.InitTMDBApiClient(app),
