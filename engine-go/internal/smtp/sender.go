@@ -64,6 +64,7 @@ func sendEmail(
 }
 
 func SendEmailToAllRecipients(emailHTML string, app *app.ApplicationContext) error {
+	var err error
 	const emailSendingDelaySeconds = 2
 	emailSubject, err := template.BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Subject,
@@ -95,8 +96,8 @@ func SendEmailToAllRecipients(emailHTML string, app *app.ApplicationContext) err
 	}
 
 	for _, recipient := range app.Config.EmailRecipients {
-		cleanedRecipientEmailAddr, err := getEmailAddressFromFriendlyName(recipient)
-		if err != nil {
+		cleanedRecipientEmailAddr, fromErr := getEmailAddressFromFriendlyName(recipient)
+		if fromErr != nil {
 			app.Logger.Error(
 				"fatal error while parsing the RCPT recipient address.",
 				zap.String("Recipient", recipient),
