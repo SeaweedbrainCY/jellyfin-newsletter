@@ -67,6 +67,7 @@ func sendEmail(
 }
 
 func SendEmailToAllRecipients(emailHTML string, app *app.ApplicationContext) error {
+	const emailSendingDelaySeconds = 2
 	emailSubject, err := template.BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Subject,
 		app.Config.Jellyfin.ObservedPeriodDays,
@@ -123,7 +124,7 @@ func SendEmailToAllRecipients(emailHTML string, app *app.ApplicationContext) err
 		}
 		_ = smtpClient.Reset()
 		// We avoid SMTP rate limiting
-		time.Sleep(2 * time.Second)
+		time.Sleep(emailSendingDelaySeconds * time.Second)
 	}
 	return nil
 }
