@@ -41,7 +41,13 @@ func getEmailAddressFromFriendlyName(emailFriendlyName string) (string, error) {
 	return parsedAddress.Address, nil
 }
 
-func sendEmail(smtpClient *smtp.Client, ctx context.Context, fromEmailAddr, recipientEmailAddr, emailHTML string, emailData EmailMIMEData, app *app.ApplicationContext) error {
+func sendEmail(
+	smtpClient *smtp.Client,
+	ctx context.Context,
+	fromEmailAddr, recipientEmailAddr, emailHTML string,
+	emailData EmailMIMEData,
+	app *app.ApplicationContext,
+) error {
 
 	if err := smtpClient.Mail(fromEmailAddr); err != nil {
 		return fmt.Errorf("MAIL FROM: %w. Given value:%s", err, fromEmailAddr)
@@ -93,11 +99,23 @@ func SendEmailToAllRecipients(emailHTML string, app *app.ApplicationContext) err
 	for _, recipient := range app.Config.EmailRecipients {
 		cleanedRecipientEmailAddr, err := getEmailAddressFromFriendlyName(recipient)
 		if err != nil {
-			app.Logger.Error("fatal error while parsing the RCPT recipient address.", zap.String("Recipient", recipient), zap.Error(err))
+			app.Logger.Error(
+				"fatal error while parsing the RCPT recipient address.",
+				zap.String("Recipient", recipient),
+				zap.Error(err),
+			)
 			continue
 		}
 		emailData.To = recipient
-		err = sendEmail(smtpClient, context.Background(), cleanedFromEmailAddr, cleanedRecipientEmailAddr, emailHTML, emailData, app)
+		err = sendEmail(
+			smtpClient,
+			context.Background(),
+			cleanedFromEmailAddr,
+			cleanedRecipientEmailAddr,
+			emailHTML,
+			emailData,
+			app,
+		)
 		if err != nil {
 			app.Logger.Error("Failed to send email to "+recipient, zap.String("recipient", recipient), zap.Error(err))
 		} else {

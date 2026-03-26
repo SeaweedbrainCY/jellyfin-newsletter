@@ -7,7 +7,10 @@ import (
 	"go.uber.org/zap"
 )
 
-func CreateNewsletterScheduler(newsletterWorkflow newsletter.Workflow, app *app.ApplicationContext) (gocron.Scheduler, error) {
+func CreateNewsletterScheduler(
+	newsletterWorkflow newsletter.Workflow,
+	app *app.ApplicationContext,
+) (gocron.Scheduler, error) {
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
 		return nil, err

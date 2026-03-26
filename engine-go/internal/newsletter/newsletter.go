@@ -60,7 +60,10 @@ func (workflow Workflow) Run(app *app.ApplicationContext) {
 		dryrun.SaveDryRunEmail(emailHTML, recentlyAddedMovies, recentlyAddedSeries, app)
 		app.Logger.Info("Successfully generated the newsletter (dry run).")
 	} else {
-		smtp.SendEmailToAllRecipients(emailHTML, app)
+		err = smtp.SendEmailToAllRecipients(emailHTML, app)
+		if err != nil {
+			app.Logger.Fatal("Failed to send emails to recipients.", zap.Error(err))
+		}
 	}
 
 	err = persistentdata.UpdateLastNewsletterDatetime(time.Now(), app)
