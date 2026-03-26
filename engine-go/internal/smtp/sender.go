@@ -43,12 +43,9 @@ func getEmailAddressFromFriendlyName(emailFriendlyName string) (string, error) {
 
 func sendEmail(
 	smtpClient *smtp.Client,
-	ctx context.Context,
-	fromEmailAddr, recipientEmailAddr, emailHTML string,
+	fromEmailAddr, recipientEmailAddr string,
 	emailData EmailMIMEData,
-	app *app.ApplicationContext,
 ) error {
-
 	if err := smtpClient.Mail(fromEmailAddr); err != nil {
 		return fmt.Errorf("MAIL FROM: %w. Given value:%s", err, fromEmailAddr)
 	}
@@ -110,12 +107,9 @@ func SendEmailToAllRecipients(emailHTML string, app *app.ApplicationContext) err
 		emailData.To = recipient
 		err = sendEmail(
 			smtpClient,
-			context.Background(),
 			cleanedFromEmailAddr,
 			cleanedRecipientEmailAddr,
-			emailHTML,
 			emailData,
-			app,
 		)
 		if err != nil {
 			app.Logger.Error("Failed to send email to "+recipient, zap.String("recipient", recipient), zap.Error(err))
