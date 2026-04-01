@@ -1,8 +1,6 @@
 package newsletter
 
 import (
-	"time"
-
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/dryrun"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
@@ -66,7 +64,7 @@ func (workflow Workflow) Run(app *app.ApplicationContext) {
 		}
 	}
 
-	err = persistentdata.UpdateLastNewsletterDatetime(time.Now(), app)
+	err = persistentdata.UpdateLastNewsletterDatetime(app.Clock.Now(), app)
 	if err != nil {
 		app.Logger.Warn(
 			"An error occured while saving the last newsletter datetime. This could lead to future error or items sent again.",
