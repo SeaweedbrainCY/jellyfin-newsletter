@@ -100,10 +100,10 @@ type yamlConfiguration struct {
 	Email struct {
 		SMTPServer     string `yaml:"smtp_server" validate:"required,hostname|ip"`
 		SMTPPort       int    `yaml:"smtp_port" validate:"required,numeric,min=1,max=65535"`
-		SMTPUsername   string `yaml:"smtp_username" validate:"required"`
-		SMTPPassword   Secret `yaml:"smtp_password" validate:"required"`
+		SMTPUsername   string `yaml:"smtp_username" validate:"required_if=SMTPTlsType NONE"`
+		SMTPPassword   Secret `yaml:"smtp_password" validate:"required_if=SMTPTlsType NONE"`
 		SMTPSenderName string `yaml:"smtp_sender_email" validate:"required"`
-		SMTPTlsType    string `yaml:"smtp_tls_type,omitempty" validate:"omitempty,oneof=TLS STARTTLS"`
+		SMTPTlsType    string `yaml:"smtp_tls_type,omitempty" validate:"omitempty,oneof=TLS STARTTLS NONE"`
 	} `yaml:"email"               validate:"required"`
 	DryRun *struct {
 		Enabled            bool   `yaml:"enabled" validate:"boolean"`
