@@ -19,25 +19,21 @@ type APIInterface interface {
 	SearchMediaByName(name string, productionYear int, mediaType MediaType) (*SearchMediaHTTPResponse, error)
 }
 
-type HTTPClientInterface interface {
-	Do(req *http.Request) (*http.Response, error)
-}
-
 type APIClient struct {
 	APIKey     config.Secret
 	Lang       string
 	Logger     *zap.Logger
 	BaseURL    string
-	HTTPClient HTTPClientInterface
+	HTTPClient *http.Client
 }
 
-func InitTMDBApiClient(app *app.ApplicationContext) APIClient {
+func InitTMDBApiClient(httpClient *http.Client, app *app.ApplicationContext) APIClient {
 	return APIClient{
 		APIKey:     app.Config.TMDB.APIKey,
 		Lang:       app.Config.EmailTemplate.Language,
 		Logger:     app.Logger,
 		BaseURL:    "https://api.themoviedb.org/3",
-		HTTPClient: http.DefaultClient,
+		HTTPClient: httpClient,
 	}
 }
 
