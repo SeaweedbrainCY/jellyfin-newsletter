@@ -11,3 +11,6 @@ lint:
 
 fmt:
 	golangci-lint fmt *
+
+integration:
+	go test -tags integration -v ./...
