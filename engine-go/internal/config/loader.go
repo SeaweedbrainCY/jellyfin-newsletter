@@ -64,7 +64,7 @@ func parseYaml(r io.Reader, yamlParsedConfig *yamlConfiguration) error {
 func buildLogConfig(yamlParsedConfig *yamlConfiguration) LogConfig {
 	logConfig := LogConfig{
 		Level:  "INFO",
-		Format: "json",
+		Format: "console",
 	}
 
 	if yamlParsedConfig.Log != nil {
