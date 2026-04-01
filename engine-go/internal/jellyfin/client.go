@@ -35,11 +35,12 @@ type APIClient struct {
 	LibraryAPI LibraryAPIInterface
 }
 
-func NewJellyfinAPIClient(app *app.ApplicationContext) APIClient {
+func NewJellyfinAPIClient(app *app.ApplicationContext, httpClient *http.Client) APIClient {
 	headerToken := "MediaBrowser Token=\"" + app.Config.Jellyfin.APIKey + "\""
 	config := &jellyfinAPI.Configuration{
 		Servers:       jellyfinAPI.ServerConfigurations{{URL: app.Config.Jellyfin.URL}},
 		DefaultHeader: map[string]string{"Authorization": string(headerToken)},
+		HTTPClient:    httpClient,
 	}
 	client := jellyfinAPI.NewAPIClient(config)
 	return APIClient{

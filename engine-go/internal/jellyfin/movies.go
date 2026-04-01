@@ -23,7 +23,7 @@ type MovieItem struct {
 // `getRecentlyAddedMoviesByFolder` and returns a slice of
 // `MovieItem` for movies added within the configured observed period.
 func (client *APIClient) GetRecentlyAddedMovies(app *app.ApplicationContext) *[]MovieItem {
-	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	minimumAdditionDate := app.Clock.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
 	if app.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter {
 		lastNewsletterDatetime, err := persistentdata.GetLastNewsletterDatetime(app)
 		if err != nil {
@@ -35,7 +35,7 @@ func (client *APIClient) GetRecentlyAddedMovies(app *app.ApplicationContext) *[]
 			minimumAdditionDate = *lastNewsletterDatetime
 		}
 	}
-
+	app.Logger.Debug("Searching for newly added movies ...", zap.Time("minimum addition date", minimumAdditionDate))
 	var movieItems = []MovieItem{}
 	for _, folderName := range app.Config.Jellyfin.WatchedFilmFolders {
 		if items, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, folderName, app); err == nil {

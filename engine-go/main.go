@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/clock"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/cron"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
@@ -38,7 +39,7 @@ func main() {
 		logger.Fatal("Failed to load Localizer", zap.Error(err))
 	}
 
-	app := app.InitApplicationContext(config, logger, localizer)
+	app := app.InitApplicationContext(config, logger, localizer, clock.RealClock{})
 
 	err = template.CheckIfThemeIsAvailable(app)
 	if err != nil {

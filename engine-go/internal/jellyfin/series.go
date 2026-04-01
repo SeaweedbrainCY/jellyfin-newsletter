@@ -366,8 +366,9 @@ func (client *APIClient) findNewEpisodes(
 func (client *APIClient) GetNewlyAddedSeries(
 	app *app.ApplicationContext,
 ) *[]NewlyAddedSeriesItem {
+
 	var seriesItems = []NewlyAddedSeriesItem{}
-	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	minimumAdditionDate := app.Clock.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
 	if app.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter {
 		lastNewsletterDatetime, err := persistentdata.GetLastNewsletterDatetime(app)
 		if err != nil {
@@ -379,6 +380,7 @@ func (client *APIClient) GetNewlyAddedSeries(
 			minimumAdditionDate = *lastNewsletterDatetime
 		}
 	}
+	app.Logger.Debug("Searching for newly added series ...", zap.Time("minimum addition date", minimumAdditionDate))
 	for _, folderName := range app.Config.Jellyfin.WatchedSeriesFolders {
 		if items, err := client.getNewlyAddedSeriesByFolder(minimumAdditionDate, folderName, app); err == nil {
 			seriesItems = append(seriesItems, *items...)
