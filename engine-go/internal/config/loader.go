@@ -93,7 +93,7 @@ func buildJellyfinConfig(yamlParsedConfig *yamlConfiguration) JellyfinConfig {
 	//Remove trailing / :
 	jellyfinURL := yamlParsedConfig.Jellyfin.URL
 	if string(yamlParsedConfig.Jellyfin.URL[len(yamlParsedConfig.Jellyfin.URL)-1]) == "/" {
-		jellyfinURL = yamlParsedConfig.Jellyfin.URL[0 : len(yamlParsedConfig.Jellyfin.URL)-2]
+		jellyfinURL = yamlParsedConfig.Jellyfin.URL[0 : len(yamlParsedConfig.Jellyfin.URL)-1]
 	}
 	jellyfinConfig := JellyfinConfig{
 		URL:                                 jellyfinURL,
