@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/clock"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
@@ -273,6 +274,7 @@ func getAppContext() (*app.ApplicationContext, *observer.ObservedLogs) {
 				DisplayOverviewMaxItems: 0,
 			},
 		},
+		Clock: clock.RealClock{},
 	}, recordedLogs
 }
 
