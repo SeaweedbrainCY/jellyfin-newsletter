@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/clock"
@@ -55,8 +56,8 @@ func main() {
 	app.Logger.Info("Configuration loaded successfully")
 
 	newsletterWorkflow := newsletter.Workflow{
-		JellyfinClient: jellyfin.NewJellyfinAPIClient(app),
-		TMDBClient:     tmdb.InitTMDBApiClient(app),
+		JellyfinClient: jellyfin.NewJellyfinAPIClient(http.DefaultClient, app),
+		TMDBClient:     tmdb.InitTMDBApiClient(http.DefaultClient, app),
 	}
 
 	if app.Config.Scheduler.Enabled {
