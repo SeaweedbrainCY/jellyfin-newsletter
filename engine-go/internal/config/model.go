@@ -101,8 +101,8 @@ type yamlConfiguration struct {
 		SMTPServer     string `yaml:"smtp_server" validate:"required,hostname|ip"`
 		SMTPPort       int    `yaml:"smtp_port" validate:"required,numeric,min=1,max=65535"`
 		SMTPTlsType    string `yaml:"smtp_tls_type,omitempty" validate:"omitempty,oneof=TLS STARTTLS NONE"`
-		SMTPUsername   string `yaml:"smtp_username" validate:"required_if=smtp_tls_type NONE"`
-		SMTPPassword   Secret `yaml:"smtp_password" validate:"required_if=smtp_tls_type NONE"`
+		SMTPUsername   string `yaml:"smtp_username" validate:"required_unless=SMTPTlsType NONE"`
+		SMTPPassword   Secret `yaml:"smtp_password" validate:"required_unless=SMTPTlsType NONE"`
 		SMTPSenderName string `yaml:"smtp_sender_email" validate:"required"`
 	} `yaml:"email"               validate:"required"`
 	DryRun *struct {
