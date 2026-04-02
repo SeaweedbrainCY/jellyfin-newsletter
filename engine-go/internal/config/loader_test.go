@@ -388,7 +388,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email smtp_username",
 			yamlKeyToRemove: "email.smtp_username",
-			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPUsername' Error:Field validation for 'SMTPUsername' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPUsername' Error:Field validation for 'SMTPUsername' failed on the 'required_unless' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
   22 |
@@ -403,7 +403,7 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing email smtp_password",
 			yamlKeyToRemove: "email.smtp_password",
-			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPPassword' Error:Field validation for 'SMTPPassword' failed on the 'required' tag
+			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPPassword' Error:Field validation for 'SMTPPassword' failed on the 'required_unless' tag
   20 | tmdb:
   21 |   api_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
   22 |
