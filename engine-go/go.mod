@@ -4,7 +4,6 @@ go 1.26
 
 require (
 	github.com/BurntSushi/toml v1.6.0
-	github.com/docker/go-connections v0.6.0
 	github.com/go-co-op/gocron/v2 v2.19.1
 	github.com/go-playground/validator/v10 v10.29.0
 	github.com/goccy/go-yaml v1.19.0
@@ -14,6 +13,7 @@ require (
 	github.com/testcontainers/testcontainers-go v0.41.0
 	go.uber.org/zap v1.27.1
 	golang.org/x/text v0.34.0
+	gopkg.in/dnaeon/go-vcr.v4 v4.0.6
 )
 
 require (
@@ -30,8 +30,8 @@ require (
 	github.com/cpuguy83/dockercfg v0.3.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/distribution/reference v0.6.0 // indirect
-	github.com/dnaeon/go-vcr v1.2.0 // indirect
 	github.com/docker/docker v28.5.2+incompatible // indirect
+	github.com/docker/go-connections v0.6.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/ebitengine/purego v0.10.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -75,10 +75,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.42.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
+	go.yaml.in/yaml/v4 v4.0.0-rc.3 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/validator.v2 v2.0.1 // indirect
-	gopkg.in/yaml.v2 v2.2.8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
