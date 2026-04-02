@@ -154,8 +154,16 @@ func TestJellyfinNewsletter(t *testing.T) {
 	assert.Contains(t, html, "No Time to Die")
 	assert.Contains(t, html, "The Last of Us")
 	assert.Contains(t, html, "Severance: Season 1, Episodes 2-3")
-	assert.Contains(t, html, "You are recieving this email because you are using TestJellyfinUser&#39;s Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying unsubscribe@example.com.")
-	assert.Contains(t, html, "Developed with ❤️ by <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> and <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">the contributors</a>.")
+	assert.Contains(
+		t,
+		html,
+		"You are recieving this email because you are using TestJellyfinUser&#39;s Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying unsubscribe@example.com.",
+	)
+	assert.Contains(
+		t,
+		html,
+		"Developed with ❤️ by <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> and <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">the contributors</a>.",
+	)
 	assert.Contains(t, html, "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3.")
 	assert.NotContains(t, html, "House of the Dragon")
 }

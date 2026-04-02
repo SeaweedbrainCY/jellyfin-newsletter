@@ -67,7 +67,7 @@ func marshalNewItems(items any) string {
 }
 
 func addMetadataToHTML(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
-	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string, clock clock.ClockInterface) string {
+	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string, clock clock.Interface) string {
 	if smtpTestResult == "" {
 		smtpTestResult = "Not tested"
 	}
@@ -83,7 +83,7 @@ func addMetadataToHTML(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem
 }
 
 func saveMetadataAsJSONFile(outputDirectory, outputFilename string, newJellyfinMovies *[]jellyfin.MovieItem,
-	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string, clock clock.ClockInterface) error {
+	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string, clock clock.Interface) error {
 	metadata := metadataJSON{
 		NewDetectedMovies: *newJellyfinMovies,
 		NewDetectedSeries: *newJellyfinSeries,

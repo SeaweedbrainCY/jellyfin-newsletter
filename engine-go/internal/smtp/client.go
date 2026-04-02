@@ -93,7 +93,12 @@ func newSMTPClient(ctx context.Context, app *app.ApplicationContext) (*smtp.Clie
 		return nil, err
 	}
 	if app.Config.SMTP.TLSType != "NONE" {
-		auth := smtp.PlainAuth("", app.Config.SMTP.Username, app.Config.SMTP.Password.SafeString(), app.Config.SMTP.Host)
+		auth := smtp.PlainAuth(
+			"",
+			app.Config.SMTP.Username,
+			app.Config.SMTP.Password.SafeString(),
+			app.Config.SMTP.Host,
+		)
 		if err = netSMTPclient.Auth(auth); err != nil {
 			_ = netSMTPclient.Close()
 			return nil, fmt.Errorf("smtp authentication failed: %w", err)

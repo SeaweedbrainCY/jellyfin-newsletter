@@ -366,7 +366,6 @@ func (client *APIClient) findNewEpisodes(
 func (client *APIClient) GetNewlyAddedSeries(
 	app *app.ApplicationContext,
 ) *[]NewlyAddedSeriesItem {
-
 	var seriesItems = []NewlyAddedSeriesItem{}
 	minimumAdditionDate := app.Clock.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
 	if app.Config.Jellyfin.IgnoreItemsAddedAfterLastNewsletter {

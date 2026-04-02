@@ -11,7 +11,7 @@ func InitApplicationContext(
 	config *config.Configuration,
 	logger *zap.Logger,
 	localizer *i18n.Localizer,
-	clock clock.ClockInterface,
+	clock clock.Interface,
 ) *ApplicationContext {
 	return &ApplicationContext{
 		Logger:    logger,

@@ -11,5 +11,5 @@ type ApplicationContext struct {
 	Config    *config.Configuration
 	Logger    *zap.Logger
 	Localizer *i18n.Localizer
-	Clock     clock.ClockInterface
+	Clock     clock.Interface
 }
