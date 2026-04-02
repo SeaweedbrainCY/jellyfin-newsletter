@@ -67,4 +67,4 @@ jobs:
         with:
           working-directory: ./engine-go
           cover-pkg: ./...
-          tags: integration
+          test-flags: -tags=integration
