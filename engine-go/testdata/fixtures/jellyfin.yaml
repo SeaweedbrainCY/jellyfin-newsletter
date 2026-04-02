@@ -1,0 +1,318 @@
+---
+version: 2
+interactions:
+  - id: 0
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 0
+      host: localhost:8096
+      headers:
+        Accept:
+          - application/json
+        User-Agent:
+          - ""
+      url: http://localhost:8096/System/Ping
+      method: POST
+    response:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      transfer_encoding:
+        - chunked
+      content_length: -1
+      uncompressed: true
+      body: '"Jellyfin Server"'
+      headers:
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Thu, 02 Apr 2026 21:06:59 GMT
+        Server:
+          - Kestrel
+        Vary:
+          - Accept-Encoding
+        X-Response-Time-Ms:
+          - "14.8055"
+      status: 200 OK
+      code: 200
+      duration: 76.791667ms
+  - id: 1
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 0
+      host: localhost:8096
+      headers:
+        Accept:
+          - application/json
+        User-Agent:
+          - ""
+      url: http://localhost:8096/System/Info
+      method: GET
+    response:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      transfer_encoding:
+        - chunked
+      content_length: -1
+      uncompressed: true
+      body: '{"OperatingSystemDisplayName":"","HasPendingRestart":false,"IsShuttingDown":false,"SupportsLibraryMonitor":true,"WebSocketPortNumber":8096,"CompletedInstallations":[],"CanSelfRestart":true,"CanLaunchWebBrowser":false,"ProgramDataPath":"/config","WebPath":"/jellyfin/jellyfin-web","ItemsByNamePath":"/config/metadata","CachePath":"/cache","LogPath":"/config/log","InternalMetadataPath":"/config/metadata","TranscodingTempPath":"/cache/transcodes","CastReceiverApplications":[{"Id":"F007D354","Name":"Stable"},{"Id":"6F511C87","Name":"Unstable"}],"HasUpdateAvailable":false,"EncoderLocation":"System","SystemArchitecture":"X64","LocalAddress":"http://192.168.97.2:8096","ServerName":"7008caf1ee73","Version":"10.11.6","ProductName":"Jellyfin Server","OperatingSystem":"","Id":"c41cbaaf5e4b4059867814580dfffbc7","StartupWizardCompleted":true}'
+      headers:
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Thu, 02 Apr 2026 21:06:59 GMT
+        Server:
+          - Kestrel
+        Vary:
+          - Accept-Encoding
+        X-Response-Time-Ms:
+          - "34.6144"
+      status: 200 OK
+      code: 200
+      duration: 37.407125ms
+  - id: 2
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 0
+      host: localhost:8096
+      form:
+        enableImages:
+          - "true"
+        enableTotalRecordCount:
+          - "true"
+        locationTypes:
+          - FileSystem
+        recursive:
+          - "false"
+      headers:
+        Accept:
+          - application/json
+        User-Agent:
+          - ""
+      url: http://localhost:8096/Items?enableImages=true&enableTotalRecordCount=true&locationTypes=FileSystem&recursive=false
+      method: GET
+    response:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      transfer_encoding:
+        - chunked
+      content_length: -1
+      uncompressed: true
+      body: '{"Items":[{"Name":"movies","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"5b0d238e2f6d5609b709d7b76300e217","ChannelId":null,"IsFolder":true,"Type":"Folder","ImageTags":{},"BackdropImageTags":[],"ImageBlurHashes":{},"LocationType":"FileSystem","MediaType":"Unknown"},{"Name":"Playlists","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"1071671e7bffa0532e930debee501d2e","ChannelId":null,"IsFolder":true,"Type":"ManualPlaylistsFolder","CollectionType":"playlists","ImageTags":{},"BackdropImageTags":[],"ImageBlurHashes":{},"LocationType":"FileSystem","MediaType":"Unknown"},{"Name":"tvshows","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"10359ee85dcb9abda7d3dde0e1cd5073","ChannelId":null,"IsFolder":true,"Type":"Folder","ImageTags":{},"BackdropImageTags":[],"ImageBlurHashes":{},"LocationType":"FileSystem","MediaType":"Unknown"}],"TotalRecordCount":3,"StartIndex":0}'
+      headers:
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Thu, 02 Apr 2026 21:06:59 GMT
+        Server:
+          - Kestrel
+        Vary:
+          - Accept-Encoding
+        X-Response-Time-Ms:
+          - "12.3903"
+      status: 200 OK
+      code: 200
+      duration: 13.999541ms
+  - id: 3
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 0
+      host: localhost:8096
+      form:
+        enableImages:
+          - "true"
+        enableTotalRecordCount:
+          - "true"
+        fields:
+          - DateCreated
+          - ProviderIds
+          - Id
+          - Name
+          - ProductionYear
+        isMovie:
+          - "true"
+        locationTypes:
+          - FileSystem
+        parentId:
+          - 5b0d238e2f6d5609b709d7b76300e217
+        recursive:
+          - "true"
+      headers:
+        Accept:
+          - application/json
+        User-Agent:
+          - ""
+      url: http://localhost:8096/Items?enableImages=true&enableTotalRecordCount=true&fields=DateCreated&fields=ProviderIds&fields=Id&fields=Name&fields=ProductionYear&isMovie=true&locationTypes=FileSystem&parentId=5b0d238e2f6d5609b709d7b76300e217&recursive=true
+      method: GET
+    response:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      transfer_encoding:
+        - chunked
+      content_length: -1
+      uncompressed: true
+      body: '{"Items":[{"Name":"Harry Potter and the Chamber of Secrets","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"59e87e509e15a1fd1e9380bcf5a6f16a","DateCreated":"2026-02-25T12:14:22.403832Z","PremiereDate":"2002-11-13T00:00:00.0000000Z","CriticRating":82,"OfficialRating":"PG","ChannelId":null,"CommunityRating":7.703,"ProductionYear":2002,"ProviderIds":{"Imdb":"tt0295297","Tmdb":"672","TmdbCollection":"1241"},"IsFolder":false,"Type":"Movie","VideoType":"VideoFile","ImageTags":{"Primary":"01ed29569208f6d962235292c8a159ff","Thumb":"3a840da6f59713f953ac7cd3398f1108","Logo":"2079a2ffb0f2f07463996a5184b0a598"},"BackdropImageTags":["ee94b75ae5bce3fc9208947acaf472b6"],"ImageBlurHashes":{"Backdrop":{"ee94b75ae5bce3fc9208947acaf472b6":"WLBzdx_MJUD*IBMx?a%ME2M{V?M{DjIUMyn$xZozR*R*xun%t6x["},"Primary":{"01ed29569208f6d962235292c8a159ff":"dE8YCkb]J6.7.mTJS#%M9ZSibbRj8{tRt7IoIB%f-:Xm"},"Thumb":{"3a840da6f59713f953ac7cd3398f1108":"WH7MWpcED*yXr=NZ*Jt,OrW;%2XRW;S~i|sCb^gNIBo}%MR*X8o#"},"Logo":{"2079a2ffb0f2f07463996a5184b0a598":"OEHxMy.69NE4IVxT04~RoaN0WFobt3%0I_WWS5IXRPM|xZ"}},"LocationType":"FileSystem","MediaType":"Video"},{"Name":"Love Actually","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"27ef6694953fd390ddd46d3882c41692","DateCreated":"2026-03-31T12:14:22.9356693Z","PremiereDate":"2003-09-07T00:00:00.0000000Z","CriticRating":65,"OfficialRating":"R","ChannelId":null,"CommunityRating":7.096,"ProductionYear":2003,"ProviderIds":{"Imdb":"tt0314331","Tmdb":"508"},"IsFolder":false,"Type":"Movie","VideoType":"VideoFile","ImageTags":{"Logo":"3ccee7a40b4e6bfa95c7b9228ee1bb6d","Thumb":"9558dbbc5d4a2ddfec4aceab3ffd751f","Primary":"1b56fb2d7d7fc1fee85d0fd6dd6549c4"},"BackdropImageTags":["18095908d2fafb8237307534169cb05a"],"ImageBlurHashes":{"Backdrop":{"18095908d2fafb8237307534169cb05a":"WRM7DXx]NK%N?w-o$~tRx]%Lt7oM00ITaxM{R*t7$#%NM{ofxaj["},"Logo":{"3ccee7a40b4e6bfa95c7b9228ee1bb6d":"HCTSUAxufQxufQxufQxufQ~qj[fQj[fQj[fQj[fQ"},"Thumb":{"9558dbbc5d4a2ddfec4aceab3ffd751f":"WQOV$Ds8?w-=%$^\u002B@=RjNdnitSe:oNxtbbSLIUM|%#IA%go}M|tR"},"Primary":{"1b56fb2d7d7fc1fee85d0fd6dd6549c4":"dLO{z9^OXR~VH=TJY5ox_4nmnO%2?vxusmWDyDx]ozo}"}},"LocationType":"FileSystem","MediaType":"Video"},{"Name":"No Time to Die","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"6b1a8aa913904f6db991fa396540b34d","DateCreated":"2026-03-31T12:14:22.6631181Z","PremiereDate":"2021-09-29T00:00:00.0000000Z","CriticRating":83,"OfficialRating":"PG-13","ChannelId":null,"CommunityRating":7.3,"ProductionYear":2021,"ProviderIds":{"Imdb":"tt2382320","Tmdb":"370172","TmdbCollection":"645"},"IsFolder":false,"Type":"Movie","VideoType":"VideoFile","ImageTags":{"Thumb":"ad73cde50c57495544c289e876a2b156","Logo":"c5e1366cf4868e631ad84646e7bbc1a0","Primary":"3ca5a38a73e7c34740b7833868b46b8b"},"BackdropImageTags":["a1e48c9e4f486ac2e4b712c9960c5003"],"ImageBlurHashes":{"Backdrop":{"a1e48c9e4f486ac2e4b712c9960c5003":"WfKne.-;~qxuIU%MRj%MIoogjZRjIUM{Rk-;%2-;ofWB%MxuxuoL"},"Thumb":{"ad73cde50c57495544c289e876a2b156":"WLLg@OMws-_N_N?v6.%htRWDn$M|of~VtR-:s,M{_3-:of%1%1n~"},"Logo":{"c5e1366cf4868e631ad84646e7bbc1a0":"dTHoI6xu00t7xu~qxuD%M{ay?bayIUozayM{RPt7RjM{"},"Primary":{"3ca5a38a73e7c34740b7833868b46b8b":"dZHxpS_3_NIU-ps:x]%NxaxaW;RjM_9FIUD%9GIURja}"}},"LocationType":"FileSystem","MediaType":"Video"},{"Name":"Star Wars: Episode III - Revenge of the Sith","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"a244d46cc887b690512833471328bdad","DateCreated":"2026-02-20T12:14:22.1081453Z","PremiereDate":"2005-05-17T00:00:00.0000000Z","CriticRating":79,"OfficialRating":"PG-13","ChannelId":null,"CommunityRating":7.462,"ProductionYear":2005,"ProviderIds":{"Imdb":"tt0121766","Tmdb":"1895","TmdbCollection":"10"},"IsFolder":false,"Type":"Movie","VideoType":"VideoFile","ImageTags":{"Thumb":"a89fe590af05ea20fe278caced03db55","Logo":"08cf1772f31ccf39040e5472290bc581","Primary":"3851b53e85ba838f334f8f2bfe55041f"},"BackdropImageTags":["a49356d39b2871c9bb4b8646a0a394a9"],"ImageBlurHashes":{"Backdrop":{"a49356d39b2871c9bb4b8646a0a394a9":"W57^A3xZ%L%1IVsApvS|%LkVM|so1Hs,OWbFt7OXE1ocWUNaxtof"},"Thumb":{"a89fe590af05ea20fe278caced03db55":"WNELW^=yM_NF9FoMITIoS5S%SiR*00%MxuM|%gj@tSo#RjROV@s:"},"Logo":{"08cf1772f31ccf39040e5472290bc581":"NNIg[yWV0KbHIoRjRjWBW;fQayj[r=R*E1j[Rjs:"},"Primary":{"3851b53e85ba838f334f8f2bfe55041f":"dlGrbR,=$O=c}CoKNcsn,;a|Ncay$hazR,S3xFsnazWX"}},"LocationType":"FileSystem","MediaType":"Video"}],"TotalRecordCount":4,"StartIndex":0}'
+      headers:
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Thu, 02 Apr 2026 21:06:59 GMT
+        Server:
+          - Kestrel
+        Vary:
+          - Accept-Encoding
+        X-Response-Time-Ms:
+          - "9.3521"
+      status: 200 OK
+      code: 200
+      duration: 10.838666ms
+  - id: 4
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 0
+      host: localhost:8096
+      form:
+        enableImages:
+          - "true"
+        enableTotalRecordCount:
+          - "true"
+        locationTypes:
+          - FileSystem
+        recursive:
+          - "false"
+      headers:
+        Accept:
+          - application/json
+        User-Agent:
+          - ""
+      url: http://localhost:8096/Items?enableImages=true&enableTotalRecordCount=true&locationTypes=FileSystem&recursive=false
+      method: GET
+    response:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      transfer_encoding:
+        - chunked
+      content_length: -1
+      uncompressed: true
+      body: '{"Items":[{"Name":"movies","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"5b0d238e2f6d5609b709d7b76300e217","ChannelId":null,"IsFolder":true,"Type":"Folder","ImageTags":{},"BackdropImageTags":[],"ImageBlurHashes":{},"LocationType":"FileSystem","MediaType":"Unknown"},{"Name":"Playlists","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"1071671e7bffa0532e930debee501d2e","ChannelId":null,"IsFolder":true,"Type":"ManualPlaylistsFolder","CollectionType":"playlists","ImageTags":{},"BackdropImageTags":[],"ImageBlurHashes":{},"LocationType":"FileSystem","MediaType":"Unknown"},{"Name":"tvshows","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"10359ee85dcb9abda7d3dde0e1cd5073","ChannelId":null,"IsFolder":true,"Type":"Folder","ImageTags":{},"BackdropImageTags":[],"ImageBlurHashes":{},"LocationType":"FileSystem","MediaType":"Unknown"}],"TotalRecordCount":3,"StartIndex":0}'
+      headers:
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Thu, 02 Apr 2026 21:06:59 GMT
+        Server:
+          - Kestrel
+        Vary:
+          - Accept-Encoding
+        X-Response-Time-Ms:
+          - "2.1537"
+      status: 200 OK
+      code: 200
+      duration: 3.537417ms
+  - id: 5
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 0
+      host: localhost:8096
+      form:
+        enableImages:
+          - "true"
+        enableTotalRecordCount:
+          - "true"
+        fields:
+          - DateCreated
+          - ProviderIds
+          - Id
+          - Name
+          - ProductionYear
+          - IndexNumber
+          - SeriesId
+          - Type
+          - SeasonId
+        parentId:
+          - 10359ee85dcb9abda7d3dde0e1cd5073
+        recursive:
+          - "true"
+      headers:
+        Accept:
+          - application/json
+        User-Agent:
+          - ""
+      url: http://localhost:8096/Items?enableImages=true&enableTotalRecordCount=true&fields=DateCreated&fields=ProviderIds&fields=Id&fields=Name&fields=ProductionYear&fields=IndexNumber&fields=SeriesId&fields=Type&fields=SeasonId&parentId=10359ee85dcb9abda7d3dde0e1cd5073&recursive=true
+      method: GET
+    response:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      transfer_encoding:
+        - chunked
+      content_length: -1
+      uncompressed: true
+      body: '{"Items":[{"Name":"House of the Dragon","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"a2e3f74e2e49e8e5020e9e5635b79d47","DateCreated":"2026-02-11T00:00:00.0000000Z","PremiereDate":"2022-08-21T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":8.29,"ProductionYear":2022,"ProviderIds":{"Imdb":"tt11198330","Tmdb":"94997","TvRage":"0","Tvdb":"371572"},"IsFolder":true,"Type":"Series","Status":"Continuing","AirTime":"","AirDays":[],"DisplayOrder":"","ImageTags":{"Thumb":"0b5365ce06d95796ebd8076b07772685","Primary":"75d13ac43b698a114d90b176d429b503","Logo":"9748136b4557292c453b06988c8dc94e"},"BackdropImageTags":["382c79357e3356bb017b18025506c5b7"],"ImageBlurHashes":{"Backdrop":{"382c79357e3356bb017b18025506c5b7":"W57J:^Nx5S}=xtEN^gNI9v$~$%EN$eI;Iqs\u002BR\u002BR,xFbIt7xZNbso"},"Thumb":{"0b5365ce06d95796ebd8076b07772685":"W22~Ght64oIp%L%1xZoLNHR*s:s:E2Rk%L%1V@IpI:WVxas.WBS3"},"Primary":{"75d13ac43b698a114d90b176d429b503":"d88WQu%J0~IX=]t5JAjIRkX7xZxFENR\u002B$%xF9vNHxG$%"},"Logo":{"9748136b4557292c453b06988c8dc94e":"H9H.Qb?b?bj[%MxuM{ofM{~q?bRjIU?b%MWBt7ay"}},"LocationType":"FileSystem","MediaType":"Unknown","EndDate":"2024-08-04T00:00:00.0000000Z"},{"Name":"Season 2","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"787ce497755fa9885ec124a7a2dc1eb3","DateCreated":"2026-02-11T12:16:31.7967931Z","PremiereDate":"2024-06-16T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"ProductionYear":2024,"IndexNumber":2,"ProviderIds":{"Tvdb":"2118892"},"IsFolder":true,"Type":"Season","ParentLogoItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentBackdropItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentBackdropImageTags":["382c79357e3356bb017b18025506c5b7"],"SeriesName":"House of the Dragon","SeriesId":"a2e3f74e2e49e8e5020e9e5635b79d47","SeriesPrimaryImageTag":"75d13ac43b698a114d90b176d429b503","ImageTags":{"Primary":"d3a5c73ada218111d9f33ec61dfcc0b8"},"BackdropImageTags":[],"ParentLogoImageTag":"9748136b4557292c453b06988c8dc94e","ImageBlurHashes":{"Primary":{"d3a5c73ada218111d9f33ec61dfcc0b8":"d57A;\u002B?ERPxb~VoLVs-VR6M}IpR*E2IqNaW.OAS1X7bb","75d13ac43b698a114d90b176d429b503":"d88WQu%J0~IX=]t5JAjIRkX7xZxFENR\u002B$%xF9vNHxG$%"},"Logo":{"9748136b4557292c453b06988c8dc94e":"H9H.Qb?b?bj[%MxuM{ofM{~q?bRjIU?b%MWBt7ay"},"Thumb":{"0b5365ce06d95796ebd8076b07772685":"W22~Ght64oIp%L%1xZoLNHR*s:s:E2Rk%L%1V@IpI:WVxas.WBS3"},"Backdrop":{"382c79357e3356bb017b18025506c5b7":"W57J:^Nx5S}=xtEN^gNI9v$~$%EN$eI;Iqs\u002BR\u002BR,xFbIt7xZNbso"}},"ParentThumbItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentThumbImageTag":"0b5365ce06d95796ebd8076b07772685","LocationType":"FileSystem","MediaType":"Unknown"},{"Name":"A Son for a Son","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"3de9283b5c9c54bd4d518530a3b1f0aa","DateCreated":"2026-02-11T12:14:23.2287521Z","PremiereDate":"2024-06-16T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":7.691,"ProductionYear":2024,"IndexNumber":1,"ParentIndexNumber":2,"ProviderIds":{"Imdb":"tt21912342","Tvdb":"10396624"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentBackdropItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentBackdropImageTags":["382c79357e3356bb017b18025506c5b7"],"SeriesName":"House of the Dragon","SeriesId":"a2e3f74e2e49e8e5020e9e5635b79d47","SeasonId":"787ce497755fa9885ec124a7a2dc1eb3","SeriesPrimaryImageTag":"75d13ac43b698a114d90b176d429b503","SeasonName":"Season 2","VideoType":"VideoFile","ImageTags":{"Primary":"14eb7712b493ee83aaf7aba013176679"},"BackdropImageTags":[],"ParentLogoImageTag":"9748136b4557292c453b06988c8dc94e","ImageBlurHashes":{"Primary":{"14eb7712b493ee83aaf7aba013176679":"WyHxslNG%g%MW=%N~qWXt6xuWAt7%Mj[j?oej[f5tmoJbbbboMbb","75d13ac43b698a114d90b176d429b503":"d88WQu%J0~IX=]t5JAjIRkX7xZxFENR\u002B$%xF9vNHxG$%"},"Logo":{"9748136b4557292c453b06988c8dc94e":"H9H.Qb?b?bj[%MxuM{ofM{~q?bRjIU?b%MWBt7ay"},"Thumb":{"0b5365ce06d95796ebd8076b07772685":"W22~Ght64oIp%L%1xZoLNHR*s:s:E2Rk%L%1V@IpI:WVxas.WBS3"},"Backdrop":{"382c79357e3356bb017b18025506c5b7":"W57J:^Nx5S}=xtEN^gNI9v$~$%EN$eI;Iqs\u002BR\u002BR,xFbIt7xZNbso"}},"ParentThumbItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentThumbImageTag":"0b5365ce06d95796ebd8076b07772685","LocationType":"FileSystem","MediaType":"Video"},{"Name":"Rhaenyra the Cruel","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"9b1cffd63b4f98279577a6552d8a0973","DateCreated":"2026-02-11T12:14:23.3713416Z","PremiereDate":"2024-06-23T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":7.596,"ProductionYear":2024,"IndexNumber":2,"ParentIndexNumber":2,"ProviderIds":{"Imdb":"tt27133251","Tvdb":"10396629"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentBackdropItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentBackdropImageTags":["382c79357e3356bb017b18025506c5b7"],"SeriesName":"House of the Dragon","SeriesId":"a2e3f74e2e49e8e5020e9e5635b79d47","SeasonId":"787ce497755fa9885ec124a7a2dc1eb3","SeriesPrimaryImageTag":"75d13ac43b698a114d90b176d429b503","SeasonName":"Season 2","VideoType":"VideoFile","ImageTags":{"Primary":"8662a22e60cb2e04e5637829b14ea6f6"},"BackdropImageTags":[],"ParentLogoImageTag":"9748136b4557292c453b06988c8dc94e","ImageBlurHashes":{"Primary":{"8662a22e60cb2e04e5637829b14ea6f6":"WPAT.ss;D%xu-=kD_Nj]IUxu%MWB-pWCM{xut7M{-;a#M{s:j[Rk","75d13ac43b698a114d90b176d429b503":"d88WQu%J0~IX=]t5JAjIRkX7xZxFENR\u002B$%xF9vNHxG$%"},"Logo":{"9748136b4557292c453b06988c8dc94e":"H9H.Qb?b?bj[%MxuM{ofM{~q?bRjIU?b%MWBt7ay"},"Thumb":{"0b5365ce06d95796ebd8076b07772685":"W22~Ght64oIp%L%1xZoLNHR*s:s:E2Rk%L%1V@IpI:WVxas.WBS3"},"Backdrop":{"382c79357e3356bb017b18025506c5b7":"W57J:^Nx5S}=xtEN^gNI9v$~$%EN$eI;Iqs\u002BR\u002BR,xFbIt7xZNbso"}},"ParentThumbItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentThumbImageTag":"0b5365ce06d95796ebd8076b07772685","LocationType":"FileSystem","MediaType":"Video"},{"Name":"The Burning Mill","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"683d30e5966603564b306024e1fee13b","DateCreated":"2026-02-11T12:14:23.5632088Z","PremiereDate":"2024-06-30T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":7.578,"ProductionYear":2024,"IndexNumber":3,"ParentIndexNumber":2,"ProviderIds":{"Imdb":"tt27172708","Tvdb":"10396630"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentBackdropItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentBackdropImageTags":["382c79357e3356bb017b18025506c5b7"],"SeriesName":"House of the Dragon","SeriesId":"a2e3f74e2e49e8e5020e9e5635b79d47","SeasonId":"787ce497755fa9885ec124a7a2dc1eb3","SeriesPrimaryImageTag":"75d13ac43b698a114d90b176d429b503","SeasonName":"Season 2","VideoType":"VideoFile","ImageTags":{"Primary":"b3d10bc6663e62474bd770685b7fc27c"},"BackdropImageTags":[],"ParentLogoImageTag":"9748136b4557292c453b06988c8dc94e","ImageBlurHashes":{"Primary":{"b3d10bc6663e62474bd770685b7fc27c":"W25}Kr9a0}^3xHJ-^*-UNaRk={9]Jns.^OSM9^-ATIR*-9bbAG^O","75d13ac43b698a114d90b176d429b503":"d88WQu%J0~IX=]t5JAjIRkX7xZxFENR\u002B$%xF9vNHxG$%"},"Logo":{"9748136b4557292c453b06988c8dc94e":"H9H.Qb?b?bj[%MxuM{ofM{~q?bRjIU?b%MWBt7ay"},"Thumb":{"0b5365ce06d95796ebd8076b07772685":"W22~Ght64oIp%L%1xZoLNHR*s:s:E2Rk%L%1V@IpI:WVxas.WBS3"},"Backdrop":{"382c79357e3356bb017b18025506c5b7":"W57J:^Nx5S}=xtEN^gNI9v$~$%EN$eI;Iqs\u002BR\u002BR,xFbIt7xZNbso"}},"ParentThumbItemId":"a2e3f74e2e49e8e5020e9e5635b79d47","ParentThumbImageTag":"0b5365ce06d95796ebd8076b07772685","LocationType":"FileSystem","MediaType":"Video"},{"Name":"The Last of Us","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"9d22f414787b4219c17efd3c1a7629c9","DateCreated":"2026-04-01T12:16:31.6353848Z","PremiereDate":"2023-01-15T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":8.441,"RunTimeTicks":0,"ProductionYear":2023,"ProviderIds":{"Imdb":"tt3581920","Tmdb":"100088","Tvdb":"392256"},"IsFolder":true,"Type":"Series","Status":"Continuing","AirDays":[],"ImageTags":{"Primary":"5e8ab344319525adbb17a4644b0f4e26","Logo":"63194105aa4c7429f56a1ecdb1d36fda","Thumb":"341eb249d2d8227e7fee4fc2273c62ef"},"BackdropImageTags":["c1b1bd0824eb3d55eb69492eb3dad591"],"ImageBlurHashes":{"Backdrop":{"c1b1bd0824eb3d55eb69492eb3dad591":"W96*p#4V%foeM|x[.7IBtQofV[j[M|t6V[ofoKRkM|xtV[a}oeWB"},"Primary":{"5e8ab344319525adbb17a4644b0f4e26":"dNE.|a%g0000_4%M9F4n01%2ofM{M_WUxuxu%MIVayxu"},"Logo":{"63194105aa4c7429f56a1ecdb1d36fda":"HBTSUAxufQxufQxufQxufQ~qj[fQj[fQj[fQj[fQ"},"Thumb":{"341eb249d2d8227e7fee4fc2273c62ef":"WKBDsCMdxC-:Mxn%_MR6xZxtn~t69Fjax[M{xutQ0KahtRM|ogkC"}},"LocationType":"FileSystem","MediaType":"Unknown","EndDate":"2025-05-25T00:00:00.0000000Z"},{"Name":"Season 1","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"d59c61ca1470de65c16e99fe87e6a2a7","DateCreated":"2026-04-01T12:16:31.7885382Z","PremiereDate":"2023-01-15T00:00:00.0000000Z","ChannelId":null,"ProductionYear":2023,"IndexNumber":1,"ProviderIds":{"Tvdb":"1928616"},"IsFolder":true,"Type":"Season","ParentLogoItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropImageTags":["c1b1bd0824eb3d55eb69492eb3dad591"],"SeriesName":"The Last of Us","SeriesId":"9d22f414787b4219c17efd3c1a7629c9","SeriesPrimaryImageTag":"5e8ab344319525adbb17a4644b0f4e26","ImageTags":{"Primary":"a4b760b25c026e37c3bd56b44a4452bc"},"BackdropImageTags":[],"ParentLogoImageTag":"63194105aa4c7429f56a1ecdb1d36fda","ImageBlurHashes":{"Primary":{"a4b760b25c026e37c3bd56b44a4452bc":"dH9jy2WC00MyD$M|?bt7jbWBoyt7x]ofIURjIUaxxut7","5e8ab344319525adbb17a4644b0f4e26":"dNE.|a%g0000_4%M9F4n01%2ofM{M_WUxuxu%MIVayxu"},"Logo":{"63194105aa4c7429f56a1ecdb1d36fda":"HBTSUAxufQxufQxufQxufQ~qj[fQj[fQj[fQj[fQ"},"Thumb":{"341eb249d2d8227e7fee4fc2273c62ef":"WKBDsCMdxC-:Mxn%_MR6xZxtn~t69Fjax[M{xutQ0KahtRM|ogkC"},"Backdrop":{"c1b1bd0824eb3d55eb69492eb3dad591":"W96*p#4V%foeM|x[.7IBtQofV[j[M|t6V[ofoKRkM|xtV[a}oeWB"}},"ParentThumbItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentThumbImageTag":"341eb249d2d8227e7fee4fc2273c62ef","LocationType":"FileSystem","MediaType":"Unknown"},{"Name":"When You\u0027re Lost in the Darkness","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"6df1ac42be75bddb11fa0aeb95b8cdad","DateCreated":"2026-03-30T12:14:24.0970978Z","PremiereDate":"2023-01-15T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":8.26,"ProductionYear":2023,"IndexNumber":1,"ParentIndexNumber":1,"ProviderIds":{"Imdb":"tt11957006","Tvdb":"8444132"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropImageTags":["c1b1bd0824eb3d55eb69492eb3dad591"],"SeriesName":"The Last of Us","SeriesId":"9d22f414787b4219c17efd3c1a7629c9","SeasonId":"d59c61ca1470de65c16e99fe87e6a2a7","SeriesPrimaryImageTag":"5e8ab344319525adbb17a4644b0f4e26","SeasonName":"Season 1","VideoType":"VideoFile","ImageTags":{"Primary":"f4e1bfbb48a7b2981934c32deb9d5ebe"},"BackdropImageTags":[],"ParentLogoImageTag":"63194105aa4c7429f56a1ecdb1d36fda","ImageBlurHashes":{"Primary":{"f4e1bfbb48a7b2981934c32deb9d5ebe":"W67Khy~oIpIVens:4oD*n%t6kCS2IVWBxuxut6jZ?a%2M|IUM{n*","5e8ab344319525adbb17a4644b0f4e26":"dNE.|a%g0000_4%M9F4n01%2ofM{M_WUxuxu%MIVayxu"},"Logo":{"63194105aa4c7429f56a1ecdb1d36fda":"HBTSUAxufQxufQxufQxufQ~qj[fQj[fQj[fQj[fQ"},"Thumb":{"341eb249d2d8227e7fee4fc2273c62ef":"WKBDsCMdxC-:Mxn%_MR6xZxtn~t69Fjax[M{xutQ0KahtRM|ogkC"},"Backdrop":{"c1b1bd0824eb3d55eb69492eb3dad591":"W96*p#4V%foeM|x[.7IBtQofV[j[M|t6V[ofoKRkM|xtV[a}oeWB"}},"ParentThumbItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentThumbImageTag":"341eb249d2d8227e7fee4fc2273c62ef","LocationType":"FileSystem","MediaType":"Video"},{"Name":"Infected","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"7babcc34e63e4bebd24060a1d7ba15e4","DateCreated":"2026-03-30T12:14:24.2590947Z","PremiereDate":"2023-01-22T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":8.074,"ProductionYear":2023,"IndexNumber":2,"ParentIndexNumber":1,"ProviderIds":{"Imdb":"tt14500884","Tvdb":"9435211"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropImageTags":["c1b1bd0824eb3d55eb69492eb3dad591"],"SeriesName":"The Last of Us","SeriesId":"9d22f414787b4219c17efd3c1a7629c9","SeasonId":"d59c61ca1470de65c16e99fe87e6a2a7","SeriesPrimaryImageTag":"5e8ab344319525adbb17a4644b0f4e26","SeasonName":"Season 1","VideoType":"VideoFile","ImageTags":{"Primary":"cc4dda9e2c82b54ed31e9d78fba73e39"},"BackdropImageTags":[],"ParentLogoImageTag":"63194105aa4c7429f56a1ecdb1d36fda","ImageBlurHashes":{"Primary":{"cc4dda9e2c82b54ed31e9d78fba73e39":"WMEn@M~AIVWAxsX8D-Rnt6j[IpRkjFjZoea#R\u002BWB-noyWCs.xaoL","5e8ab344319525adbb17a4644b0f4e26":"dNE.|a%g0000_4%M9F4n01%2ofM{M_WUxuxu%MIVayxu"},"Logo":{"63194105aa4c7429f56a1ecdb1d36fda":"HBTSUAxufQxufQxufQxufQ~qj[fQj[fQj[fQj[fQ"},"Thumb":{"341eb249d2d8227e7fee4fc2273c62ef":"WKBDsCMdxC-:Mxn%_MR6xZxtn~t69Fjax[M{xutQ0KahtRM|ogkC"},"Backdrop":{"c1b1bd0824eb3d55eb69492eb3dad591":"W96*p#4V%foeM|x[.7IBtQofV[j[M|t6V[ofoKRkM|xtV[a}oeWB"}},"ParentThumbItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentThumbImageTag":"341eb249d2d8227e7fee4fc2273c62ef","LocationType":"FileSystem","MediaType":"Video"},{"Name":"Long, Long Time","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"586b36e3afe8b5c3f7599a314bb8ba0c","DateCreated":"2026-03-30T12:14:24.3983708Z","PremiereDate":"2023-01-29T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":7.092,"ProductionYear":2023,"IndexNumber":3,"ParentIndexNumber":1,"ProviderIds":{"Imdb":"tt14500888","Tvdb":"9435212"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropImageTags":["c1b1bd0824eb3d55eb69492eb3dad591"],"SeriesName":"The Last of Us","SeriesId":"9d22f414787b4219c17efd3c1a7629c9","SeasonId":"d59c61ca1470de65c16e99fe87e6a2a7","SeriesPrimaryImageTag":"5e8ab344319525adbb17a4644b0f4e26","SeasonName":"Season 1","VideoType":"VideoFile","ImageTags":{"Primary":"cfb2515b06e5943594bc643477486139"},"BackdropImageTags":[],"ParentLogoImageTag":"63194105aa4c7429f56a1ecdb1d36fda","ImageBlurHashes":{"Primary":{"cfb2515b06e5943594bc643477486139":"W78q1u-:ELV@-Vs.~oozSgNGRQaeWXW?t7bHD*IVt7ogjbt6IVE1","5e8ab344319525adbb17a4644b0f4e26":"dNE.|a%g0000_4%M9F4n01%2ofM{M_WUxuxu%MIVayxu"},"Logo":{"63194105aa4c7429f56a1ecdb1d36fda":"HBTSUAxufQxufQxufQxufQ~qj[fQj[fQj[fQj[fQ"},"Thumb":{"341eb249d2d8227e7fee4fc2273c62ef":"WKBDsCMdxC-:Mxn%_MR6xZxtn~t69Fjax[M{xutQ0KahtRM|ogkC"},"Backdrop":{"c1b1bd0824eb3d55eb69492eb3dad591":"W96*p#4V%foeM|x[.7IBtQofV[j[M|t6V[ofoKRkM|xtV[a}oeWB"}},"ParentThumbItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentThumbImageTag":"341eb249d2d8227e7fee4fc2273c62ef","LocationType":"FileSystem","MediaType":"Video"},{"Name":"Please Hold to My Hand","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"b61346ecb118f24e8084ffd8b4fef0ee","DateCreated":"2026-03-31T12:14:24.5621784Z","PremiereDate":"2023-02-05T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":7.56,"ProductionYear":2023,"IndexNumber":4,"ParentIndexNumber":1,"ProviderIds":{"Imdb":"tt14500890","Tvdb":"9435213"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropImageTags":["c1b1bd0824eb3d55eb69492eb3dad591"],"SeriesName":"The Last of Us","SeriesId":"9d22f414787b4219c17efd3c1a7629c9","SeasonId":"d59c61ca1470de65c16e99fe87e6a2a7","SeriesPrimaryImageTag":"5e8ab344319525adbb17a4644b0f4e26","SeasonName":"Season 1","VideoType":"VideoFile","ImageTags":{"Primary":"e064e984b98f6f80cc3a862ca6536cb3"},"BackdropImageTags":[],"ParentLogoImageTag":"63194105aa4c7429f56a1ecdb1d36fda","ImageBlurHashes":{"Primary":{"e064e984b98f6f80cc3a862ca6536cb3":"WGA0zUsp9aNGWBxa~BaxR\u002BS3NGt7%2WAs:ofNGW=yDjYsloMbGSN","5e8ab344319525adbb17a4644b0f4e26":"dNE.|a%g0000_4%M9F4n01%2ofM{M_WUxuxu%MIVayxu"},"Logo":{"63194105aa4c7429f56a1ecdb1d36fda":"HBTSUAxufQxufQxufQxufQ~qj[fQj[fQj[fQj[fQ"},"Thumb":{"341eb249d2d8227e7fee4fc2273c62ef":"WKBDsCMdxC-:Mxn%_MR6xZxtn~t69Fjax[M{xutQ0KahtRM|ogkC"},"Backdrop":{"c1b1bd0824eb3d55eb69492eb3dad591":"W96*p#4V%foeM|x[.7IBtQofV[j[M|t6V[ofoKRkM|xtV[a}oeWB"}},"ParentThumbItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentThumbImageTag":"341eb249d2d8227e7fee4fc2273c62ef","LocationType":"FileSystem","MediaType":"Video"},{"Name":"Endure and Survive","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"dc212121527156f9d63d941c17c04230","DateCreated":"2026-03-31T12:14:24.6762924Z","PremiereDate":"2023-02-12T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":8.218,"ProductionYear":2023,"IndexNumber":5,"ParentIndexNumber":1,"ProviderIds":{"Imdb":"tt14659486","Tvdb":"9435214"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentBackdropImageTags":["c1b1bd0824eb3d55eb69492eb3dad591"],"SeriesName":"The Last of Us","SeriesId":"9d22f414787b4219c17efd3c1a7629c9","SeasonId":"d59c61ca1470de65c16e99fe87e6a2a7","SeriesPrimaryImageTag":"5e8ab344319525adbb17a4644b0f4e26","SeasonName":"Season 1","VideoType":"VideoFile","ImageTags":{"Primary":"2342d47991f7f98aa2d19d03a6328e2c"},"BackdropImageTags":[],"ParentLogoImageTag":"63194105aa4c7429f56a1ecdb1d36fda","ImageBlurHashes":{"Primary":{"2342d47991f7f98aa2d19d03a6328e2c":"W49Plw59Eg^O,s0~V@=x$~#:EjofERXOwgRkI;$$xr5AOWV[xZS3","5e8ab344319525adbb17a4644b0f4e26":"dNE.|a%g0000_4%M9F4n01%2ofM{M_WUxuxu%MIVayxu"},"Logo":{"63194105aa4c7429f56a1ecdb1d36fda":"HBTSUAxufQxufQxufQxufQ~qj[fQj[fQj[fQj[fQ"},"Thumb":{"341eb249d2d8227e7fee4fc2273c62ef":"WKBDsCMdxC-:Mxn%_MR6xZxtn~t69Fjax[M{xutQ0KahtRM|ogkC"},"Backdrop":{"c1b1bd0824eb3d55eb69492eb3dad591":"W96*p#4V%foeM|x[.7IBtQofV[j[M|t6V[ofoKRkM|xtV[a}oeWB"}},"ParentThumbItemId":"9d22f414787b4219c17efd3c1a7629c9","ParentThumbImageTag":"341eb249d2d8227e7fee4fc2273c62ef","LocationType":"FileSystem","MediaType":"Video"},{"Name":"Severance","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"4261338818d868c3f8f7c1c995c71e4f","DateCreated":"2026-02-11T00:00:00.0000000Z","PremiereDate":"2022-02-17T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":8.4,"ProductionYear":2022,"ProviderIds":{"Imdb":"tt11280740","Tmdb":"95396","Tvdb":"371980"},"IsFolder":true,"Type":"Series","Status":"Continuing","AirTime":"","AirDays":[],"DisplayOrder":"","ImageTags":{"Primary":"0983537c3df4543b03b3932f71462e5f","Thumb":"d6420247005703eea5516241d33f760b","Logo":"6bd6e98174e778d1949a19b4e76f20e3"},"BackdropImageTags":["8aea7887751930cf3d74a2543677d7fe"],"ImageBlurHashes":{"Backdrop":{"8aea7887751930cf3d74a2543677d7fe":"WPB}I8V?k?R:ROtS?wozRjfhV@V@IUbIMxs8t7a}NMV?Rij^xat7"},"Primary":{"0983537c3df4543b03b3932f71462e5f":"dSIF9#tRyD_2_Mt7-pof9[s:IAE1ISozELNFD$M{R*oe"},"Thumb":{"d6420247005703eea5516241d33f760b":"WTCQ=H?GDiOZcFOt?ww[RPbco#XTI;WCxus.WBt6S%WAoJfkbIt7"},"Logo":{"6bd6e98174e778d1949a19b4e76f20e3":"HLJuAa%Mxut7xuWBxuWBM{00xut7xut7t7ofj[xu"}},"LocationType":"FileSystem","MediaType":"Unknown","EndDate":"2025-03-20T00:00:00.0000000Z"},{"Name":"Season 1","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"f8621b0fb7ef7f5354227ad5e514cdb8","DateCreated":"2026-02-11T00:00:00.0000000Z","PremiereDate":"2022-02-17T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"ProductionYear":2022,"IndexNumber":1,"ProviderIds":{"Tvdb":"1971742"},"IsFolder":true,"Type":"Season","ParentLogoItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentBackdropItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentBackdropImageTags":["8aea7887751930cf3d74a2543677d7fe"],"SeriesName":"Severance","SeriesId":"4261338818d868c3f8f7c1c995c71e4f","SeriesPrimaryImageTag":"0983537c3df4543b03b3932f71462e5f","ImageTags":{"Primary":"72608dea760368b378de2546093dfcbd"},"BackdropImageTags":[],"ParentLogoImageTag":"6bd6e98174e778d1949a19b4e76f20e3","ImageBlurHashes":{"Primary":{"72608dea760368b378de2546093dfcbd":"dSIF9#tRyD_2_Mt7-pof9[s:IAE1ISozELNFD$M{R*oe","0983537c3df4543b03b3932f71462e5f":"dSIF9#tRyD_2_Mt7-pof9[s:IAE1ISozELNFD$M{R*oe"},"Logo":{"6bd6e98174e778d1949a19b4e76f20e3":"HLJuAa%Mxut7xuWBxuWBM{00xut7xut7t7ofj[xu"},"Thumb":{"d6420247005703eea5516241d33f760b":"WTCQ=H?GDiOZcFOt?ww[RPbco#XTI;WCxus.WBt6S%WAoJfkbIt7"},"Backdrop":{"8aea7887751930cf3d74a2543677d7fe":"WPB}I8V?k?R:ROtS?wozRjfhV@V@IUbIMxs8t7a}NMV?Rij^xat7"}},"ParentThumbItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentThumbImageTag":"d6420247005703eea5516241d33f760b","LocationType":"FileSystem","MediaType":"Unknown"},{"Name":"Good News About Hell","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"8c60bcace54f117f4ad44a34d307ab70","DateCreated":"2026-02-11T12:14:25.2813478Z","PremiereDate":"2022-02-17T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":8.113,"ProductionYear":2022,"IndexNumber":1,"ParentIndexNumber":1,"ProviderIds":{"Imdb":"tt11650328","Tvdb":"8891221"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentBackdropItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentBackdropImageTags":["8aea7887751930cf3d74a2543677d7fe"],"SeriesName":"Severance","SeriesId":"4261338818d868c3f8f7c1c995c71e4f","SeasonId":"f8621b0fb7ef7f5354227ad5e514cdb8","SeriesPrimaryImageTag":"0983537c3df4543b03b3932f71462e5f","SeasonName":"Season 1","VideoType":"VideoFile","ImageTags":{"Primary":"4ba0229accf700097719a65a88d61b2c"},"BackdropImageTags":[],"ParentLogoImageTag":"6bd6e98174e778d1949a19b4e76f20e3","ImageBlurHashes":{"Primary":{"4ba0229accf700097719a65a88d61b2c":"W784bz-:4.M|R*WB%LofR%WBWVay0KNG-;xtxZt7IoR*xut7t6of","0983537c3df4543b03b3932f71462e5f":"dSIF9#tRyD_2_Mt7-pof9[s:IAE1ISozELNFD$M{R*oe"},"Logo":{"6bd6e98174e778d1949a19b4e76f20e3":"HLJuAa%Mxut7xuWBxuWBM{00xut7xut7t7ofj[xu"},"Thumb":{"d6420247005703eea5516241d33f760b":"WTCQ=H?GDiOZcFOt?ww[RPbco#XTI;WCxus.WBt6S%WAoJfkbIt7"},"Backdrop":{"8aea7887751930cf3d74a2543677d7fe":"WPB}I8V?k?R:ROtS?wozRjfhV@V@IUbIMxs8t7a}NMV?Rij^xat7"}},"ParentThumbItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentThumbImageTag":"d6420247005703eea5516241d33f760b","LocationType":"FileSystem","MediaType":"Video"},{"Name":"Half Loop","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"07e34b7ea31912747e3812884c633329","DateCreated":"2026-03-31T12:14:25.4475698Z","PremiereDate":"2022-02-17T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":8.226,"ProductionYear":2022,"IndexNumber":2,"ParentIndexNumber":1,"ProviderIds":{"Imdb":"tt13393872","Tvdb":"8891222"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentBackdropItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentBackdropImageTags":["8aea7887751930cf3d74a2543677d7fe"],"SeriesName":"Severance","SeriesId":"4261338818d868c3f8f7c1c995c71e4f","SeasonId":"f8621b0fb7ef7f5354227ad5e514cdb8","SeriesPrimaryImageTag":"0983537c3df4543b03b3932f71462e5f","SeasonName":"Season 1","VideoType":"VideoFile","ImageTags":{"Primary":"2d3fae3621d30c340dfc5324aced5976"},"BackdropImageTags":[],"ParentLogoImageTag":"6bd6e98174e778d1949a19b4e76f20e3","ImageBlurHashes":{"Primary":{"2d3fae3621d30c340dfc5324aced5976":"WpKBm,-;_3-;t7%M~Xxus;ofkBt7%Lt7D%WBaeR*?vt7M{t7WBj[","0983537c3df4543b03b3932f71462e5f":"dSIF9#tRyD_2_Mt7-pof9[s:IAE1ISozELNFD$M{R*oe"},"Logo":{"6bd6e98174e778d1949a19b4e76f20e3":"HLJuAa%Mxut7xuWBxuWBM{00xut7xut7t7ofj[xu"},"Thumb":{"d6420247005703eea5516241d33f760b":"WTCQ=H?GDiOZcFOt?ww[RPbco#XTI;WCxus.WBt6S%WAoJfkbIt7"},"Backdrop":{"8aea7887751930cf3d74a2543677d7fe":"WPB}I8V?k?R:ROtS?wozRjfhV@V@IUbIMxs8t7a}NMV?Rij^xat7"}},"ParentThumbItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentThumbImageTag":"d6420247005703eea5516241d33f760b","LocationType":"FileSystem","MediaType":"Video"},{"Name":"In Perpetuity","ServerId":"c41cbaaf5e4b4059867814580dfffbc7","Id":"d020f634a4633c2ade29326785bc0c1d","DateCreated":"2026-03-31T12:14:25.627298Z","PremiereDate":"2022-02-24T00:00:00.0000000Z","OfficialRating":"TV-MA","ChannelId":null,"CommunityRating":8.025,"ProductionYear":2022,"IndexNumber":3,"ParentIndexNumber":1,"ProviderIds":{"Imdb":"tt13399816","Tvdb":"8891223"},"IsFolder":false,"Type":"Episode","ParentLogoItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentBackdropItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentBackdropImageTags":["8aea7887751930cf3d74a2543677d7fe"],"SeriesName":"Severance","SeriesId":"4261338818d868c3f8f7c1c995c71e4f","SeasonId":"f8621b0fb7ef7f5354227ad5e514cdb8","SeriesPrimaryImageTag":"0983537c3df4543b03b3932f71462e5f","SeasonName":"Season 1","VideoType":"VideoFile","ImageTags":{"Primary":"98ebcbec10b63dc8cf566f7709148181"},"BackdropImageTags":[],"ParentLogoImageTag":"6bd6e98174e778d1949a19b4e76f20e3","ImageBlurHashes":{"Primary":{"98ebcbec10b63dc8cf566f7709148181":"WQGcDSDik=R\u002BD%%g%~_NXSDix]xu%#tRspnPt7kW.8IUsn%2RjtR","0983537c3df4543b03b3932f71462e5f":"dSIF9#tRyD_2_Mt7-pof9[s:IAE1ISozELNFD$M{R*oe"},"Logo":{"6bd6e98174e778d1949a19b4e76f20e3":"HLJuAa%Mxut7xuWBxuWBM{00xut7xut7t7ofj[xu"},"Thumb":{"d6420247005703eea5516241d33f760b":"WTCQ=H?GDiOZcFOt?ww[RPbco#XTI;WCxus.WBt6S%WAoJfkbIt7"},"Backdrop":{"8aea7887751930cf3d74a2543677d7fe":"WPB}I8V?k?R:ROtS?wozRjfhV@V@IUbIMxs8t7a}NMV?Rij^xat7"}},"ParentThumbItemId":"4261338818d868c3f8f7c1c995c71e4f","ParentThumbImageTag":"d6420247005703eea5516241d33f760b","LocationType":"FileSystem","MediaType":"Video"}],"TotalRecordCount":17,"StartIndex":0}'
+      headers:
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Thu, 02 Apr 2026 21:06:59 GMT
+        Server:
+          - Kestrel
+        Vary:
+          - Accept-Encoding
+        X-Response-Time-Ms:
+          - "2.8395"
+      status: 200 OK
+      code: 200
+      duration: 3.861208ms
+  - id: 6
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 0
+      host: localhost:8096
+      headers:
+        Accept:
+          - application/json
+        User-Agent:
+          - ""
+      url: http://localhost:8096/Items/Counts
+      method: GET
+    response:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      transfer_encoding:
+        - chunked
+      content_length: -1
+      uncompressed: true
+      body: '{"MovieCount":4,"SeriesCount":3,"EpisodeCount":11,"ArtistCount":0,"ProgramCount":0,"TrailerCount":0,"SongCount":0,"AlbumCount":0,"MusicVideoCount":0,"BoxSetCount":0,"BookCount":0,"ItemCount":0}'
+      headers:
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Thu, 02 Apr 2026 21:07:00 GMT
+        Server:
+          - Kestrel
+        Vary:
+          - Accept-Encoding
+        X-Response-Time-Ms:
+          - "31.4239"
+      status: 200 OK
+      code: 200
+      duration: 33.36775ms
