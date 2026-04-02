@@ -5,9 +5,9 @@ package newsletter_test
 import (
 	"context"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"testing"
 	"time"
@@ -30,8 +30,6 @@ import (
 	"gopkg.in/dnaeon/go-vcr.v4/pkg/cassette"
 	"gopkg.in/dnaeon/go-vcr.v4/pkg/recorder"
 )
-
-var configPath = flag.String("config", "", "path to config file")
 
 type FakeClock struct{}
 
@@ -69,7 +67,11 @@ func (c FakeClock) Now() time.Time {
 func initApp(t *testing.T) (*app.ApplicationContext, *observer.ObservedLogs, error) {
 	// We first load a real Config from a test-dedicated YAML file
 	// Then we add the data we need to capture elements (logs, http requests ...)
-	config, err := config.LoadConfig(*configPath)
+	configPath := os.Getenv("INTEGRATION_TEST_CONFIG_FILE")
+	if configPath == "" {
+		t.Fatal("INTEGRATION_TEST_CONFIG_FILE is not defined")
+	}
+	config, err := config.LoadConfig(configPath)
 	if err != nil {
 		return nil, nil, err
 	}
