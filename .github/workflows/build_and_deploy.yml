@@ -1,8 +1,9 @@
 name: "Jellyfin-newsletter docker image deployment"
 
 permissions:
-  contents: read
+  contents: write
   packages: write
+  pull-requests: write
 
 on:
   push:
