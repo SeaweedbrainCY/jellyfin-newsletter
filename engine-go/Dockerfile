@@ -13,7 +13,7 @@ RUN chown 1001:1001 /app/config
 RUN mkdir /app/previews
 RUN chown 1001:1001 /app/previews
 
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-X main.Version=${VERSION}"  -o /app/jellyfin-newsletter .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-X main.version=${VERSION}"  -o /app/jellyfin-newsletter .
 
 
 FROM gcr.io/distroless/static AS runtime

@@ -19,7 +19,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var Version = "dev" // Will be set during build time
+var version = "dev" // Will be set during build time
 
 func main() {
 	var configPath = flag.String("config", "./config/config.yml", "path to config file")
