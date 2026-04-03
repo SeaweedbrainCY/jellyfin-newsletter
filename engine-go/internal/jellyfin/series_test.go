@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/clock"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
 	jellyfinAPI "github.com/sj14/jellyfin-go/api"
 	"github.com/stretchr/testify/assert"
@@ -35,6 +36,7 @@ func testSeriesInitApp() (*app.ApplicationContext, *observer.ObservedLogs) {
 				WatchedSeriesFolders: []string{"folder1"},
 			},
 		},
+		Clock: clock.RealClock{},
 	}, recordedLogs
 }
 

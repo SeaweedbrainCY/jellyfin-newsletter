@@ -215,11 +215,11 @@ func BuildEmailTitleWithPlaceholders(
 	observedPeriodDays int,
 	app *app.ApplicationContext,
 ) (string, error) {
-	today := time.Now()
+	today := app.Clock.Now()
 	todayDayNumber := int(today.Weekday())
 	todayMonthNumber := int(today.Month())
 
-	startDate := time.Now().AddDate(0, 0, observedPeriodDays*-1)
+	startDate := app.Clock.Now().AddDate(0, 0, observedPeriodDays*-1)
 	startDayNumber := int(startDate.Weekday())
 	startMonthNumber := int(startDate.Month())
 

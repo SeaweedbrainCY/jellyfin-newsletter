@@ -1,8 +1,6 @@
 package newsletter
 
 import (
-	"time"
-
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/dryrun"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
@@ -13,11 +11,15 @@ import (
 	"go.uber.org/zap"
 )
 
-// TriggerNewsletterWorkflow connects to Jellyfin to retrieve the latest items and send the newsletter to the configured recipients.
-func TriggerNewsletterWorkflow(app *app.ApplicationContext) {
+type Workflow struct {
+	JellyfinClient jellyfin.APIClient
+	TMDBClient     tmdb.APIClient
+}
+
+// Run connects to Jellyfin to retrieve the latest items and send the newsletter to the configured recipients.
+func (workflow Workflow) Run(app *app.ApplicationContext) {
 	app.Logger.Info("Gathering new items and sending the newsletter ...")
-	jellyfinAPIClient := jellyfin.NewJellyfinAPIClient(app)
-	err := jellyfinAPIClient.TestConnection(app)
+	err := workflow.JellyfinClient.TestConnection(app)
 	if err != nil {
 		app.Logger.Fatal(
 			"Jellyfin newsletter startup failed. An error occurred while connecting to Jellyfin.",
@@ -25,19 +27,18 @@ func TriggerNewsletterWorkflow(app *app.ApplicationContext) {
 		)
 	}
 
-	recentlyAddedMovies := jellyfinAPIClient.GetRecentlyAddedMovies(app)
-	recentlyAddedSeries := jellyfinAPIClient.GetNewlyAddedSeries(app)
+	recentlyAddedMovies := workflow.JellyfinClient.GetRecentlyAddedMovies(app)
+	recentlyAddedSeries := workflow.JellyfinClient.GetNewlyAddedSeries(app)
 
 	if len(*recentlyAddedMovies) == 0 && len(*recentlyAddedSeries) == 0 {
 		app.Logger.Info("No new items detected. Email notification is skipped.")
 		return
 	}
 
-	tmdbClient := tmdb.InitTMDBApiClient(app)
-	tmdb.EnrichMovieItemsList(recentlyAddedMovies, tmdbClient, app)
-	tmdb.EnrichSeriesItemsList(recentlyAddedSeries, tmdbClient, app)
+	tmdb.EnrichMovieItemsList(recentlyAddedMovies, workflow.TMDBClient, app)
+	tmdb.EnrichSeriesItemsList(recentlyAddedSeries, workflow.TMDBClient, app)
 
-	moviesCount, episodesCount, err := jellyfinAPIClient.LibraryAPI.GetItemsStats(app)
+	moviesCount, episodesCount, err := workflow.JellyfinClient.LibraryAPI.GetItemsStats(app)
 	if err != nil {
 		app.Logger.Fatal("Failed to get Jellyfin items statistics.", zap.Error(err))
 	}
@@ -57,10 +58,13 @@ func TriggerNewsletterWorkflow(app *app.ApplicationContext) {
 		dryrun.SaveDryRunEmail(emailHTML, recentlyAddedMovies, recentlyAddedSeries, app)
 		app.Logger.Info("Successfully generated the newsletter (dry run).")
 	} else {
-		smtp.SendEmailToAllRecipients(emailHTML, app)
+		err = smtp.SendEmailToAllRecipients(emailHTML, app)
+		if err != nil {
+			app.Logger.Fatal("Failed to send emails to recipients.", zap.Error(err))
+		}
 	}
 
-	err = persistentdata.UpdateLastNewsletterDatetime(time.Now(), app)
+	err = persistentdata.UpdateLastNewsletterDatetime(app.Clock.Now(), app)
 	if err != nil {
 		app.Logger.Warn(
 			"An error occured while saving the last newsletter datetime. This could lead to future error or items sent again.",

@@ -3,14 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/clock"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/config"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/cron"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/i18n"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/logger"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/newsletter"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/tmdb"
 	"github.com/go-co-op/gocron/v2"
 	"go.uber.org/zap"
 )
@@ -36,7 +40,7 @@ func main() {
 		logger.Fatal("Failed to load Localizer", zap.Error(err))
 	}
 
-	app := app.InitApplicationContext(config, logger, localizer)
+	app := app.InitApplicationContext(config, logger, localizer, clock.RealClock{})
 
 	err = template.CheckIfThemeIsAvailable(app)
 	if err != nil {
@@ -51,9 +55,14 @@ func main() {
 	app.Logger.Info("Copyright (C) 2025 Nathan Stchepinsky (Seaweedbrain). Licensed under the AGPLv3.0")
 	app.Logger.Info("Configuration loaded successfully")
 
+	newsletterWorkflow := newsletter.Workflow{
+		JellyfinClient: jellyfin.NewJellyfinAPIClient(http.DefaultClient, app),
+		TMDBClient:     tmdb.InitTMDBApiClient(http.DefaultClient, app),
+	}
+
 	if app.Config.Scheduler.Enabled {
 		var scheduler gocron.Scheduler
-		scheduler, err = cron.CreateNewsletterScheduler(app)
+		scheduler, err = cron.CreateNewsletterScheduler(newsletterWorkflow, app)
 		if err != nil {
 			app.Logger.Fatal("Error while creating the scheduler. Exiting now.", zap.Error(err))
 		}
@@ -63,7 +72,7 @@ func main() {
 	}
 
 	// One time trigger
-	newsletter.TriggerNewsletterWorkflow(app)
+	newsletterWorkflow.Run(app)
 
 	app.Logger.Info("Jellyfin-Newsletter exiting gracefully.")
 }

@@ -1,0 +1,11 @@
+# WARNING
+# This docker compose is only used to generate the initial jellyfin data
+# The container used by integration tests is managed by go-testcontainers
+
+services:
+  jellyfin:
+    build:
+      context: .
+    container_name: jellyfin
+    ports:
+      - 8096:8096

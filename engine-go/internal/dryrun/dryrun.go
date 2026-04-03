@@ -9,9 +9,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/clock"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/smtp"
 	"go.uber.org/zap"
@@ -28,7 +28,7 @@ func fillFilenameTemplate(filename string, app *app.ApplicationContext) string {
 	templateData := struct {
 		Datetime string
 	}{
-		Datetime: time.Now().Format("2006-01-02T15:04:05Z07:00"),
+		Datetime: app.Clock.Now().Format("2006-01-02T15:04:05Z07:00"),
 	}
 	tmpl, err := template.New("filename").Option("missingkey=zero").Parse(filename)
 	if err != nil {
@@ -67,14 +67,14 @@ func marshalNewItems(items any) string {
 }
 
 func addMetadataToHTML(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
-	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string) string {
+	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string, clock clock.Interface) string {
 	if smtpTestResult == "" {
 		smtpTestResult = "Not tested"
 	}
 
 	metadata := fmt.Sprintf(
 		"<!--\nJellyfin-newsletter dry run\nGenerated at: %s\nSMTP test result:%s\nNew movies detected: %s\nNew series detected: %s\n-->\n\n",
-		time.Now().Format("2006-01-02T15:04:05Z07:00"),
+		clock.Now().Format("2006-01-02T15:04:05Z07:00"),
 		smtpTestResult,
 		marshalNewItems(newJellyfinMovies),
 		marshalNewItems(newJellyfinSeries),
@@ -83,11 +83,11 @@ func addMetadataToHTML(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem
 }
 
 func saveMetadataAsJSONFile(outputDirectory, outputFilename string, newJellyfinMovies *[]jellyfin.MovieItem,
-	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string) error {
+	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem, smtpTestResult string, clock clock.Interface) error {
 	metadata := metadataJSON{
 		NewDetectedMovies: *newJellyfinMovies,
 		NewDetectedSeries: *newJellyfinSeries,
-		Datetime:          time.Now().Format("2006-01-02T15:04:05Z07:00"),
+		Datetime:          clock.Now().Format("2006-01-02T15:04:05Z07:00"),
 		SMTPTestResult:    smtpTestResult,
 	}
 
@@ -123,7 +123,7 @@ func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
 	}
 
 	if app.Config.DryRun.IncludeMetadata {
-		emailHTML = addMetadataToHTML(emailHTML, newJellyfinMovies, newJellyfinSeries, smtpTestResult)
+		emailHTML = addMetadataToHTML(emailHTML, newJellyfinMovies, newJellyfinSeries, smtpTestResult, app.Clock)
 	}
 
 	if app.Config.DryRun.SaveEmailData {
@@ -134,6 +134,7 @@ func SaveDryRunEmail(emailHTML string, newJellyfinMovies *[]jellyfin.MovieItem,
 			newJellyfinMovies,
 			newJellyfinSeries,
 			smtpTestResult,
+			app.Clock,
 		)
 		if err != nil {
 			app.Logger.Error(

@@ -1,0 +1,308 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.themoviedb.org
+        form:
+            language:
+                - en
+        headers:
+            Accept:
+                - application/json
+        url: https://api.themoviedb.org/3/movie/508?language=en
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"adult":false,"backdrop_path":"/xUWf5xX0AnZgAnYXAMk03zTbsef.jpg","belongs_to_collection":null,"budget":40000000,"genres":[{"id":35,"name":"Comedy"},{"id":10749,"name":"Romance"},{"id":18,"name":"Drama"}],"homepage":"http://www.loveactually.com/","id":508,"imdb_id":"tt0314331","origin_country":["GB"],"original_language":"en","original_title":"Love Actually","overview":"Eight very different couples deal with their love lives in various loosely interrelated tales all set during a frantic month before Christmas in London.","popularity":5.8848,"poster_path":"/7QPeVsr9rcFU9Gl90yg0gTOTpVv.jpg","production_companies":[{"id":10163,"logo_path":"/16KWBMmfPX0aJzDExDrPxSLj0Pg.png","name":"Working Title Films","origin_country":"GB"},{"id":284,"logo_path":"/6a26if3IKy7mlrQuGHHVp6ufQtF.png","name":"DNA Films","origin_country":"GB"},{"id":694,"logo_path":"/5LEHONGkZBIoWvp1ygHOF8iyi1M.png","name":"StudioCanal","origin_country":"FR"}],"production_countries":[{"iso_3166_1":"FR","name":"France"},{"iso_3166_1":"GB","name":"United Kingdom"}],"release_date":"2003-09-07","revenue":250779876,"runtime":135,"spoken_languages":[{"english_name":"English","iso_639_1":"en","name":"English"},{"english_name":"French","iso_639_1":"fr","name":"Français"},{"english_name":"Portuguese","iso_639_1":"pt","name":"Português"}],"status":"Released","tagline":"Love actually is all around.","title":"Love Actually","video":false,"vote_average":7.096,"vote_count":7323}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - public, max-age=23931
+            Content-Type:
+                - application/json;charset=utf-8
+            Date:
+                - Thu, 02 Apr 2026 19:52:17 GMT
+            Etag:
+                - W/"04e5071538473a54274d96fa333b5181"
+            Server:
+                - openresty
+            Vary:
+                - accept-encoding
+                - Origin
+            Via:
+                - 1.1 49854a90957d798535a9c12d122915ac.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - LuakjYE5J6aOqKrwh29dtZyUZ3alk8NJ2J27gaumucFFDTRwZjYiOQ==
+            X-Amz-Cf-Pop:
+                - YUL62-P4
+            X-Az:
+                - us-east-1a
+            X-Cache:
+                - Miss from cloudfront
+            X-Memc:
+                - HIT
+            X-Memc-Age:
+                - "1023"
+            X-Memc-Expires:
+                - "23931"
+            X-Memc-Key:
+                - f49dc7f50b742138bc58ffdbae516cf415c7ec103879760fee4a8e4bb192eede
+            X-Task-Id:
+                - 74b59d474e134818a582dad5b91b928f
+        status: 200 OK
+        code: 200
+        duration: 543.524458ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.themoviedb.org
+        form:
+            language:
+                - en
+        headers:
+            Accept:
+                - application/json
+        url: https://api.themoviedb.org/3/movie/370172?language=en
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"adult":false,"backdrop_path":"/x9td0NQha0t44K2qgcMipLOGjVi.jpg","belongs_to_collection":{"id":645,"name":"James Bond Collection","poster_path":"/ofwSiqOFShhunAIYYdSMHMJQSx2.jpg","backdrop_path":"/dOSECZImeyZldoq0ObieBE0lwie.jpg"},"budget":250000000,"genres":[{"id":28,"name":"Action"},{"id":53,"name":"Thriller"},{"id":12,"name":"Adventure"}],"homepage":"https://mgm.com/movies/no-time-to-die","id":370172,"imdb_id":"tt2382320","origin_country":["GB"],"original_language":"en","original_title":"No Time to Die","overview":"Bond has left active service and is enjoying a tranquil life in Jamaica. His peace is short-lived when his old friend Felix Leiter from the CIA turns up asking for help. The mission to rescue a kidnapped scientist turns out to be far more treacherous than expected, leading Bond onto the trail of a mysterious villain armed with dangerous new technology.","popularity":13.6391,"poster_path":"/iUgygt3fscRoKWCV1d0C7FbM9TP.jpg","production_companies":[{"id":7576,"logo_path":"/oYcUi1byZ312Z3xiz5ojz9RQLND.png","name":"EON Productions","origin_country":"GB"},{"id":21,"logo_path":"/usUnaYV6hQnlVAXP6r4HwrlLFPG.png","name":"Metro-Goldwyn-Mayer","origin_country":"US"}],"production_countries":[{"iso_3166_1":"GB","name":"United Kingdom"},{"iso_3166_1":"US","name":"United States of America"}],"release_date":"2021-09-29","revenue":774153024,"runtime":163,"spoken_languages":[{"english_name":"English","iso_639_1":"en","name":"English"},{"english_name":"French","iso_639_1":"fr","name":"Français"},{"english_name":"Italian","iso_639_1":"it","name":"Italiano"},{"english_name":"Russian","iso_639_1":"ru","name":"Pусский"},{"english_name":"Spanish","iso_639_1":"es","name":"Español"}],"status":"Released","tagline":"The mission that changes everything begins…","title":"No Time to Die","video":false,"vote_average":7.342,"vote_count":6990}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - public, max-age=2176
+            Content-Type:
+                - application/json;charset=utf-8
+            Date:
+                - Thu, 02 Apr 2026 19:52:17 GMT
+            Etag:
+                - W/"030696892063a8b9f44b9dcec4bf5d5c"
+            Server:
+                - openresty
+            Vary:
+                - accept-encoding
+                - Origin
+            Via:
+                - 1.1 49854a90957d798535a9c12d122915ac.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - mL3D-bzBjD9jUpSQ_2N1sr6v3xbP_2qHX9z_b7kK6xbRwu2JHh1JWQ==
+            X-Amz-Cf-Pop:
+                - YUL62-P4
+            X-Az:
+                - us-east-1b
+            X-Cache:
+                - Miss from cloudfront
+            X-Memc:
+                - HIT
+            X-Memc-Age:
+                - "23277"
+            X-Memc-Expires:
+                - "2176"
+            X-Memc-Key:
+                - 95ae0d8df2ce7219b7a86e2d63bf0e4795aef0c129600b385ab7477aea905208
+            X-Task-Id:
+                - 5abee92134384f7f8195878c73df9fd6
+        status: 200 OK
+        code: 200
+        duration: 143.434541ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.themoviedb.org
+        form:
+            language:
+                - en
+        headers:
+            Accept:
+                - application/json
+        url: https://api.themoviedb.org/3/tv/94997?language=en
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"adult":false,"backdrop_path":"/2xGcSLyTAzConiHAByWqhfLiatT.jpg","created_by":[{"id":237053,"credit_id":"5db8d867a1d3320011e7ddf1","name":"George R.R. Martin","original_name":"George R.R. Martin","gender":2,"profile_path":"/1A7W0L9dZz0rCN1oj6h8YUvusdN.jpg"},{"id":1167458,"credit_id":"5db8d8fe3faba000163a83cb","name":"Ryan Condal","original_name":"Ryan Condal","gender":2,"profile_path":"/1TGRIEArYHB7TD40HHYiRkwTHLX.jpg"}],"episode_run_time":[],"first_air_date":"2022-08-21","genres":[{"id":10765,"name":"Sci-Fi & Fantasy"},{"id":18,"name":"Drama"},{"id":10759,"name":"Action & Adventure"}],"homepage":"https://www.hbo.com/house-of-the-dragon","id":94997,"in_production":true,"languages":["en"],"last_air_date":"2024-08-04","last_episode_to_air":{"id":5234730,"name":"The Queen Who Ever Was","overview":"As Aemond becomes more volatile, Larys plots an escape, and Alicent grows more concerned about Helaena''s safety. Flush with new power, Rhaenyra looks to press her advantage.","vote_average":6.6,"vote_count":74,"air_date":"2024-08-04","episode_number":8,"episode_type":"finale","production_code":"","runtime":70,"season_number":2,"show_id":94997,"still_path":"/mTjsLzqgzEk5MLNwjaddVDFXqKd.jpg"},"name":"House of the Dragon","next_episode_to_air":null,"networks":[{"id":49,"logo_path":"/tuomPhY2UtuPTqqFnKMVHvSb724.png","name":"HBO","origin_country":"US"}],"number_of_episodes":18,"number_of_seasons":3,"origin_country":["US"],"original_language":"en","original_name":"House of the Dragon","overview":"The Targaryen dynasty is at the absolute apex of its power, with more than 15 dragons under their yoke. Most empires crumble from such heights. In the case of the Targaryens, their slow fall begins when King Viserys breaks with a century of tradition by naming his daughter Rhaenyra heir to the Iron Throne. But when Viserys later fathers a son, the court is shocked when Rhaenyra retains her status as his heir, and seeds of division sow friction across the realm.","popularity":45.9338,"poster_path":"/7QMsOTMUswlwxJP0rTTZfmz2tX2.jpg","production_companies":[{"id":3268,"logo_path":"/tuomPhY2UtuPTqqFnKMVHvSb724.png","name":"HBO","origin_country":"US"},{"id":180956,"logo_path":null,"name":"Bastard Sword","origin_country":"US"},{"id":180957,"logo_path":null,"name":"1:26 Pictures","origin_country":"US"},{"id":180958,"logo_path":null,"name":"GRRM","origin_country":"US"}],"production_countries":[{"iso_3166_1":"US","name":"United States of America"}],"seasons":[{"air_date":"2022-08-21","episode_count":73,"id":309556,"name":"Specials","overview":"","poster_path":"/n9z5p7psbfhLsaRyUrv0jrNCbh0.jpg","season_number":0,"vote_average":0.0},{"air_date":"2022-08-21","episode_count":10,"id":134965,"name":"Season 1","overview":"Set nearly 200 years before Game of Thrones, this season chronicles the events leading up to the Targaryen civil war, known as the Dance of the Dragons. King Viserys I Targaryen names his daughter, Princess Rhaenyra, as heir to the Iron Throne, breaking tradition and igniting tensions within the realm. The court becomes divided as Queen Alicent Hightower, Viserys’s second wife, promotes her son Aegon’s claim to the throne. Political intrigue, shifting alliances, and personal betrayals set the stage for a looming conflict that threatens to tear the Targaryen dynasty apart.","poster_path":"/lx6hsqWXq4aVrXPjCqnMHFrGL5u.jpg","season_number":1,"vote_average":7.9},{"air_date":"2024-06-16","episode_count":8,"id":368014,"name":"Season 2","overview":"The Dance of the Dragons erupts as Rhaenyra and Aegon II both assert their claims to the Iron Throne, plunging Westeros into a brutal civil war. The season delves into the complexities of loyalty, power, and family as both sides employ dragons and armies to assert dominance. Key events include the tragic assassination of Prince Jaehaerys, escalating the conflict, and the shifting dynamics among key players like Daemon Targaryen and Alicent Hightower. As the war intensifies, the realm witnesses the devastating consequences of ambition and the high cost of succession disputes.","poster_path":"/lZwxqNWnT1dRl76ry6BM0FPqCUg.jpg","season_number":2,"vote_average":7.5},{"air_date":null,"episode_count":0,"id":449260,"name":"Season 3","overview":"","poster_path":"/5OfQpVSXRZnKcJH9cpk76NhOp96.jpg","season_number":3,"vote_average":0.0}],"spoken_languages":[{"english_name":"English","iso_639_1":"en","name":"English"}],"status":"Returning Series","tagline":"All must choose.","type":"Scripted","vote_average":8.289,"vote_count":5820}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - public, max-age=8487
+            Content-Type:
+                - application/json;charset=utf-8
+            Date:
+                - Thu, 02 Apr 2026 19:52:18 GMT
+            Etag:
+                - W/"e529090f3f7836afc5f4cf416a8e7b92"
+            Server:
+                - openresty
+            Vary:
+                - accept-encoding
+                - Origin
+            Via:
+                - 1.1 49854a90957d798535a9c12d122915ac.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - HywRL6LnNyR7O_fNdVTm-qj1ssOsQuSvw_B69Q10fTtht8YyzWeTkA==
+            X-Amz-Cf-Pop:
+                - YUL62-P4
+            X-Az:
+                - us-east-1a
+            X-Cache:
+                - Miss from cloudfront
+            X-Memc:
+                - HIT
+            X-Memc-Age:
+                - "18863"
+            X-Memc-Expires:
+                - "8487"
+            X-Memc-Key:
+                - 2ef13e034e1080137b40846471d3a6004ba616457f8b8c27e49dd1ef213272f9
+            X-Task-Id:
+                - c0949a04835c4cf19f4e433fab97e812
+        status: 200 OK
+        code: 200
+        duration: 135.389083ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.themoviedb.org
+        form:
+            language:
+                - en
+        headers:
+            Accept:
+                - application/json
+        url: https://api.themoviedb.org/3/tv/100088?language=en
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"adult":false,"backdrop_path":"/lY2DhbA7Hy44fAKddr06UrXWWaQ.jpg","created_by":[{"id":1295692,"credit_id":"5e84f03598f1f10016a985c0","name":"Neil Druckmann","original_name":"Neil Druckmann","gender":2,"profile_path":"/bVUsM4aYiHbeSYE1xAw2H5Z1ANU.jpg"},{"id":35796,"credit_id":"5e84f06a3344c600153f6a57","name":"Craig Mazin","original_name":"Craig Mazin","gender":2,"profile_path":"/uEhna6qcMuyU5TP7irpTUZ2ZsZc.jpg"}],"episode_run_time":[],"first_air_date":"2023-01-15","genres":[{"id":18,"name":"Drama"}],"homepage":"https://www.hbo.com/the-last-of-us","id":100088,"in_production":true,"languages":["en"],"last_air_date":"2025-05-25","last_episode_to_air":{"id":5994273,"name":"Convergence","overview":"As the Wolves and the Scars prepare for a battle that could potentially end their longstanding feud, Ellie''s search draws her away from her friends and toward a devastating confrontation.","vote_average":6.23,"vote_count":87,"air_date":"2025-05-25","episode_number":7,"episode_type":"finale","production_code":"","runtime":50,"season_number":2,"show_id":100088,"still_path":"/4IZqCZRmBq9LifHFQkYA1QqqE0x.jpg"},"name":"The Last of Us","next_episode_to_air":null,"networks":[{"id":49,"logo_path":"/tuomPhY2UtuPTqqFnKMVHvSb724.png","name":"HBO","origin_country":"US"}],"number_of_episodes":16,"number_of_seasons":2,"origin_country":["US"],"original_language":"en","original_name":"The Last of Us","overview":"Twenty years after modern civilization has been destroyed, Joel, a hardened survivor, is hired to smuggle Ellie, a 14-year-old girl, out of an oppressive quarantine zone. What starts as a small job soon becomes a brutal, heartbreaking journey, as they both must traverse the United States and depend on each other for survival.","popularity":43.2624,"poster_path":"/dmo6TYuuJgaYinXBPjrgG9mB5od.jpg","production_companies":[{"id":125281,"logo_path":"/3hV8pyxzAJgEjiSYVv1WZ0ZYayp.png","name":"PlayStation Productions","origin_country":"US"},{"id":11073,"logo_path":"/wHs44fktdoj6c378ZbSWfzKsM2Z.png","name":"Sony Pictures Television","origin_country":"US"},{"id":23217,"logo_path":"/kXBZdQigEf6QiTLzo6TFLAa7jKD.png","name":"Naughty Dog","origin_country":"US"},{"id":119645,"logo_path":null,"name":"Word Games","origin_country":"US"},{"id":115241,"logo_path":null,"name":"The Mighty Mint","origin_country":"US"},{"id":3268,"logo_path":"/tuomPhY2UtuPTqqFnKMVHvSb724.png","name":"HBO","origin_country":"US"}],"production_countries":[{"iso_3166_1":"US","name":"United States of America"}],"seasons":[{"air_date":"2023-01-15","episode_count":9,"id":144593,"name":"Season 1","overview":"After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity''s last hope.","poster_path":"/pMfG5XIlmvCL9bQQiJKdTvmF2FW.jpg","season_number":1,"vote_average":7.8},{"air_date":"2025-04-13","episode_count":7,"id":405376,"name":"Season 2","overview":"After five years of peace following the events of the first season, Joel and Ellie''s collective past catches up to them, drawing them into conflict with each other and a world even more dangerous and unpredictable than the one they left behind.","poster_path":"/2TpP0oApo9M7dKF2MkoYKOxRbb.jpg","season_number":2,"vote_average":6.6}],"spoken_languages":[{"english_name":"English","iso_639_1":"en","name":"English"}],"status":"Returning Series","tagline":"Every path has a price.","type":"Scripted","vote_average":8.441,"vote_count":6880}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - public, max-age=2974
+            Content-Type:
+                - application/json;charset=utf-8
+            Date:
+                - Thu, 02 Apr 2026 19:52:18 GMT
+            Etag:
+                - W/"c8a93f03c734b68b66226b7e333723c1"
+            Server:
+                - openresty
+            Vary:
+                - accept-encoding
+                - Origin
+            Via:
+                - 1.1 49854a90957d798535a9c12d122915ac.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - 66gZqHNlBkdkcoGE2-0shI3qGnrUMI_rrYySSRca2UrdKU2wV4aWyg==
+            X-Amz-Cf-Pop:
+                - YUL62-P4
+            X-Az:
+                - us-east-1b
+            X-Cache:
+                - Miss from cloudfront
+            X-Memc:
+                - HIT
+            X-Memc-Age:
+                - "20217"
+            X-Memc-Expires:
+                - "2974"
+            X-Memc-Key:
+                - 3d0fa1aeb5131c47a31cd47cfecf4ad000ac7f5450daa37140600cd87d43ba63
+            X-Task-Id:
+                - 9b44a4a906434eadad07b02c14cfcee3
+        status: 200 OK
+        code: 200
+        duration: 140.20825ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.themoviedb.org
+        form:
+            language:
+                - en
+        headers:
+            Accept:
+                - application/json
+        url: https://api.themoviedb.org/3/tv/95396?language=en
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"adult":false,"backdrop_path":"/ixgFmf1X59PUZam2qbAfskx2gQr.jpg","created_by":[{"id":3442409,"credit_id":"6217f14d0e597b00412768f1","name":"Dan Erickson","original_name":"Dan Erickson","gender":2,"profile_path":"/qzQ30V43kbVoMjJXRw6ydkicXEP.jpg"}],"episode_run_time":[],"first_air_date":"2022-02-17","genres":[{"id":18,"name":"Drama"},{"id":9648,"name":"Mystery"},{"id":10765,"name":"Sci-Fi & Fantasy"}],"homepage":"https://tv.apple.com/show/umc.cmc.1srk2goyh2q2zdxcx605w8vtx","id":95396,"in_production":true,"languages":["en"],"last_air_date":"2025-03-20","last_episode_to_air":{"id":5469142,"name":"Cold Harbor","overview":"Mark forms a shaky alliance in an all-or-nothing play, while the team makes a dangerous last stand.","vote_average":8.729,"vote_count":85,"air_date":"2025-03-20","episode_number":10,"episode_type":"finale","production_code":"210","runtime":76,"season_number":2,"show_id":95396,"still_path":"/1FhuOQo7aBclaOE2WenXmZMCDYn.jpg"},"name":"Severance","next_episode_to_air":null,"networks":[{"id":2552,"logo_path":"/bngHRFi794mnMq34gfVcm9nDxN1.png","name":"Apple TV","origin_country":""}],"number_of_episodes":19,"number_of_seasons":3,"origin_country":["US"],"original_language":"en","original_name":"Severance","overview":"Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives. When a mysterious colleague appears outside of work, it begins a journey to discover the truth about their jobs.","popularity":31.2803,"poster_path":"/pPHpeI2X1qEd1CS1SeyrdhZ4qnT.jpg","production_companies":[{"id":100640,"logo_path":"/5BR67T28TVm2UMH8GCRDftafsaJ.png","name":"Endeavor Content","origin_country":"US"},{"id":2932,"logo_path":"/4uLKLjGivVg2YnAIhAn8k7ZuVFj.png","name":"Red Hour","origin_country":"US"},{"id":181874,"logo_path":"/crrgXvLhDO9c57HYrbO4H58Vxmb.png","name":"Fifth Season","origin_country":"US"},{"id":254490,"logo_path":null,"name":"Animals & People","origin_country":"US"},{"id":166623,"logo_path":"/rvmwTPf8K4tMFCSqzS4rKs9K0Eo.png","name":"Westward","origin_country":"US"}],"production_countries":[{"iso_3166_1":"US","name":"United States of America"}],"seasons":[{"air_date":"2021-12-15","episode_count":1,"id":443382,"name":"Specials","overview":"","poster_path":"/f3E2o8DbW9QSzu31yY3Q1av5JO7.jpg","season_number":0,"vote_average":0.0},{"air_date":"2022-02-17","episode_count":9,"id":135726,"name":"Season 1","overview":"At Lumon Industries, employees undergo \"severance,\" a procedure dividing their work and personal memories. Mark, a grieving team leader, begins to uncover the dark secrets of the company, forcing him and his coworkers to confront questions of identity, free will, and corporate control.","poster_path":"/lFf6LLrQjYldcZItzOkGmMMigP7.jpg","season_number":1,"vote_average":8.4},{"air_date":"2025-01-16","episode_count":10,"id":401674,"name":"Season 2","overview":"Mark and his friends learn the dire consequences of trifling with the severance barrier, leading them further down a path of woe.","poster_path":"/Rb7sga832Cyqvafd7CqOzbwdK4.jpg","season_number":2,"vote_average":8.1},{"air_date":null,"episode_count":0,"id":447475,"name":"Season 3","overview":"","poster_path":null,"season_number":3,"vote_average":0.0}],"spoken_languages":[{"english_name":"English","iso_639_1":"en","name":"English"}],"status":"Returning Series","tagline":"There''s more to work than life.","type":"Scripted","vote_average":8.4,"vote_count":2550}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=86400
+            Cache-Control:
+                - public, max-age=13877
+            Content-Type:
+                - application/json;charset=utf-8
+            Date:
+                - Thu, 02 Apr 2026 19:52:18 GMT
+            Etag:
+                - W/"816884a2a98994e42c3feef8d7c70f0b"
+            Server:
+                - openresty
+            Vary:
+                - accept-encoding
+                - Origin
+            Via:
+                - 1.1 49854a90957d798535a9c12d122915ac.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - DHFAkzRuPUPF0wRQUC1DYUlkPhAqjyVecBJ8_dGEIT3m0X0g5dDoNw==
+            X-Amz-Cf-Pop:
+                - YUL62-P4
+            X-Az:
+                - us-east-1a
+            X-Cache:
+                - Miss from cloudfront
+            X-Memc:
+                - HIT
+            X-Memc-Age:
+                - "12311"
+            X-Memc-Expires:
+                - "13877"
+            X-Memc-Key:
+                - 795b5304d01782d98718cbecfd82987716b763ae1ce610bc7d0c7ba119dcd65d
+            X-Task-Id:
+                - 08b50f60a25d4196bf206ded9799acb3
+        status: 200 OK
+        code: 200
+        duration: 134.839375ms

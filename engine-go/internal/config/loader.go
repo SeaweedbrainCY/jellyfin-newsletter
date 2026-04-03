@@ -64,7 +64,7 @@ func parseYaml(r io.Reader, yamlParsedConfig *yamlConfiguration) error {
 func buildLogConfig(yamlParsedConfig *yamlConfiguration) LogConfig {
 	logConfig := LogConfig{
 		Level:  "INFO",
-		Format: "json",
+		Format: "console",
 	}
 
 	if yamlParsedConfig.Log != nil {
@@ -90,8 +90,13 @@ func buildSchedulerConfig(yamlParsedConfig *yamlConfiguration) SchedulerConfig {
 }
 
 func buildJellyfinConfig(yamlParsedConfig *yamlConfiguration) JellyfinConfig {
+	// Remove trailing / :
+	jellyfinURL := yamlParsedConfig.Jellyfin.URL
+	if string(yamlParsedConfig.Jellyfin.URL[len(yamlParsedConfig.Jellyfin.URL)-1]) == "/" {
+		jellyfinURL = yamlParsedConfig.Jellyfin.URL[0 : len(yamlParsedConfig.Jellyfin.URL)-1]
+	}
 	jellyfinConfig := JellyfinConfig{
-		URL:                                 yamlParsedConfig.Jellyfin.URL,
+		URL:                                 jellyfinURL,
 		APIKey:                              yamlParsedConfig.Jellyfin.APIToken,
 		WatchedFilmFolders:                  yamlParsedConfig.Jellyfin.WatchedFilmFolders,
 		WatchedSeriesFolders:                yamlParsedConfig.Jellyfin.WatchedSeriesFolders,
