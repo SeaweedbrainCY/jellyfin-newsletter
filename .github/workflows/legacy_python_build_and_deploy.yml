@@ -7,45 +7,13 @@ permissions:
 on:
   push:
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
-      - "v[0-9]+.[0-9]+.[0-9]+-dev.[0-9]+"
+      - "python-v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      is_prod: ${{ steps.check_env.outputs.is_prod }}
-      is_dev: ${{ steps.check_env.outputs.is_dev }}
-      environment: ${{ steps.check_env.outputs.environment }}
-    steps:
-      - name: Determine environment
-        id: check_env
-        run: |
-          TAG="${{ github.ref_name }}"
-          if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+-dev\.[0-9]+$ ]]; then
-            echo "is_dev=true" >> $GITHUB_OUTPUT
-            echo "is_prod=false" >> $GITHUB_OUTPUT
-            echo "environment=development" >> $GITHUB_OUTPUT
-          elif [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "is_dev=false" >> $GITHUB_OUTPUT
-            echo "is_prod=true" >> $GITHUB_OUTPUT
-            echo "environment=production" >> $GITHUB_OUTPUT
-          else
-            echo "is_dev=false" >> $GITHUB_OUTPUT
-            echo "is_prod=false" >> $GITHUB_OUTPUT
-            echo "environment=unknown" >> $GITHUB_OUTPUT
-          fi
-      - name: Fail if not prod or dev tag
-        if: ${{ steps.check_env.outputs.is_prod != 'true' && steps.check_env.outputs.is_dev != 'true' }}
-        run: |
-          echo "This workflow only runs on production or development tags."
-          exit 1
-  code_and_security_tests:
-    needs: setup
-    uses: ./.github/workflows/go_code_scan_test.yml
-
+  security_test:
+    uses: ./.github/workflows/legacy_python_security_test.yml
   build_and_publish:
-    needs: [code_and_security_tests]
+    needs: [security_test]
     name: Build and publish image
     strategy:
       fail-fast: false
@@ -73,6 +41,9 @@ jobs:
           echo "PLATFORM=${platform}" >> $GITHUB_ENV
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
+      - name: Set up Version file
+        run: echo ${{ github.ref_name }} > VERSION
+
       - name: Set up Qemu
         uses: docker/setup-qemu-action@v3
 
@@ -94,8 +65,6 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ env.REPOSITORY_NAME }}
-          build-args: |
-            VERSION=${{ github.ref_name }}
           labels: |
             org.opencontainers.image.revision=${{ env.GIT_COMMIT }}
             org.opencontainers.image.created=${{ env.DATE }}
@@ -108,7 +77,7 @@ jobs:
             org.opencontainers.image.licenses="AGPL-3.0-or-later"
             org.opencontainers.image.documentation="https://github.com/seaweedbraincy/jellyfin-newsletter#readme"
             org.opencontainers.image.vendor="Seaweedbrain"
-            org.opencontainers.image.base.name="gcr.io/distroless/static"
+            org.opencontainers.image.base.name="python:3.12-slim"
           annotations: |
             org.opencontainers.image.description="A Dockerized newsletter service that connects to Jellyfin  API to notify your users of newly added media."
             org.opencontainers.image.source=https://github.com/seaweedbraincy/jellyfin-newsletter
@@ -159,24 +128,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Docker meta (dev)
+      - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
-        if: needs.setup.outputs.id_dev == 'true'
-        with:
-          images: ghcr.io/${{ env.REPOSITORY_NAME }}
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=dev
-          annotations: |
-            org.opencontainers.image.description="A Dockerized newsletter service that connects to Jellyfin  API to notify your users of newly added media."
-            org.opencontainers.image.source=https://github.com/seaweedbraincy/jellyfin-newsletter
-
-      - name: Docker meta (prod)
-        id: meta
-        uses: docker/metadata-action@v5
-        if: needs.setup.outputs.is_prod == 'true'
         with:
           images: ghcr.io/${{ env.REPOSITORY_NAME }}
           tags: |
