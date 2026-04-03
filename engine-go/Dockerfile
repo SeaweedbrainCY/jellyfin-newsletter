@@ -1,5 +1,8 @@
 FROM golang:1.26-alpine AS builder
 WORKDIR /app
+ARG VERSION="dev"
+
+
 COPY engine-go/go.mod engine-go/go.sum ./
 RUN go mod download
 
