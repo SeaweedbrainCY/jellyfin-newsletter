@@ -19,7 +19,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var version = "dev" // Will be set during build time
+var Version = "dev" // Will be set during build time
 
 func main() {
 	var configPath = flag.String("config", "./config/config.yml", "path to config file")
@@ -51,7 +51,7 @@ func main() {
 		)
 	}
 
-	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
+	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", Version))
 	app.Logger.Info("Copyright (C) 2025 Nathan Stchepinsky (Seaweedbrain). Licensed under the AGPLv3.0")
 	app.Logger.Info("Configuration loaded successfully")
 
