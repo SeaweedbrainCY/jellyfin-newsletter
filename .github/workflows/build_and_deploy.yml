@@ -160,7 +160,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Docker meta (dev)
-        id: meta
+        id: meta-dev
         uses: docker/metadata-action@v5
         if: needs.setup.outputs.id_dev == 'true'
         with:
@@ -174,7 +174,7 @@ jobs:
             org.opencontainers.image.source=https://github.com/seaweedbraincy/jellyfin-newsletter
 
       - name: Docker meta (prod)
-        id: meta
+        id: meta-prod
         uses: docker/metadata-action@v5
         if: needs.setup.outputs.is_prod == 'true'
         with:
@@ -195,4 +195,4 @@ jobs:
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ghcr.io/${{ env.REPOSITORY_NAME }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ghcr.io/${{ env.REPOSITORY_NAME }}:${{ needs.setup.outputs.is_dev == 'true' && steps.meta-dev.outputs.version || steps.meta-prod.outputs.version }}
