@@ -164,7 +164,7 @@ jobs:
       - name: Docker meta (dev)
         id: meta-dev
         uses: docker/metadata-action@v5
-        if: needs.setup.outputs.id_dev == 'true'
+        if: needs.setup.outputs.is_dev == 'true'
         with:
           images: ghcr.io/${{ env.REPOSITORY_NAME }}
           tags: |
