@@ -68,3 +68,10 @@ jobs:
           working-directory: ./engine-go
           cover-pkg: ./...
           test-args: '["-tags=integration"]'
+
+  go_vulncheck:
+    name: "Go vulncheck"
+    runs-on: ubuntu-latest
+    steps:
+      - id: govulncheck
+        uses: golang/govulncheck-action@v1
