@@ -51,7 +51,7 @@ func main() {
 		)
 	}
 
-	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", Version))
+	app.Logger.Info("Starting Jellyfin Newsletter ...", zap.String("version", version))
 	app.Logger.Info("Copyright (C) 2025 Nathan Stchepinsky (Seaweedbrain). Licensed under the AGPLv3.0")
 	app.Logger.Info("Configuration loaded successfully")
 
