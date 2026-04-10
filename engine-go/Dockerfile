@@ -11,10 +11,10 @@ COPY engine-go/main.go /app/main.go
 
 RUN mkdir /app/config
 COPY config/config-example.yml /app/config/
-RUN chown 1001:1001 /app/config
+RUN chown 1000:1000 /app/config
 
 RUN mkdir /app/previews
-RUN chown 1001:1001 /app/previews
+RUN chown 1000:1000 /app/previews
 
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-X main.version=${VERSION}"  -o /app/jellyfin-newsletter .
 
