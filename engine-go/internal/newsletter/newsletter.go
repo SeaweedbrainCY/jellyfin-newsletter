@@ -64,7 +64,7 @@ func (workflow Workflow) Run(app *app.ApplicationContext) {
 		}
 	}
 
-	err = persistentdata.UpdateLastNewsletterDatetime(app.Clock.Now(), app)
+	err = persistentdata.UpdateLastNewsletterDatetime(app.Clock.Now().UTC(), app)
 	if err != nil {
 		app.Logger.Warn(
 			"An error occured while saving the last newsletter datetime. This could lead to future error or items sent again.",
