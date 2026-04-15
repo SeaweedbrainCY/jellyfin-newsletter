@@ -76,7 +76,7 @@ func newSMTPClientWithSTARTTLS(
 
 func newSMTPClient(ctx context.Context, app *app.ApplicationContext) (*smtp.Client, error) {
 	addr := fmt.Sprintf("%s:%d", app.Config.SMTP.Host, app.Config.SMTP.Port)
-	tlsCfg := &tls.Config{ServerName: app.Config.SMTP.Host, MinVersion: tls.VersionTLS13}
+	tlsCfg := &tls.Config{ServerName: app.Config.SMTP.Host, MinVersion: tls.VersionTLS12}
 
 	var netSMTPclient *smtp.Client
 	var err error
