@@ -72,7 +72,7 @@ func main() {
 	}
 
 	// One time trigger
-	newsletterWorkflow.Run(app)
+	newsletterWorkflow.Run(app, nil)
 
 	app.Logger.Info("Jellyfin-Newsletter exiting gracefully.")
 }

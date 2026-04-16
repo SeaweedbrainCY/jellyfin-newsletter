@@ -140,7 +140,7 @@ func TestJellyfinNewsletter(t *testing.T) {
 	app.Config.SMTP.Host = mailpitCT.Host
 	app.Config.SMTP.Port = mailpitCT.SMTPPort
 
-	newsletterWorkflow.Run(app)
+	newsletterWorkflow.Run(app, nil)
 
 	messages, err := mailpitCT.GetMessages()
 	require.NoError(t, err)

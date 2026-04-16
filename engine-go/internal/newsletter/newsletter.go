@@ -18,7 +18,7 @@ type Workflow struct {
 
 // Run connects to Jellyfin to retrieve the latest items and send the newsletter to the configured recipients.
 // cronjob is optional and should be nil if the workflow is not called by a scheduled job. It is mainly used for logging purposes
-func (workflow Workflow) Run(app *app.ApplicationContext, cronjob *gocron.Job) {
+func (workflow Workflow) Run(app *app.ApplicationContext) {
 	app.Logger.Info("Gathering new items and sending the newsletter ...")
 	err := workflow.JellyfinClient.TestConnection(app)
 	if err != nil {
