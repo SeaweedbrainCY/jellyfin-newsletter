@@ -13,7 +13,7 @@ func CreateNewsletterScheduler(
 ) (gocron.Scheduler, gocron.Job, error) {
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	job, err := scheduler.NewJob(
