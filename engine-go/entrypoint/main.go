@@ -41,8 +41,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// nosemgrep: dangerous-syscall-exec.
+
 	// Expected for an entrypoint.
+	// nosemgrep: dangerous-syscall-exec.
 	_ = syscall.Exec(binary, os.Args, os.Environ())
 }
 
