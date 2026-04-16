@@ -222,4 +222,4 @@ jobs:
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ghcr.io/${{ env.REPOSITORY_NAME }}:${{ needs.setup.outputs.is_dev == 'true' && steps.meta-dev.outputs.version || steps.meta-prod.outputs.version }}
+          docker buildx imagetools inspect ghcr.io/${{ env.REPOSITORY_NAME }}:${{ needs.setup.outputs.is_dev == 'true' && steps.meta-dev.outputs.version || steps.meta-prod.outputs.version  && steps.meta-beta.outputs.version || steps.meta-beta.outputs.version }}
