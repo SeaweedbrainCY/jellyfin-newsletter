@@ -102,7 +102,7 @@ jobs:
         id: build
         with:
           context: .
-          file: engine-go/Dockerfile
+          file: Dockerfile
           push: true
           tags: |
             ghcr.io/${{ env.REPOSITORY_NAME }}
