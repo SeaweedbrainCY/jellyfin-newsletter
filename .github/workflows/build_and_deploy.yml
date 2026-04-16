@@ -10,6 +10,7 @@ on:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
       - "v[0-9]+.[0-9]+.[0-9]+-dev.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+"
 
 jobs:
   setup:
@@ -17,6 +18,7 @@ jobs:
     outputs:
       is_prod: ${{ steps.check_env.outputs.is_prod }}
       is_dev: ${{ steps.check_env.outputs.is_dev }}
+      is_beta: ${{ steps.check_env.outputs.is_beta }}
       environment: ${{ steps.check_env.outputs.environment }}
     steps:
       - name: Determine environment
@@ -26,18 +28,26 @@ jobs:
           if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+-dev\.[0-9]+$ ]]; then
             echo "is_dev=true" >> $GITHUB_OUTPUT
             echo "is_prod=false" >> $GITHUB_OUTPUT
+            echo "is_beta=false" >> $GITHUB_OUTPUT
             echo "environment=development" >> $GITHUB_OUTPUT
+          elif [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+$ ]]; then
+            echo "is_dev=false" >> $GITHUB_OUTPUT
+            echo "is_prod=false" >> $GITHUB_OUTPUT
+            echo "environment=development" >> $GITHUB_OUTPUT
+            echo "is_beta=true" >> $GITHUB_OUTPUT
           elif [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "is_dev=false" >> $GITHUB_OUTPUT
+            echo "is_beta=false" >> $GITHUB_OUTPUT
             echo "is_prod=true" >> $GITHUB_OUTPUT
             echo "environment=production" >> $GITHUB_OUTPUT
           else
             echo "is_dev=false" >> $GITHUB_OUTPUT
+            echo "is_beta=false" >> $GITHUB_OUTPUT
             echo "is_prod=false" >> $GITHUB_OUTPUT
             echo "environment=unknown" >> $GITHUB_OUTPUT
           fi
       - name: Fail if not prod or dev tag
-        if: ${{ steps.check_env.outputs.is_prod != 'true' && steps.check_env.outputs.is_dev != 'true' }}
+        if: ${{ steps.check_env.outputs.is_prod != 'true' && steps.check_env.outputs.is_dev != 'true'  && steps.check_env.outputs.is_beta != 'true' }}
         run: |
           echo "This workflow only runs on production or development tags."
           exit 1
@@ -172,6 +182,20 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=dev
+          annotations: |
+            org.opencontainers.image.description="A Dockerized newsletter service that connects to Jellyfin  API to notify your users of newly added media."
+            org.opencontainers.image.source=https://github.com/seaweedbraincy/jellyfin-newsletter
+
+      - name: Docker meta (beta)
+        id: meta-beta
+        uses: docker/metadata-action@v5
+        if: needs.setup.outputs.is_beta == 'true'
+        with:
+          images: ghcr.io/${{ env.REPOSITORY_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=beta
           annotations: |
             org.opencontainers.image.description="A Dockerized newsletter service that connects to Jellyfin  API to notify your users of newly added media."
             org.opencontainers.image.source=https://github.com/seaweedbraincy/jellyfin-newsletter
