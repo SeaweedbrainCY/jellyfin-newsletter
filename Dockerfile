@@ -1,47 +1,40 @@
-FROM python:3.13-slim
+######
+# Jellyfin-Newsletter Go-engine entrypoint builder
+######
 
-# Set environment variables
-ENV LANG=en_US.UTF-8 \
-    LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
+FROM golang:1.26-alpine AS entrypoint-builder
 WORKDIR /app
 
-# Install only runtime dependencies and locales in one layer, clean up immediately
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    locales \
-    gosu \
-    ca-certificates \
-    && echo "fr_FR.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "he_IL.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "es_ES.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "it_IT.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "ca_ES.UTF-8 UTF-8" >> /etc/locale.gen \
-    && locale-gen \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
+COPY engine-go/entrypoint/main.go .
+
+RUN go mod init entrypoint && \
+    CGO_ENABLED=0 GOOS=linux go build -o entrypoint main.go
+
+######
+# Jellyfin-Newsletter Go-engine application builder
+######
+
+FROM golang:1.26-alpine AS app-builder
+WORKDIR /app
+ARG VERSION="dev"
 
 
-# Install Python dependencies
-COPY engine-python/requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --upgrade pip \
- && pip install --no-cache-dir --no-compile -r /app/requirements.txt
+COPY engine-go/go.mod engine-go/go.sum ./
+RUN go mod download
 
-# Create config directory
-RUN mkdir -p /app/config
+COPY engine-go/internal/ /app/internal/
+COPY engine-go/main.go /app/main.go
 
-# Copy application code
-COPY engine-python/source /app/source
-COPY engine-python/main.py /app
-COPY themes /app/themes
-COPY assets /app/assets
-COPY entrypoint.sh /app/entrypoint.sh
-COPY VERSION /app
-COPY config/config-example.yml /app/default/config-example.yml
+RUN mkdir /app/config
+COPY config/config-example.yml /app/config/
 
-RUN chmod +x /app/entrypoint.sh
+RUN mkdir /app/previews
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-X main.version=${VERSION}"  -o /app/jellyfin-newsletter .
+
+FROM gcr.io/distroless/static AS runtime
+COPY --from=app-builder /app/jellyfin-newsletter /app/jellyfin-newsletter
+COPY --from=app-builder /app/config /app/config
+COPY --from=entrypoint-builder /app/entrypoint /app/entrypoint
+
+ENTRYPOINT ["/app/entrypoint", "-config", "/app/config/config.yml"]
