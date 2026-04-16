@@ -62,11 +62,13 @@ func main() {
 
 	if app.Config.Scheduler.Enabled {
 		var scheduler gocron.Scheduler
-		scheduler, err = cron.CreateNewsletterScheduler(newsletterWorkflow, app)
+		var job gocron.Job
+		scheduler, job, err = cron.CreateNewsletterScheduler(newsletterWorkflow, app)
 		if err != nil {
 			app.Logger.Fatal("Error while creating the scheduler. Exiting now.", zap.Error(err))
 		}
 		scheduler.Start()
+		cron.LogNextRun(job, app)
 		// Block forever (or until signal)
 		select {}
 	}

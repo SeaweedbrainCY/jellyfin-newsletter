@@ -10,10 +10,10 @@ import (
 func CreateNewsletterScheduler(
 	newsletterWorkflow newsletter.Workflow,
 	app *app.ApplicationContext,
-) (gocron.Scheduler, error) {
+) (gocron.Scheduler, gocron.Job, error) {
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	job, err := scheduler.NewJob(
@@ -21,14 +21,19 @@ func CreateNewsletterScheduler(
 		gocron.NewTask(newsletterWorkflow.Run, app),
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	jobNextRunStr := "Unknown"
-	nextRunDatetime, nextRunErr := job.NextRun()
-	if nextRunErr == nil {
-		jobNextRunStr = nextRunDatetime.Format("2006-01-02T15:04:05Z07:00")
+	return scheduler, job, nil
+}
+
+func LogNextRun(job gocron.Job, app *app.ApplicationContext) {
+	nextRunDatetime, err := job.NextRun()
+	if err != nil {
+		app.Logger.Debug("Error while computing next run.", zap.Error(err))
+		return
 	}
+	jobNextRunStr := nextRunDatetime.Format("2006-01-02T15:04:05Z07:00")
 
 	app.Logger.Info(
 		"Scheduler created.",
@@ -36,6 +41,4 @@ func CreateNewsletterScheduler(
 		zap.String("Cron expression", app.Config.Scheduler.CronExpr),
 		zap.String("Next run", jobNextRunStr),
 	)
-
-	return scheduler, nil
 }
