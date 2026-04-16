@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"syscall"
 )
@@ -32,13 +33,39 @@ func main() {
 		panic(err)
 	}
 
+	ChownRecursively(uid, gid, "/app/config")
+
+	DropAndSetNewPrivileges(uid, gid)
+
+	binary, _ := exec.LookPath("/app/jellyfin-newsletter")
+	syscall.Exec(binary, os.Args, os.Environ())
+}
+
+func DropAndSetNewPrivileges(uid, gid int) {
 	if err := syscall.Setgid(gid); err != nil {
 		panic(err)
 	}
 	if err := syscall.Setuid(uid); err != nil {
 		panic(err)
 	}
+}
 
-	binary, _ := exec.LookPath("/app/jellyfin-newsletter")
-	syscall.Exec(binary, os.Args, os.Environ())
+// Source - https://stackoverflow.com/a/73864967
+// Posted by h0ch5tr4355
+// Retrieved 2026-04-16, License - CC BY-SA 4.0
+func ChownRecursively(uid, gid int, root string) {
+	err := filepath.Walk(root,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				panic(err)
+			}
+			err = os.Chown(path, uid, gid)
+			if err != nil {
+				panic(err)
+			}
+			return nil
+		})
+	if err != nil {
+		panic(err)
+	}
 }
