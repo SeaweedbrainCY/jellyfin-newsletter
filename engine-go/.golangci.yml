@@ -464,6 +464,6 @@ linters:
           - gosec
           - noctx
           - wrapcheck
-      - path: "engine-go/entrypoint/main.go"
+      - path: "entrypoint/main.go"
         linters:
           - forbidigo
