@@ -43,7 +43,8 @@ func main() {
 	}
 
 	// Expected for an entrypoint.
-	// nosemgrep: dangerous-syscall-exec.
+	//nolint:gosec // This is expected for an entrypoint. No security issue, the user already control args and env variables.
+	// nosemgrep: dangerous-syscall-exec .
 	_ = syscall.Exec(binary, os.Args, os.Environ())
 }
 
@@ -63,7 +64,7 @@ func ChownRecursively(uid, gid int, root string) {
 	}
 	defer r.Close()
 
-	err = fs.WalkDir(r.FS(), ".", func(path string, d fs.DirEntry, err error) error {
+	err = fs.WalkDir(r.FS(), ".", func(path string, _ fs.DirEntry, err error) error {
 		if err != nil {
 			panic(err)
 		}
