@@ -1,130 +1,163 @@
+# Contribution Guidelines for Jellyfin-Newsletter
 
-# Contribution Guidelines for Jellyfin-Newsletter Project
+Thank you for your interest in contributing to Jellyfin-Newsletter! This document reflects the current Go-based engine (`engine-go`).
 
-Thank you for your interest in contributing to Jellyfin-Newsletter! We appreciate your willingness to help improve the project. This document outlines the guidelines and processes for contributing to the project, ensuring a smooth and collaborative experience for everyone involved.
+> **Note on the Python codebase:** The original Python implementation is kept in the repository for historical reference only. It is deprecated and will be removed in a future release. All active development happens in `engine-go`.
 
 ## Table of Contents
-1. [Introduction](#introduction)
-2. [Getting Started](#getting-started)
-    - [Fork the Repository](#fork-the-repository)
-    - [Set up the Project](#set-up-the-project)
-3. [Contribution Process](#contribution-process)
-    - [Issue Tracker](#issue-tracker)
-    - [Branching](#branching)
-    - [Code Style](#code-style)
-    - [Testing](#testing)
-4. [Submitting Pull Requests](#submitting-pull-requests)
-5. [Security](#security)
-6. [Community and Communication](#community-and-communication)
-7. [Acknowledgements](#acknowledgements)
+
+1. [Getting Started](#getting-started)
+2. [Contribution Process](#contribution-process)
+3. [Code Style & Linting](#code-style--linting)
+4. [Testing](#testing)
+5. [Translations](#translations)
+6. [Submitting Pull Requests](#submitting-pull-requests)
+7. [Security](#security)
 8. [License](#license)
 
-## Introduction
-
-Jellyfin-Newsletter is an open-source project that aims to provide a comprehensive and user-friendly newsletter system for Jellyfin users. We welcome contributions from developers, designers, and anyone interested in improving the project.
+---
 
 ## Getting Started
 
-### Fork the Repository
-
-Before you start contributing, make sure to fork the Jellyfin-Newsletter repository to your GitHub account. You will be working on your forked repository and submitting pull requests from there.
-
 ### Requirements
-- Python 3.9+ (preferably 3.13)
-- Jellyfin API key - [How to generate an API key](https://github.com/SeaweedbrainCY/jellyfin-newsletter?tab=readme-ov-file#how-to-generate-a-jellyfin-api-key)
-- A TMDB API key (free) - [How to generate a TMDB API key](https://github.com/SeaweedbrainCY/jellyfin-newsletter?tab=readme-ov-file#how-to-generate-a-tmdb-api-key)
-- A SMTP server 
 
-### Installation and setup
+- Go 1.23+
+- A running Jellyfin instance with an API key — [How to generate a Jellyfin API key](https://github.com/SeaweedbrainCY/jellyfin-newsletter?tab=readme-ov-file#how-to-generate-a-jellyfin-api-key)
+- A TMDB API key (free) — [How to generate a TMDB API key](https://github.com/SeaweedbrainCY/jellyfin-newsletter?tab=readme-ov-file#how-to-generate-a-tmdb-api-key)
+- An SMTP server
+- Docker (required for integration tests)
 
-1. Install the required packages 
-```bash
-# Unix : 
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+### Setup
 
-# Windows :
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-```
-2.  Copy the `config/config-example.yml` to `./config/config.yml` ([direct download](https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/config/config-example.yml)) and fill in the required fields. 
+1. Fork and clone the repository.
 
-3. Make sure to support the following locales:
-- `en_US.UTF-8 UTF-8` 
-- `fr_FR.UTF-8 UTF-8`
-- `he_IL.UTF-8 UTF-8`
+2. Navigate to the Go engine directory:
+   ```bash
+   cd engine-go
+   ```
 
-On debian based systems, you can edit `/etc/locale.gen` and uncomment the lines for the locales listed above, then run:
-```bash
-sudo locale-gen
-```
-For other systems, please refer to your system's documentation on how to generate locales.
+3. Install dependencies:
+   ```bash
+   go mod download
+   ```
 
-4. Run the script
-```bash
-python main.py
-```
+4. Copy the example config and fill in the required fields:
+   ```bash
+   cp config/config-example.yml config/config.yml
+   ```
+
+5. Run the application:
+   ```bash
+   go run . --config config/config.yml
+   ```
+
+---
 
 ## Contribution Process
 
 ### Issue Tracker
 
-If you want to work on a new feature, bug fix, or other enhancements, please check the [Issue Tracker](https://github.com/Jellyfin-Newsletter/Jellyfin-Newsletter/issues) first. It's possible that someone else is already working on something similar or that the issue has already been addressed.
-
-If you find a new issue or want to suggest an enhancement, please open a new issue on the Issue Tracker. Provide a clear description and, if applicable, steps to reproduce the problem.
-
-### Commit signature
-We require all commits to be **signed**. [How to](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits). Not-signed commits cannot be merged. To sign your commits, you can use the `-S` flag with `git commit`:
-```bash
-git commit -S -m "Your commit message"
-```
-
-If you already pushed non-signed commits in your forked projects according, you can execute this
-```bash 
-git rebase --exec 'git commit --amend --no-edit -n -S' -i <first_commit_hash>
-```
-to sign all commits you've already pushed.
+Before starting work, check the [Issue Tracker](https://github.com/SeaweedbrainCY/jellyfin-newsletter/issues). If no existing issue covers your change, open one with a clear description and — for bugs — steps to reproduce.
 
 ### Branching
 
-For every contribution, create a new branch with a descriptive name that summarizes the changes you plan to make. Use lowercase letters and dashes to separate words, for example:
-```
+Create a descriptive branch for your work, using lowercase letters and dashes:
+
+```bash
 git checkout -b add-localization-support
 ```
 
+### Commit Signatures
 
-## Submitting Pull Requests
+All commits must be **signed**. See [GitHub's signing guide](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).
 
-When you're ready to submit your changes, follow these steps:
-1. Commit your changes with a descriptive commit message. Commits must be **signed**
-2. Push your changes to your forked repository:
+```bash
+git commit -S -m "your commit message"
 ```
-git push origin your-branch-name
+
+If you already pushed unsigned commits, you can sign them retroactively:
+
+```bash
+git rebase --exec 'git commit --amend --no-edit -n -S' -i <first_commit_hash>
 ```
-3. Go to the Jellyfin-Newsletter repository on GitHub and create a new pull request from your branch.
-4. Provide a clear title and description for your pull request, including any relevant information about the changes you made.
-
-## Security
-
-Even for small projects like this one, security is essential. If you discover any security vulnerabilities or potential issues, please **DO NOT** open a public issue. Instead, use the following methods to report security issues:
-- Github Private vulnerability reporting (preferred). You can find this option in the "Security" tab of the repository.
-- Email at jellynewsletter-security[at]seaweedbrain.xyz. Please encrypt sensitive information using this [PGP public key](https://pgp.stchepinsky.net). 
-
-## Community and Communication
-
-We value a friendly and inclusive community. Be respectful and considerate when communicating with other contributors. If you have questions or need help, through GitHub issues or discussions.
-
-## Acknowledgements
-
-We appreciate all contributions to Jellyfin-Newsletter, and we recognize and acknowledge everyone's effort and time. Contributors will be listed in the project's contributors section.
-
-## License
-
-Jellyfin-Newsletter is licensed under the AGPLv3 License. By contributing to this project, you agree that your contributions will be licensed under the same license.
-
-Please read the [LICENSE](LICENSE) file for more details. All contributions must comply with the terms of the AGPLv3 License.
 
 ---
 
+## Code Style & Linting
+
+The project uses [golangci-lint](https://golangci-lint.run/). Before submitting, make sure your code passes:
+
+```bash
+# from engine-go/
+make lint
+```
+
+Fix any reported issues before opening a PR. PRs with lint failures will not be merged.
+Linter exceptions should be avoided as much as possible. If it is absolutely necessary, it needs to be discussed with mantainers to be accepted.
+
+To format code, you can use 
+```bash
+# from engine-go/
+make fmt
+```
+
+---
+
+## Testing
+
+The project has both unit tests and integration tests. Integration tests use Docker (via testcontainers) and are tagged with `//go:build integration`.
+
+```bash
+# from engine-go/
+
+# Unit tests only
+make test
+
+# Integration tests (requires Docker)
+make integration
+```
+
+Contributions that introduce new features or fix bugs should include appropriate test coverage.
+
+---
+
+## Translations
+
+Translations are managed via **Weblate** at [weblate.seaweedbrain.xyz](https://weblate.seaweedbrain.xyz). If you want to add or improve a translation:
+
+1. Head to the Weblate project and contribute there directly — no PR needed for translation-only changes.
+
+Do **not** edit translation files manually in the repository — they are synced from Weblate.
+
+---
+
+## Submitting Pull Requests
+
+1. Make sure `make lint` and `make test` both pass locally.
+2. Push your branch to your fork:
+   ```bash
+   git push origin your-branch-name
+   ```
+3. Open a pull request against the main repository with a clear title and description of your changes.
+4. Reference any related issues in the PR description.
+
+---
+
+## Security
+
+Do **not** open a public issue for security vulnerabilities. Instead:
+
+- **Preferred:** Use [GitHub Private Vulnerability Reporting](https://github.com/SeaweedbrainCY/jellyfin-newsletter/security) (Security tab of the repository).
+- **Alternative:** Email `jellynewsletter-security[at]seaweedbrain.xyz`. For sensitive information, please encrypt using the [PGP public key](https://pgp.stchepinsky.net).
+
+---
+
+## Community and Communication
+
+Be respectful and considerate. Questions and discussions can happen through GitHub Issues or Discussions.
+
+---
+
+## License
+
+Jellyfin-Newsletter is licensed under **AGPLv3**. By contributing, you agree that your contributions will be licensed under the same terms. See the [LICENSE](LICENSE) file for details.
