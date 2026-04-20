@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strconv"
 	"syscall"
 )
@@ -37,8 +37,15 @@ func main() {
 
 	DropAndSetNewPrivileges(uid, gid)
 
-	binary, _ := exec.LookPath("/app/jellyfin-newsletter")
-	syscall.Exec(binary, os.Args, os.Environ())
+	binary, err := exec.LookPath("/app/jellyfin-newsletter")
+	if err != nil {
+		panic(err)
+	}
+
+	// Expected for an entrypoint.
+	//nolint:gosec // This is expected for an entrypoint. No security issue, the user already control args and env variables.
+	// nosemgrep: dangerous-syscall-exec .
+	_ = syscall.Exec(binary, os.Args, os.Environ())
 }
 
 func DropAndSetNewPrivileges(uid, gid int) {
@@ -50,21 +57,23 @@ func DropAndSetNewPrivileges(uid, gid int) {
 	}
 }
 
-// Source - https://stackoverflow.com/a/73864967
-// Posted by h0ch5tr4355
-// Retrieved 2026-04-16, License - CC BY-SA 4.0
 func ChownRecursively(uid, gid int, root string) {
-	err := filepath.Walk(root,
-		func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				panic(err)
-			}
-			err = os.Chown(path, uid, gid)
-			if err != nil {
-				panic(err)
-			}
-			return nil
-		})
+	r, err := os.OpenRoot(root)
+	if err != nil {
+		panic(err)
+	}
+	defer r.Close()
+
+	err = fs.WalkDir(r.FS(), ".", func(path string, _ fs.DirEntry, err error) error {
+		if err != nil {
+			panic(err)
+		}
+		err = r.Lchown(path, uid, gid)
+		if err != nil {
+			panic(err)
+		}
+		return nil
+	})
 	if err != nil {
 		panic(err)
 	}
