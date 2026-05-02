@@ -115,7 +115,7 @@ curl -o config/config.yml https://raw.githubusercontent.com/SeaweedbrainCY/jelly
 ```bash
 docker run --rm \
     -v ./config:/app/config \
-    ghcr.io/seaweedbraincy/jellyfin-newsletter:v1.0.0
+    ghcr.io/seaweedbraincy/jellyfin-newsletter:1.0.0
 ```
 > [!note]
 > Note: It is recommended to use a static version instead of `latest`, and manually upgrade. [Last version](https://github.com/SeaweedbrainCY/jellyfin-newsletter/releases)
@@ -125,7 +125,7 @@ docker run --rm \
 # Unix :
 crontab -e
 # Add the following line to run the script every 1st of the month at 8am
-0 8 1 * * root docker run --rm -v PATH_TO_CONFIG_FOLDER/config:/app/config/ ghcr.io/seaweedbraincy/jellyfin-newsletter:v1.0.0
+0 8 1 * * root docker run --rm -v PATH_TO_CONFIG_FOLDER/config:/app/config/ ghcr.io/seaweedbraincy/jellyfin-newsletter:1.0.0
 ```
 
 
