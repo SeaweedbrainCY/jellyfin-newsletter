@@ -1,25 +1,24 @@
 name: New release published
 
 on:
-  release:
-    types: [published]
+  #  release:
+  #    types: [published]
   workflow_dispatch:
 
 jobs:
   update-version:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: main
-      
 
       - name: Pull latest changes
         run: git pull origin main
-        
+
       - name: Update version in files
         run: |
           sed -i -E "s|ghcr.io/seaweedbraincy/jellyfin-newsletter:[0-9]+\.[0-9]+\.[0-9]+|ghcr.io/seaweedbraincy/jellyfin-newsletter:${{ github.event.release.tag_name }}|g" README.md
@@ -29,8 +28,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
+
           git add README.md docker-compose.yml
           git commit -m "chore: bump image version to ${{ github.event.release.tag_name }}"
           git push origin HEAD:main
-
