@@ -14,22 +14,14 @@ A newsletter for Jellyfin to notify your users of your latest additions. Jellyfi
 
 It is fully customizable and can be run on a schedule using a cron job or a task scheduler.
 
-> [!important]
-> **This project engine is under heavy rewrite, from python to GO.**
->
-> The python version is the stable reference and is still maintained.
-> The GO version is in development. The GO version will be more efficient, easier to maintain and extend, and will have a better architecture.
->
-> See the [reasons and implication of the rewrite](https://github.com/SeaweedbrainCY/jellyfin-newsletter/discussions/103) for more details.
 
 ## Table of Contents
 1. [What it looks like](#what-it-looks-like)
 2. [Features](#features)
 3. [Recommended installation: Docker](#recommended-installation-docker)
-4. [Current limitations](#current-limitations)
-5. [License](#license)
-6. [Contribution](#contribution)
-7. [How to](#how-to)
+4. [License](#license)
+5. [Contribution](#contribution)
+6. [How to](#how-to)
    - [How to generate a Jellyfin API key](#how-to-generate-a-jellyfin-api-key)
    - [How to generate a TMDB API key](#how-to-generate-a-tmdb-api-key)
 
@@ -45,13 +37,18 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 - Group TV shows by seasons
 - Fully customizable and responsive email template
 - Easy to maintain, extend, setup and run
-- Support for English, French, Spanish, Catalan, Italian and Hebrew (RTL-aware template)
+- Support many languages (see below)
 - Configure the list of recipients
 - Configure specific folders to watch for new items
 - Support themes 
 
-A Go implementation is being developed in parallel.
-Python remains the stable reference.
+### Supported languages
+You can contribute to the translation of Jellyfin-Newsletter on [Weblate](weblate.seaweedbrain.xyz)
+<p align="center">
+<a href="https://weblate.seaweedbrain.xyz/engage/jellyfin-newsletter/">
+<img src="https://weblate.seaweedbrain.xyz/widget/jellyfin-newsletter/multi-auto.svg" alt="State of localization" />
+</a>
+</p>
 
 ### Create a new theme
 You can create and propose a new theme by following the [theme creation guide](engine-go/internal/template/themes/README.md).
@@ -67,7 +64,7 @@ Currently available themes:
 - A TMDB API key (free) - [How to generate a TMDB API key](https://github.com/SeaweedbrainCY/jellyfin-newsletter?tab=readme-ov-file#how-to-generate-a-tmdb-api-key)
 - A SMTP server 
 
-### Configuration with built-in cron job
+### Configuration with built-in cron job (recommended)
 This is the default and recommended way to run the newsletter. The Docker container will run on a schedule using a built-in cron job. It will run on the schedule defined in the `config/config.yml` file.
 
 1. Download the [docker-compose.yml](https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/docker-compose.yml) file:
@@ -118,7 +115,7 @@ curl -o config/config.yml https://raw.githubusercontent.com/SeaweedbrainCY/jelly
 ```bash
 docker run --rm \
     -v ./config:/app/config \
-    ghcr.io/seaweedbraincy/jellyfin-newsletter:v0.10.2
+    ghcr.io/seaweedbraincy/jellyfin-newsletter:1.0.0
 ```
 > [!note]
 > Note: It is recommended to use a static version instead of `latest`, and manually upgrade. [Last version](https://github.com/SeaweedbrainCY/jellyfin-newsletter/releases)
@@ -128,19 +125,11 @@ docker run --rm \
 # Unix :
 crontab -e
 # Add the following line to run the script every 1st of the month at 8am
-0 8 1 * * root docker run --rm -v PATH_TO_CONFIG_FOLDER/config:/app/config/ ghcr.io/seaweedbraincy/jellyfin-newsletter:v0.10.2
+0 8 1 * * root docker run --rm -v PATH_TO_CONFIG_FOLDER/config:/app/config/ ghcr.io/seaweedbraincy/jellyfin-newsletter:1.0.0
 ```
 
 
 
-
-
-## Current limitations
-- Email template translations are available for English, French, and Hebrew
-- Only supports TLS for the SMTP server
-- Only supports movies and TV shows for now
-- Not available as a Jellyfin plugin yet 
-- Must be run manually or scheduled
 
 ## License
 This project is licensed under the AGPLv3 License—see the [LICENSE](LICENSE) file for details.

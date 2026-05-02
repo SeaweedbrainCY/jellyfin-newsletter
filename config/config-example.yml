@@ -42,7 +42,7 @@ tmdb:
 # Email template to use for the newsletter
 # You can use placeholders to dynamically insert values. See available placeholders here : https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/How-to-use-placeholder
 email_template:
-  # See https://github.com/SeaweedbrainCY/jellyfin-newsletter/tree/main/themes/new_media for available themes
+  # See https://github.com/SeaweedbrainCY/jellyfin-newsletter/tree/main/engine-go/internal/template/themes for available themes
   theme: "classic"
   # Language of the email, supported languages are "en", "fr", "ca", "es", "it" and "he"
   language: "en"
@@ -93,8 +93,10 @@ email:
 # Minimum log level. Can be DEBUG INFO WARN ERROR. Default: INFO
 #   level: INFO
 # Log format. Can be console or json. Default: console
-#   format: json
+#   format: console
 
+# You can run the newsletter as dry-run to test the rendered HTML and test the SMTP connection
+# More information : https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/Troubleshoot-the-setup-and-newsletter-generation
 #dry-run:
 #    enabled: false
 #    output_directory: /app/config/
