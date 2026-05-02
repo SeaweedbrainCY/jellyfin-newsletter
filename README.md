@@ -43,7 +43,7 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 - Support themes 
 
 ### Supported languages
-You can contribute to the translation of Jellyfin-Newsletter on [Weblate](weblate.seaweedbrain.xyz)
+You can contribute to the translation of Jellyfin-Newsletter on [Weblate](https://weblate.seaweedbrain.xyz)
 <p align="center">
 <a href="https://weblate.seaweedbrain.xyz/engage/jellyfin-newsletter/">
 <img src="https://weblate.seaweedbrain.xyz/widget/jellyfin-newsletter/multi-auto.svg" alt="State of localization" />
