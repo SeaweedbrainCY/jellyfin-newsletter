@@ -3,6 +3,6 @@ certifi==2025.10.5
 charset-normalizer==3.4.3
 idna==3.10
 PyYAML==6.0.2
-requests==2.32.5
+requests==2.33.1
 tzlocal==5.3.1
 urllib3==2.6.0
