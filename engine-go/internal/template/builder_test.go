@@ -169,7 +169,7 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 			Overview:             "Following an assassination attempt on Senator Padmé Amidala, Jedi Knights Anakin Skywalker and Obi-Wan Kenobi investigate a mysterious plot into the heart of the Separatist movement and the beginning of the Clone Wars.",
 			AddedOnLabel:         "Added on",
 			IncludeItemOverviews: true,
-			MediaURL:             "https://jellyfin.example.com/web/#/index?id=7dcf7149f71046d5a50c626e3486259b",
+			MediaURL:             "https://jellyfin.example.com/web/#/details?id=7dcf7149f71046d5a50c626e3486259b",
 		},
 		{
 			PosterURL:            "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
@@ -178,7 +178,7 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 			Overview:             "The story of J. Robert Oppenheimer's role in the development of the atomic bomb during World War II.",
 			AddedOnLabel:         "Added on",
 			IncludeItemOverviews: true,
-			MediaURL:             "https://jellyfin.example.com/web/#/index?id=fd9416da9026421995b40dae418d2b5d",
+			MediaURL:             "https://jellyfin.example.com/web/#/details?id=fd9416da9026421995b40dae418d2b5d",
 		},
 	}
 
@@ -192,7 +192,7 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 			AddedOnLabel:         "Added on",
 			NewSeriesTitle:       "Game of thrones",
 			IncludeItemOverviews: true,
-			MediaURL:             "https://jellyfin.example.com/web/#/index?id=3d7b0576370c48d3b7c37c49f612afc9",
+			MediaURL:             "https://jellyfin.example.com/web/#/details?id=3d7b0576370c48d3b7c37c49f612afc9",
 		},
 		{
 			// Old series, new episodes in 2 seasons
@@ -203,7 +203,7 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 			AddedOnLabel:         "Added on",
 			NewSeriesTitle:       "Stranger Things: Seasons 1-2",
 			IncludeItemOverviews: true,
-			MediaURL:             "https://jellyfin.example.com/web/#/index?id=66b82dc8d65544b3b8d75a5eaaa581cd",
+			MediaURL:             "https://jellyfin.example.com/web/#/details?id=66b82dc8d65544b3b8d75a5eaaa581cd",
 		},
 		{
 			// Old series, new episodes in 1 season
@@ -214,7 +214,7 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 			AddedOnLabel:         "Added on",
 			NewSeriesTitle:       "Family Guy: Season 24, Episodes 1-3 & 7",
 			IncludeItemOverviews: true,
-			MediaURL:             "https://jellyfin.example.com/web/#/index?id=94327c537a324e7c84f45b1a6e71dd35",
+			MediaURL:             "https://jellyfin.example.com/web/#/details?id=94327c537a324e7c84f45b1a6e71dd35",
 		},
 		{
 			// Old series, new season
@@ -225,7 +225,7 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 			AddedOnLabel:         "Added on",
 			NewSeriesTitle:       "How I Met Your Mother: Season 9",
 			IncludeItemOverviews: true,
-			MediaURL:             "https://jellyfin.example.com/web/#/index?id=c828b89264f84def88b7dc3d9072a147",
+			MediaURL:             "https://jellyfin.example.com/web/#/details?id=c828b89264f84def88b7dc3d9072a147",
 		},
 	}
 
@@ -434,7 +434,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						Overview:             "The story of J. Robert Oppenheimer's role in the development of the atomic bomb during World War II.",
 						AddedOnLabel:         "Added on",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=fd9416da9026421995b40dae418d2b5d",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=fd9416da9026421995b40dae418d2b5d",
 					},
 					{
 						PosterURL:            "https://image.tmdb.org/t/p/w500/oZNPzxqM2s5DyVWab09NTQScDQt.jpg",
@@ -443,7 +443,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						Overview:             "Following an assassination attempt on Senator Padmé Amidala, Jedi Knights Anakin Skywalker and Obi-Wan Kenobi investigate a mysterious plot into the heart of the Separatist movement and the beginning of the Clone Wars.",
 						AddedOnLabel:         "Added on",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=7dcf7149f71046d5a50c626e3486259b",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=7dcf7149f71046d5a50c626e3486259b",
 					},
 				}
 
@@ -457,7 +457,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						AddedOnLabel:         "Added on",
 						NewSeriesTitle:       "Family Guy: Season 24, Episodes 1-3 & 7",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=94327c537a324e7c84f45b1a6e71dd35",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=94327c537a324e7c84f45b1a6e71dd35",
 					},
 					{
 						// Whole new series
@@ -468,7 +468,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						AddedOnLabel:         "Added on",
 						NewSeriesTitle:       "Game of thrones",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=3d7b0576370c48d3b7c37c49f612afc9",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=3d7b0576370c48d3b7c37c49f612afc9",
 					},
 					{
 						// Old series, new season
@@ -479,7 +479,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						AddedOnLabel:         "Added on",
 						NewSeriesTitle:       "How I Met Your Mother: Season 9",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=c828b89264f84def88b7dc3d9072a147",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=c828b89264f84def88b7dc3d9072a147",
 					},
 					{
 						// Old series, new episodes in 2 seasons
@@ -490,7 +490,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						AddedOnLabel:         "Added on",
 						NewSeriesTitle:       "Stranger Things: Seasons 1-2",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=66b82dc8d65544b3b8d75a5eaaa581cd",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=66b82dc8d65544b3b8d75a5eaaa581cd",
 					},
 				}
 				expected.NewMovies = newMovies
@@ -519,7 +519,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						Overview:             "Following an assassination attempt on Senator Padmé Amidala, Jedi Knights Anakin Skywalker and Obi-Wan Kenobi investigate a mysterious plot into the heart of the Separatist movement and the beginning of the Clone Wars.",
 						AddedOnLabel:         "Added on",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=7dcf7149f71046d5a50c626e3486259b",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=7dcf7149f71046d5a50c626e3486259b",
 					},
 					{
 						PosterURL:            "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
@@ -528,7 +528,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						Overview:             "The story of J. Robert Oppenheimer's role in the development of the atomic bomb during World War II.",
 						AddedOnLabel:         "Added on",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=fd9416da9026421995b40dae418d2b5d",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=fd9416da9026421995b40dae418d2b5d",
 					},
 				}
 
@@ -542,7 +542,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						AddedOnLabel:         "Added on",
 						NewSeriesTitle:       "Stranger Things: Seasons 1-2",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=66b82dc8d65544b3b8d75a5eaaa581cd",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=66b82dc8d65544b3b8d75a5eaaa581cd",
 					},
 					{
 						// Old series, new season
@@ -553,7 +553,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						AddedOnLabel:         "Added on",
 						NewSeriesTitle:       "How I Met Your Mother: Season 9",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=c828b89264f84def88b7dc3d9072a147",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=c828b89264f84def88b7dc3d9072a147",
 					},
 					{
 						// Whole new series
@@ -564,7 +564,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						AddedOnLabel:         "Added on",
 						NewSeriesTitle:       "Game of thrones",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=3d7b0576370c48d3b7c37c49f612afc9",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=3d7b0576370c48d3b7c37c49f612afc9",
 					},
 					{
 						// Old series, new episodes in 1 season
@@ -575,7 +575,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						AddedOnLabel:         "Added on",
 						NewSeriesTitle:       "Family Guy: Season 24, Episodes 1-3 & 7",
 						IncludeItemOverviews: true,
-						MediaURL:             "https://jellyfin.example.com/web/#/index?id=94327c537a324e7c84f45b1a6e71dd35",
+						MediaURL:             "https://jellyfin.example.com/web/#/details?id=94327c537a324e7c84f45b1a6e71dd35",
 					},
 				}
 				expected.NewMovies = newMovies
