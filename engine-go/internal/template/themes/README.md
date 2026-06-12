@@ -44,6 +44,7 @@ Templates must have the following structure:
             - `{{.AdditionDate}}` - Date the movie was added
             - `{{.Overview}}` - Movie synopsis/description
             - `{{.IncludeItemOverviews}}` - Boolean to show/hide overview text
+            - `{{.MediaURL}}` - Media URL in jellyfin
 
     - **TV Series Section**
         - `{{.DisplayNewSeries}}` - Boolean to show/hide TV series section
@@ -56,6 +57,7 @@ Templates must have the following structure:
             - `{{.AdditionDate}}` - Date the series was added
             - `{{.Overview}}` - Series synopsis/description
             - `{{.IncludeItemOverviews}}` - Boolean to show/hide overview text
+            - `{{.MediaURL}}` - Media URL in jellyfin
 
     - **Statistics Section**
         - `{{.CurrentlyAvailableLabel}}` - Title for stats section

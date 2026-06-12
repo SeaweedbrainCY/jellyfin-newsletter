@@ -362,95 +362,107 @@ Template: Classic
                             <h2 class="section-title">{{.NewFilmLabel}}</h2>
                             <div class="movie-container">
                                 {{range .NewMovies}}
-                                <div
-                                    class="movie_container"
-                                    style="margin-bottom: 15px"
+                                <a
+                                    href="{{.MediaURL}}"
+                                    style="text-decoration: none"
                                 >
                                     <div
-                                        class="movie_bg"
-                                        style="background: url('{{.PosterURL}}') no-repeat center center; background-size: cover; border-radius: 10px;"
+                                        class="movie_container"
+                                        style="margin-bottom: 15px"
                                     >
-                                        <table
-                                            class="movie"
-                                            width="100%"
-                                            role="presentation"
-                                            cellpadding="0"
-                                            cellspacing="0"
-                                            style="
-                                                background: rgba(0, 0, 0, 0.7);
-                                                border-radius: 10px;
-                                                width: 100%;
-                                            "
+                                        <div
+                                            class="movie_bg"
+                                            style="background: url('{{.PosterURL}}') no-repeat center center; background-size: cover; border-radius: 10px;"
                                         >
-                                            <tr>
-                                                <td
-                                                    class="movie-image"
-                                                    valign="middle"
-                                                    style="
-                                                        padding: 15px;
-                                                        text-align: center;
-                                                        width: 120px;
-                                                    "
-                                                >
-                                                    <img
-                                                        src="{{.PosterURL}}"
-                                                        alt="{{.Name}}"
+                                            <table
+                                                class="movie"
+                                                width="100%"
+                                                role="presentation"
+                                                cellpadding="0"
+                                                cellspacing="0"
+                                                style="
+                                                    background: rgba(
+                                                        0,
+                                                        0,
+                                                        0,
+                                                        0.7
+                                                    );
+                                                    border-radius: 10px;
+                                                    width: 100%;
+                                                "
+                                            >
+                                                <tr>
+                                                    <td
+                                                        class="movie-image"
+                                                        valign="middle"
                                                         style="
-                                                            max-width: 100px;
-                                                            height: auto;
-                                                            display: block;
-                                                            margin: 0 auto;
+                                                            padding: 15px;
+                                                            text-align: center;
+                                                            width: 120px;
                                                         "
-                                                    />
-                                                </td>
-                                                <td
-                                                    class="movie-content-cell"
-                                                    valign="middle"
-                                                    style="padding: 15px"
-                                                >
-                                                    <div
-                                                        class="mobile-text-container"
                                                     >
-                                                        <h3
-                                                            class="movie-title"
+                                                        <img
+                                                            src="{{.PosterURL}}"
+                                                            alt="{{.Name}}"
                                                             style="
-                                                                color: #ffffff !important;
-                                                                margin: 0 0 5px !important;
-                                                                font-size: 18px !important;
+                                                                max-width: 100px;
+                                                                height: auto;
+                                                                display: block;
+                                                                margin: 0 auto;
                                                             "
-                                                        >
-                                                            {{.Name}}
-                                                        </h3>
+                                                        />
+                                                    </td>
+                                                    <td
+                                                        class="movie-content-cell"
+                                                        valign="middle"
+                                                        style="padding: 15px"
+                                                    >
                                                         <div
-                                                            class="movie-date"
-                                                            style="
-                                                                color: #dddddd !important;
-                                                                font-size: 14px !important;
-                                                                margin: 0 0 10px !important;
-                                                            "
+                                                            class="mobile-text-container"
                                                         >
-                                                            {{.AddedOnLabel}}
-                                                            {{.AdditionDate}}
+                                                            <h3
+                                                                class="movie-title"
+                                                                style="
+                                                                    color: #ffffff !important;
+                                                                    margin: 0 0
+                                                                        5px !important;
+                                                                    font-size: 18px !important;
+                                                                "
+                                                            >
+                                                                {{.Name}}
+                                                            </h3>
+                                                            <div
+                                                                class="movie-date"
+                                                                style="
+                                                                    color: #dddddd !important;
+                                                                    font-size: 14px !important;
+                                                                    margin: 0 0
+                                                                        10px !important;
+                                                                "
+                                                            >
+                                                                {{.AddedOnLabel}}
+                                                                {{.AdditionDate}}
+                                                            </div>
+                                                            {{if
+                                                            .IncludeItemOverviews}}
+                                                            <div
+                                                                class="movie-description"
+                                                                style="
+                                                                    color: #dddddd !important;
+                                                                    font-size: 14px !important;
+                                                                    line-height: 1.4 !important;
+                                                                "
+                                                            >
+                                                                {{.Overview}}
+                                                            </div>
+                                                            {{end}}
                                                         </div>
-                                                        {{if
-                                                        .IncludeItemOverviews}}
-                                                        <div
-                                                            class="movie-description"
-                                                            style="
-                                                                color: #dddddd !important;
-                                                                font-size: 14px !important;
-                                                                line-height: 1.4 !important;
-                                                            "
-                                                        >
-                                                            {{.Overview}}
-                                                        </div>
-                                                        {{end}}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                                 {{end}}
                             </div>
                         </div>
@@ -460,95 +472,107 @@ Template: Classic
                             <h2 class="section-title">{{.NewSeriesLabel}}</h2>
                             <div class="movie-container">
                                 {{range .NewSeries}}
-                                <div
-                                    class="movie_container"
-                                    style="margin-bottom: 15px"
+                                <a
+                                    href="{{.MediaURL}}"
+                                    style="text-decoration: none"
                                 >
                                     <div
-                                        class="movie_bg"
-                                        style="background: url('{{.PosterURL}}') no-repeat center center; background-size: cover; border-radius: 10px;"
+                                        class="movie_container"
+                                        style="margin-bottom: 15px"
                                     >
-                                        <table
-                                            class="movie"
-                                            width="100%"
-                                            role="presentation"
-                                            cellpadding="0"
-                                            cellspacing="0"
-                                            style="
-                                                background: rgba(0, 0, 0, 0.7);
-                                                border-radius: 10px;
-                                                width: 100%;
-                                            "
+                                        <div
+                                            class="movie_bg"
+                                            style="background: url('{{.PosterURL}}') no-repeat center center; background-size: cover; border-radius: 10px;"
                                         >
-                                            <tr>
-                                                <td
-                                                    class="movie-image"
-                                                    valign="middle"
-                                                    style="
-                                                        padding: 15px;
-                                                        text-align: center;
-                                                        width: 120px;
-                                                    "
-                                                >
-                                                    <img
-                                                        src="{{.PosterURL}}"
-                                                        alt="{{.SeriesName}}"
+                                            <table
+                                                class="movie"
+                                                width="100%"
+                                                role="presentation"
+                                                cellpadding="0"
+                                                cellspacing="0"
+                                                style="
+                                                    background: rgba(
+                                                        0,
+                                                        0,
+                                                        0,
+                                                        0.7
+                                                    );
+                                                    border-radius: 10px;
+                                                    width: 100%;
+                                                "
+                                            >
+                                                <tr>
+                                                    <td
+                                                        class="movie-image"
+                                                        valign="middle"
                                                         style="
-                                                            max-width: 100px;
-                                                            height: auto;
-                                                            display: block;
-                                                            margin: 0 auto;
+                                                            padding: 15px;
+                                                            text-align: center;
+                                                            width: 120px;
                                                         "
-                                                    />
-                                                </td>
-                                                <td
-                                                    class="movie-content-cell"
-                                                    valign="middle"
-                                                    style="padding: 15px"
-                                                >
-                                                    <div
-                                                        class="mobile-text-container"
                                                     >
-                                                        <h3
-                                                            class="movie-title"
+                                                        <img
+                                                            src="{{.PosterURL}}"
+                                                            alt="{{.SeriesName}}"
                                                             style="
-                                                                color: #ffffff !important;
-                                                                margin: 0 0 5px !important;
-                                                                font-size: 18px !important;
+                                                                max-width: 100px;
+                                                                height: auto;
+                                                                display: block;
+                                                                margin: 0 auto;
                                                             "
-                                                        >
-                                                            {{.NewSeriesTitle}}
-                                                        </h3>
+                                                        />
+                                                    </td>
+                                                    <td
+                                                        class="movie-content-cell"
+                                                        valign="middle"
+                                                        style="padding: 15px"
+                                                    >
                                                         <div
-                                                            class="movie-date"
-                                                            style="
-                                                                color: #dddddd !important;
-                                                                font-size: 14px !important;
-                                                                margin: 0 0 10px !important;
-                                                            "
+                                                            class="mobile-text-container"
                                                         >
-                                                            {{.AddedOnLabel}}
-                                                            {{.AdditionDate}}
+                                                            <h3
+                                                                class="movie-title"
+                                                                style="
+                                                                    color: #ffffff !important;
+                                                                    margin: 0 0
+                                                                        5px !important;
+                                                                    font-size: 18px !important;
+                                                                "
+                                                            >
+                                                                {{.NewSeriesTitle}}
+                                                            </h3>
+                                                            <div
+                                                                class="movie-date"
+                                                                style="
+                                                                    color: #dddddd !important;
+                                                                    font-size: 14px !important;
+                                                                    margin: 0 0
+                                                                        10px !important;
+                                                                "
+                                                            >
+                                                                {{.AddedOnLabel}}
+                                                                {{.AdditionDate}}
+                                                            </div>
+                                                            {{if
+                                                            .IncludeItemOverviews}}
+                                                            <div
+                                                                class="movie-description"
+                                                                style="
+                                                                    color: #dddddd !important;
+                                                                    font-size: 14px !important;
+                                                                    line-height: 1.4 !important;
+                                                                "
+                                                            >
+                                                                {{.Overview}}
+                                                            </div>
+                                                            {{end}}
                                                         </div>
-                                                        {{if
-                                                        .IncludeItemOverviews}}
-                                                        <div
-                                                            class="movie-description"
-                                                            style="
-                                                                color: #dddddd !important;
-                                                                font-size: 14px !important;
-                                                                line-height: 1.4 !important;
-                                                            "
-                                                        >
-                                                            {{.Overview}}
-                                                        </div>
-                                                        {{end}}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                                 {{end}}
                             </div>
                         </div>
