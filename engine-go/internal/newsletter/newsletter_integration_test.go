@@ -8,7 +8,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -99,6 +101,12 @@ func customMatcher(r *http.Request, i cassette.Request) bool {
 	return r.Method == i.Method && r.URL.String() == i.URL
 }
 
+func normalizeHTML(s string) string {
+	var wsRe = regexp.MustCompile(`\s+`)
+	s = wsRe.ReplaceAllString(s, " ")
+	return strings.ReplaceAll(s, " >", ">")
+}
+
 func TestJellyfinNewsletter(t *testing.T) {
 	jellyfinRec, err := recorder.New(
 		"../../testdata/fixtures/jellyfin", recorder.WithMode(recorder.ModeRecordOnce),
@@ -148,24 +156,25 @@ func TestJellyfinNewsletter(t *testing.T) {
 	msg := messages[0]
 	assert.Equal(t, "[Jellyfin] New movies ans TV shows of April", msg.Subject)
 	html, err := mailpitCT.GetMessageHTML(msg.ID)
+	normalizedHTML := normalizeHTML(html)
 	require.NoError(t, err)
-	assert.Contains(t, html, "Love Actually")
-	assert.Contains(t, html, "Added on 2026-03-31")
-	assert.Contains(t, html, "No Time to Die")
-	assert.Contains(t, html, "The Last of Us")
-	assert.Contains(t, html, "Severance: Season 1, Episodes 2-3")
+	assert.Contains(t, normalizedHTML, "Love Actually")
+	assert.Contains(t, normalizedHTML, "Added on 2026-03-31")
+	assert.Contains(t, normalizedHTML, "No Time to Die")
+	assert.Contains(t, normalizedHTML, "The Last of Us")
+	assert.Contains(t, normalizedHTML, "Severance: Season 1, Episodes 2-3")
 	assert.Contains(
 		t,
-		html,
+		normalizedHTML,
 		"You are recieving this email because you are using TestJellyfinUser&#39;s Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying unsubscribe@example.com.",
 	)
 	assert.Contains(
 		t,
-		html,
+		normalizedHTML,
 		"Developed with ❤️ by <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> and <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">the contributors</a>.",
 	)
-	assert.Contains(t, html, "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3.")
-	assert.NotContains(t, html, "House of the Dragon")
+	assert.Contains(t, normalizedHTML, "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3.")
+	assert.NotContains(t, normalizedHTML, "House of the Dragon")
 }
 
 func StartMailpit(ctx context.Context, t *testing.T) (*MailpitContainer, error) {
