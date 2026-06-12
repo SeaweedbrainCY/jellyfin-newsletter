@@ -267,6 +267,7 @@ func getAppContext() (*app.ApplicationContext, *observer.ObservedLogs) {
 		Config: &config.Configuration{
 			Jellyfin: config.JellyfinConfig{
 				ObservedPeriodDays: 30,
+				URL:                "https://jellyfin.example.com/",
 			},
 			EmailTemplate: config.EmailTemplateConfig{
 				Theme:                   "classic",
