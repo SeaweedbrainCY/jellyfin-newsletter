@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
+	"net/url"
 	"path/filepath"
 	"slices"
 	"sort"
@@ -31,6 +32,7 @@ type newMovieItemTemplateData struct {
 	AdditionDate         string
 	Overview             string
 	IncludeItemOverviews bool
+	MediaURL             string
 }
 type newSeriesItemTemplateData struct {
 	PosterURL            string
@@ -40,6 +42,7 @@ type newSeriesItemTemplateData struct {
 	Overview             string
 	NewSeriesTitle       string
 	IncludeItemOverviews bool
+	MediaURL             string
 }
 
 type newMediaTemplateData struct {
@@ -304,6 +307,18 @@ func sortJellyfinNewMovies(newJellyfinMovies *[]jellyfin.MovieItem, app *app.App
 	return newJellyfinMoviesSorted
 }
 
+// Compute media URL in Jellyfin. If jellyfinParsedURL is nil or invalid, it will returns an empty string.
+func getMediaURL(jellyfinParsedURL *url.URL, mediaID string) string {
+	if jellyfinParsedURL == nil {
+		return ""
+	}
+	mediaURL := jellyfinParsedURL.JoinPath("/web/")
+	query := url.Values{}
+	query.Set("id", mediaID)
+	mediaURL.Fragment = "/details?" + query.Encode()
+	return mediaURL.String()
+}
+
 func sortJellyfinNewSeriesItems(
 	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem,
 	app *app.ApplicationContext,
@@ -385,6 +400,8 @@ func buildNewMediaTemplateData(
 	displayMovieOverviews := shouldOverviewsBeDisplayed(len(newJellyfinMoviesSorted), app)
 	displaySeriesOverviews := shouldOverviewsBeDisplayed(len(newJellyfinSeriesSorted), app)
 
+	jellyfinParsedURL, _ := url.Parse(app.Config.Jellyfin.URL)
+
 	for _, newMovieItem := range newJellyfinMoviesSorted {
 		newMoviesData = append(newMoviesData, newMovieItemTemplateData{
 			PosterURL:            newMovieItem.PosterURL,
@@ -393,6 +410,7 @@ func buildNewMediaTemplateData(
 			Overview:             newMovieItem.Overview,
 			AddedOnLabel:         app.Localizer.Localize("added_on"),
 			IncludeItemOverviews: displayMovieOverviews,
+			MediaURL:             getMediaURL(jellyfinParsedURL, newMovieItem.ID),
 		})
 	}
 
@@ -405,6 +423,7 @@ func buildNewMediaTemplateData(
 			Overview:             newSeriesItem.Overview,
 			NewSeriesTitle:       buildNewSeriesItemFromSeriesNewItems(newSeriesItem, app),
 			IncludeItemOverviews: displaySeriesOverviews,
+			MediaURL:             getMediaURL(jellyfinParsedURL, newSeriesItem.SeriesID),
 		})
 	}
 
