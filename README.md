@@ -50,11 +50,18 @@ You can contribute to the translation of Jellyfin-Newsletter on [Weblate](https:
 </a>
 </p>
 
-### Create a new theme
+### Custom themes
+#### Create a new theme
 You can create and propose a new theme by following the [theme creation guide](engine-go/internal/template/themes/README.md).
 
 Currently available themes:
 - `Classic`
+
+#### Bring your own themes
+Jellyfin-Newsletter comes with built-in and embedded themes (listed above). However, before your new beautiful theme gets included in the official themes, you can just instruct Jellyfin-Newsletter to use a local theme file. 
+
+[Follow these instructions to use your own local theme files](https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/Bring-your-own-themes)
+
 
 ## Recommended installation: Docker
 ### Requirements
