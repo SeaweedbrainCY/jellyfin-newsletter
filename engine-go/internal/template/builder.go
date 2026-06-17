@@ -113,12 +113,17 @@ func getNewMediaHTMLTemplate(
 			app.Config.EmailTemplate.Theme,
 			filename,
 		)
-		tmpl, err := template.New(filename).Option("missingkey=zero").ParseFS(*app.Config.EmailTemplate.ThemesDirFS, filePath)
+		tmpl, err := template.New(filename).
+			Option("missingkey=zero").
+			ParseFS(*app.Config.EmailTemplate.ThemesDirFS, filePath)
 		if err == nil {
 			return tmpl, nil
 		}
 		// else defaulting to embedded themeFS
-		app.Logger.Warn("Theme not found in custom theme directory. Will default to default Jellyfin-Newsletter themes.", zap.String("filePath", filePath))
+		app.Logger.Warn(
+			"Theme not found in custom theme directory. Will default to default Jellyfin-Newsletter themes.",
+			zap.String("filePath", filePath),
+		)
 	}
 
 	filePath := filepath.Join(
