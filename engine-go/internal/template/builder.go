@@ -114,7 +114,7 @@ func getNewMediaHTMLTemplate(
 			filename,
 		)
 		tmpl, err := template.New(filename).Option("missingkey=zero").ParseFS(*app.Config.EmailTemplate.ThemesDirFS, filePath)
-		if err != nil {
+		if err == nil {
 			return tmpl, nil
 		}
 		// else defaulting to embedded themeFS
