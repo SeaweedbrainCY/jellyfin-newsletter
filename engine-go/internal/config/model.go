@@ -90,7 +90,7 @@ type yamlConfiguration struct {
 		Language                string `yaml:"language" validate:"required,alpha"`
 		Subject                 string `yaml:"subject"  validate:"required"`
 		Title                   string `yaml:"title"   validate:"required"`
-		Subtitle                string `yaml:"subtitle"   validate:"required"`
+		Subtitle                string `yaml:"subtitle, omitempty"`
 		JellyfinURL             string `yaml:"jellyfin_url,omitempty" validate:"omitempty,url"`
 		UnsubscribeEmail        string `yaml:"unsubscribe_email,omitempty" validate:"omitempty,email"`
 		JellyfinOwnerName       string `yaml:"jellyfin_owner_name,omitempty"`
