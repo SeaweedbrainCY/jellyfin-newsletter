@@ -96,28 +96,37 @@ type footerTemplateData struct {
 var templateHTMLThemesFS embed.FS
 
 func CheckIfThemeIsAvailable(app *app.ApplicationContext) error {
-	filePath := filepath.Join(
-		"themes",
-		app.Config.EmailTemplate.Theme,
-		app.Config.EmailTemplate.Theme+".html",
-	)
-	if _, err := template.ParseFS(templateHTMLThemesFS, filePath); err != nil {
+	if _, err := getNewMediaHTMLTemplate(templateHTMLThemesFS, app); err != nil {
 		return err
 	}
 	return nil
 }
 
 func getNewMediaHTMLTemplate(
-	themeFS embed.FS,
+	defaultThemeFS embed.FS,
 	app *app.ApplicationContext,
 ) (*template.Template, error) {
 	filename := app.Config.EmailTemplate.Theme + ".html"
+	if app.Config.EmailTemplate.ThemesDirFS != nil {
+		// If the theme is available in the provided themes dir, it will be choosen. If the is not found in this dir, it will default to default embedded theme dir.
+		filePath := filepath.Join(
+			app.Config.EmailTemplate.Theme,
+			filename,
+		)
+		tmpl, err := template.New(filename).Option("missingkey=zero").ParseFS(*app.Config.EmailTemplate.ThemesDirFS, filePath)
+		if err != nil {
+			return tmpl, nil
+		}
+		// else defaulting to embedded themeFS
+		app.Logger.Warn("Theme not found in custom theme directory. Will default to default Jellyfin-Newsletter themes.", zap.String("filePath", filePath))
+	}
+
 	filePath := filepath.Join(
 		"themes",
 		app.Config.EmailTemplate.Theme,
 		filename,
 	)
-	tmpl, err := template.New(filename).Option("missingkey=zero").ParseFS(themeFS, filePath)
+	tmpl, err := template.New(filename).Option("missingkey=zero").ParseFS(defaultThemeFS, filePath)
 
 	if err != nil {
 		app.Logger.Error(
