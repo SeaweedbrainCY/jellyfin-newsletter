@@ -73,7 +73,7 @@ func initApp(t *testing.T) (*app.ApplicationContext, *observer.ObservedLogs, err
 	if configPath == "" {
 		t.Fatal("INTEGRATION_TEST_CONFIG_FILE is not defined")
 	}
-	config, err := config.LoadConfig(configPath)
+	config, err := config.LoadConfig(configPath, "")
 	if err != nil {
 		return nil, nil, err
 	}
