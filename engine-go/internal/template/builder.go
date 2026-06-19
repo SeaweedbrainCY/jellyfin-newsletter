@@ -129,7 +129,9 @@ func getNewMediaHTMLTemplate(
 				return nil
 			},
 		)
-		availableFiles = append(availableFiles, walkDirErr.Error())
+		if walkDirErr != nil {
+			availableFiles = append(availableFiles, walkDirErr.Error())
+		}
 		app.Logger.Warn(
 			"Theme not found in custom theme directory. Will default to default Jellyfin-Newsletter themes.",
 			zap.String("filePath", filename), zap.Strings("availableFiles", availableFiles), zap.Error(err),
@@ -152,7 +154,10 @@ func getNewMediaHTMLTemplate(
 			}
 			return nil
 		})
-		availableFiles = append(availableFiles, walkDirErr.Error())
+		if walkDirErr != nil {
+			availableFiles = append(availableFiles, walkDirErr.Error())
+		}
+
 		app.Logger.Error(
 			"Theme is not availabke. Impossible to open the template file. Email HTML building will fail.",
 			zap.String("filePath", filePath),
