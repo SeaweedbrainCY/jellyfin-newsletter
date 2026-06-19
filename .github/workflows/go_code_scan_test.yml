@@ -10,10 +10,6 @@ on:
       - "**/**"
   pull_request:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   semgrep_scan:
     name: Semgrep scan
@@ -39,6 +35,9 @@ jobs:
   golangci:
     name: Go lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
@@ -53,6 +52,9 @@ jobs:
   go_test:
     name: "Go test"
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v5
         with:

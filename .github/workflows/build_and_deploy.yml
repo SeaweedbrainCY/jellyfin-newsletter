@@ -1,10 +1,5 @@
 name: "Jellyfin-newsletter docker image deployment"
 
-permissions:
-  contents: write
-  packages: write
-  pull-requests: write
-
 on:
   push:
     tags:
@@ -52,11 +47,15 @@ jobs:
           echo "This workflow only runs on production or development tags."
           exit 1
   code_and_security_tests:
+    permissions:
+      security-events: write
     needs: setup
     uses: ./.github/workflows/go_code_scan_test.yml
 
   build_and_publish:
     needs: [code_and_security_tests]
+    permissions:
+      packages: write
     name: Build and publish image
     strategy:
       fail-fast: false
@@ -145,6 +144,8 @@ jobs:
 
   merge-manifests:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     needs:
       - build_and_publish
       - setup
