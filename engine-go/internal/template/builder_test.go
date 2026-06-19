@@ -2,7 +2,10 @@ package template
 
 import (
 	"html"
+	"os"
+	"regexp"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -676,4 +679,79 @@ func TestBuildNewMediaEmailHTML(t *testing.T) {
 		assert.Contains(t, unescapedHTML, series.Overview)
 		assert.Contains(t, unescapedHTML, series.NewSeriesTitle)
 	}
+}
+
+func TestBuildNewMediaEmailHTMLWithCustomDirTheme(t *testing.T) {
+	newMovies := getJellyfinNewMovies()
+	newSeries := getJellyfinNewSeriesItems()
+	movieCount := int32(1254)
+	seriesCount := int32(1253)
+	app, _ := getAppContext()
+	dirFS := os.DirFS("../../testdata/themes/")
+	app.Config.EmailTemplate.ThemesDirFS = &dirFS
+	app.Config.EmailTemplate.Theme = "custom_theme1"
+	expectedTemplateData := getExpectedNewMediaTemplateData()
+
+	escapedHTML, err := BuildNewMediaEmailHTML(&newMovies, &newSeries, movieCount, seriesCount, app)
+	unescapedHTML := html.UnescapeString(escapedHTML)
+
+	// collapse multi spaces
+	var multiSpace = regexp.MustCompile(`\s+`)
+	unescapedHTML = strings.TrimSpace(multiSpace.ReplaceAllString(unescapedHTML, " "))
+
+	require.NoError(t, err)
+
+	assert.NotContains(t, unescapedHTML, "{{")
+	assert.NotContains(t, unescapedHTML, "}}")
+	assert.Contains(t, unescapedHTML, expectedTemplateData.HTMLLang)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.HTMLDir)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.Title)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.Subtitle)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.JellyfinURL)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.DiscoverNowLabel)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.NewFilmLabel)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.NewSeriesLabel)
+	assert.NotContains(t, unescapedHTML, expectedTemplateData.CurrentlyAvailableLabel)
+	assert.NotContains(t, unescapedHTML, movieCount)
+	assert.NotContains(t, unescapedHTML, seriesCount)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.FooterLabel)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.FooterProjectLinkLabel)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.FooterOpenSourceProjectLabel)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.FooterDevelopedByLabel)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.FooterLicenceAndCopyright)
+	for _, movies := range expectedTemplateData.NewMovies {
+		assert.Contains(t, unescapedHTML, movies.PosterURL)
+		assert.Contains(t, unescapedHTML, movies.Name)
+		assert.Contains(t, unescapedHTML, movies.AddedOnLabel)
+		assert.Contains(t, unescapedHTML, movies.AdditionDate)
+		assert.Contains(t, unescapedHTML, movies.Overview)
+	}
+
+	for _, series := range expectedTemplateData.NewSeries {
+		assert.Contains(t, unescapedHTML, series.PosterURL)
+		assert.Contains(t, unescapedHTML, series.SeriesName)
+		assert.Contains(t, unescapedHTML, series.AddedOnLabel)
+		assert.Contains(t, unescapedHTML, series.AdditionDate)
+		assert.Contains(t, unescapedHTML, series.Overview)
+		assert.Contains(t, unescapedHTML, series.NewSeriesTitle)
+	}
+	assert.Contains(t, unescapedHTML, "This is a test theme template without stat section. If you can read this, it worked")
+}
+
+func TestBuildNewMediaEmailHTMLWithThemeFallBack(t *testing.T) {
+	newMovies := getJellyfinNewMovies()
+	newSeries := getJellyfinNewSeriesItems()
+	movieCount := int32(54)
+	seriesCount := int32(1253)
+	app, _ := getAppContext()
+	expectedTemplateData := getExpectedNewMediaTemplateData()
+	dirFS := os.DirFS("../../testdata/themes/")
+	app.Config.EmailTemplate.ThemesDirFS = &dirFS
+	app.Config.EmailTemplate.Theme = "classic"
+
+	escapedHTML, err := BuildNewMediaEmailHTML(&newMovies, &newSeries, movieCount, seriesCount, app)
+	unescapedHTML := html.UnescapeString(escapedHTML)
+
+	require.NoError(t, err)
+	assert.Contains(t, unescapedHTML, expectedTemplateData.Subtitle)
 }
