@@ -1,5 +1,7 @@
 package config
 
+import "io/fs"
+
 type LogConfig struct {
 	Level  string
 	Format string
@@ -34,6 +36,7 @@ type EmailTemplateConfig struct {
 	JellyfinOwnerName       string
 	DisplayOverviewMaxItems int
 	SortMode                string
+	ThemesDirFS             *fs.FS
 }
 
 type SMTPConfig struct {

@@ -9,7 +9,7 @@ import (
 	"github.com/goccy/go-yaml"
 )
 
-func LoadConfig(configPath string) (*Configuration, error) {
+func LoadConfig(configPath string, themesDir string) (*Configuration, error) {
 	file, err := os.Open(configPath)
 	if err != nil {
 		return nil, err
@@ -19,7 +19,16 @@ func LoadConfig(configPath string) (*Configuration, error) {
 		return nil, err
 	}
 
+	conf.loadThemesDir(themesDir)
+
 	return conf, nil
+}
+
+func (conf *Configuration) loadThemesDir(themesDir string) {
+	if themesDir != "" {
+		fs := os.DirFS(themesDir)
+		conf.EmailTemplate.ThemesDirFS = &fs
+	}
 }
 
 func loadConfigFromReader(configPath string, r io.Reader) (*Configuration, error) {

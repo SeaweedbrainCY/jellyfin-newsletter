@@ -23,9 +23,10 @@ var version = "dev" // Will be set during build time
 
 func main() {
 	var configPath = flag.String("config", "./config/config.yml", "path to config file")
+	var themesDir = flag.String("themes-dir", "", "path to a folder with new/replacing themes files")
 	flag.Parse()
 
-	config, err := config.LoadConfig(*configPath)
+	config, err := config.LoadConfig(*configPath, *themesDir)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to load configuration: %v", err))
 	}
