@@ -49,6 +49,8 @@ jobs:
   code_and_security_tests:
     permissions:
       security-events: write
+      contents: write
+      pull-requests: write
     needs: setup
     uses: ./.github/workflows/go_code_scan_test.yml
 
