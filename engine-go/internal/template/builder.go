@@ -119,12 +119,17 @@ func getNewMediaHTMLTemplate(
 		// else defaulting to embedded themeFS
 		// Log available files for troubleshooting
 		var availableFiles []string
-		fs.WalkDir(*app.Config.EmailTemplate.ThemesDirFS, ".", func(path string, d fs.DirEntry, err error) error {
-			if err == nil && !d.IsDir() {
-				availableFiles = append(availableFiles, path)
-			}
-			return nil
-		})
+		walkDirErr := fs.WalkDir(
+			*app.Config.EmailTemplate.ThemesDirFS,
+			".",
+			func(path string, d fs.DirEntry, err error) error {
+				if err == nil && !d.IsDir() {
+					availableFiles = append(availableFiles, path)
+				}
+				return nil
+			},
+		)
+		availableFiles = append(availableFiles, walkDirErr.Error())
 		app.Logger.Warn(
 			"Theme not found in custom theme directory. Will default to default Jellyfin-Newsletter themes.",
 			zap.String("filePath", filename), zap.Strings("availableFiles", availableFiles), zap.Error(err),
@@ -141,12 +146,13 @@ func getNewMediaHTMLTemplate(
 	if err != nil {
 		// Log available files for troubleshooting
 		var availableFiles []string
-		fs.WalkDir(defaultThemeFS, ".", func(path string, d fs.DirEntry, err error) error {
+		walkDirErr := fs.WalkDir(defaultThemeFS, ".", func(path string, d fs.DirEntry, err error) error {
 			if err == nil && !d.IsDir() {
 				availableFiles = append(availableFiles, path)
 			}
 			return nil
 		})
+		availableFiles = append(availableFiles, walkDirErr.Error())
 		app.Logger.Error(
 			"Theme is not availabke. Impossible to open the template file. Email HTML building will fail.",
 			zap.String("filePath", filePath),
