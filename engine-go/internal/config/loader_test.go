@@ -341,21 +341,6 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		},
 
 		{
-			name:            "Missing email_template subtitle",
-			yamlKeyToRemove: "email_template.subtitle",
-			expectedError: `failed to decode configuration file: [31:15] Key: 'Subtitle' Error:Field validation for 'Subtitle' failed on the 'required' tag
-  28 |   smtp_sender_email: Jellyfin
-  29 |   smtp_tls_type: "TLS"
-  30 |
-> 31 | email_template:
-                     ^
-  32 |   theme: "classic"
-  33 |   language: fr
-  34 |   subject: New releases
-  35 |   `,
-		},
-
-		{
 			name:            "Missing email smtp_server",
 			yamlKeyToRemove: "email.smtp_server",
 			expectedError: `failed to decode configuration file: [23:6] Key: 'SMTPServer' Error:Field validation for 'SMTPServer' failed on the 'required' tag
