@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"net/url"
 	"path/filepath"
 	"slices"
@@ -109,20 +110,24 @@ func getNewMediaHTMLTemplate(
 	filename := app.Config.EmailTemplate.Theme + ".html"
 	if app.Config.EmailTemplate.ThemesDirFS != nil {
 		// If the theme is available in the provided themes dir, it will be choosen. If the is not found in this dir, it will default to default embedded theme dir.
-		filePath := filepath.Join(
-			app.Config.EmailTemplate.Theme,
-			filename,
-		)
 		tmpl, err := template.New(filename).
 			Option("missingkey=zero").
-			ParseFS(*app.Config.EmailTemplate.ThemesDirFS, filePath)
+			ParseFS(*app.Config.EmailTemplate.ThemesDirFS, filename)
 		if err == nil {
 			return tmpl, nil
 		}
 		// else defaulting to embedded themeFS
+		// Log available files for troubleshooting
+		var availableFiles []string
+		fs.WalkDir(*app.Config.EmailTemplate.ThemesDirFS, ".", func(path string, d fs.DirEntry, err error) error {
+			if err == nil && !d.IsDir() {
+				availableFiles = append(availableFiles, path)
+			}
+			return nil
+		})
 		app.Logger.Warn(
 			"Theme not found in custom theme directory. Will default to default Jellyfin-Newsletter themes.",
-			zap.String("filePath", filePath),
+			zap.String("filePath", filename), zap.Strings("availableFiles", availableFiles), zap.Error(err),
 		)
 	}
 
@@ -134,10 +139,19 @@ func getNewMediaHTMLTemplate(
 	tmpl, err := template.New(filename).Option("missingkey=zero").ParseFS(defaultThemeFS, filePath)
 
 	if err != nil {
+		// Log available files for troubleshooting
+		var availableFiles []string
+		fs.WalkDir(defaultThemeFS, ".", func(path string, d fs.DirEntry, err error) error {
+			if err == nil && !d.IsDir() {
+				availableFiles = append(availableFiles, path)
+			}
+			return nil
+		})
 		app.Logger.Error(
-			"Impossible to open the template file. Email HTML building will fail.",
+			"Theme is not availabke. Impossible to open the template file. Email HTML building will fail.",
 			zap.String("filePath", filePath),
 			zap.Error(err),
+			zap.Strings("availableFiles", availableFiles),
 		)
 		return nil, err
 	}
