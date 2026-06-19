@@ -735,7 +735,11 @@ func TestBuildNewMediaEmailHTMLWithCustomDirTheme(t *testing.T) {
 		assert.Contains(t, unescapedHTML, series.Overview)
 		assert.Contains(t, unescapedHTML, series.NewSeriesTitle)
 	}
-	assert.Contains(t, unescapedHTML, "This is a test theme template without stat section. If you can read this, it worked")
+	assert.Contains(
+		t,
+		unescapedHTML,
+		"This is a test theme template without stat section. If you can read this, it worked",
+	)
 }
 
 func TestBuildNewMediaEmailHTMLWithThemeFallBack(t *testing.T) {
