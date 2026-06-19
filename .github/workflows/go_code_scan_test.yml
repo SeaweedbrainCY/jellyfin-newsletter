@@ -12,6 +12,8 @@ on:
 
 jobs:
   semgrep_scan:
+    permissions:
+      contents: read
     name: Semgrep scan
     runs-on: ubuntu-latest
     defaults:
@@ -74,6 +76,8 @@ jobs:
   go_vulncheck:
     name: "Go vulncheck"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - id: govulncheck
         uses: golang/govulncheck-action@v1

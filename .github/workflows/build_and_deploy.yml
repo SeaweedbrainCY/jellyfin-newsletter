@@ -9,6 +9,8 @@ on:
 
 jobs:
   setup:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     outputs:
       is_prod: ${{ steps.check_env.outputs.is_prod }}
