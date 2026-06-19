@@ -1,8 +1,8 @@
-name: New release published
+name: Update doc latest release tag
 
 on:
-  #  release:
-  #    types: [published]
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -11,24 +11,47 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Resolve release version
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Fetch the latest stable release (gh picks the one marked "latest" on GitHub)
+            TAG=$(gh release view --repo "${{ github.repository }}" --json tagName -q .tagName)
+          else
+            TAG="${{ github.event.release.tag_name }}"
+            # Skip if GitHub marked it as a pre-release, or if the tag looks like a dev build
+            if [ "${{ github.event.release.prerelease }}" = "true" ] || \
+               echo "$TAG" | grep -qE -- '-dev\.[0-9]+$'; then
+              echo "Skipping pre-release: $TAG"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
       - name: Checkout repository
+        if: steps.version.outputs.skip != 'true'
         uses: actions/checkout@v4
         with:
           ref: main
 
-      - name: Pull latest changes
-        run: git pull origin main
-
       - name: Update version in files
+        if: steps.version.outputs.skip != 'true'
         run: |
-          sed -i -E "s|ghcr.io/seaweedbraincy/jellyfin-newsletter:[0-9]+\.[0-9]+\.[0-9]+|ghcr.io/seaweedbraincy/jellyfin-newsletter:${{ github.event.release.tag_name }}|g" README.md
-          sed -i -E "s|ghcr.io/seaweedbraincy/jellyfin-newsletter:[0-9]+\.[0-9]+\.[0-9]+|ghcr.io/seaweedbraincy/jellyfin-newsletter:${{ github.event.release.tag_name }}|g" docker-compose.yml
+          TAG="${{ steps.version.outputs.tag }}"
+          VERSION="${TAG#v}"  # strip leading 'v' for image tags (v1.2.3 → 1.2.3)
+          sed -i -E "s|ghcr.io/seaweedbraincy/jellyfin-newsletter:[0-9]+\.[0-9]+\.[0-9]+|ghcr.io/seaweedbraincy/jellyfin-newsletter:${VERSION}|g" README.md
+          sed -i -E "s|ghcr.io/seaweedbraincy/jellyfin-newsletter:[0-9]+\.[0-9]+\.[0-9]+|ghcr.io/seaweedbraincy/jellyfin-newsletter:${VERSION}|g" docker-compose.yml
 
       - name: Commit and push changes
+        if: steps.version.outputs.skip != 'true'
         run: |
+          TAG="${{ steps.version.outputs.tag }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
           git add README.md docker-compose.yml
-          git commit -m "chore: bump image version to ${{ github.event.release.tag_name }}"
+          git commit -m "chore: bump image version to ${TAG}"
           git push origin HEAD:main
