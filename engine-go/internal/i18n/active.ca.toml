@@ -101,3 +101,12 @@ other = "Desembre"
 [episode]
 one = "Episodi"
 other = "Episodis"
+
+[footer_developed_with_hearth]
+other = "Desenvolupat amb ❤️per"
+
+[and]
+other = "i"
+
+[the_contributors]
+other = "els contribuidors"
