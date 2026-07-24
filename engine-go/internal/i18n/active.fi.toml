@@ -97,3 +97,16 @@ other = "Marraskuu"
 
 [december]
 other = "Joulukuu"
+
+[episode]
+one = "Jakso"
+other = "Jaksot"
+
+[footer_developed_with_hearth]
+other = "Kehittänyt ❤️"
+
+[and]
+other = "ja"
+
+[the_contributors]
+other = "Avustajat"
