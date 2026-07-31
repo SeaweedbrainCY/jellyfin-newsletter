@@ -97,3 +97,16 @@ other = "Novembre"
 
 [december]
 other = "Dicembre"
+
+[episode]
+one = "Episodio"
+other = "Episodi"
+
+[footer_developed_with_hearth]
+other = "Sviluppato con ❤️ da"
+
+[and]
+other = "e"
+
+[the_contributors]
+other = "i collaboratori"
