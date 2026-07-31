@@ -276,7 +276,7 @@ func getAppContext() (*app.ApplicationContext, *observer.ObservedLogs) {
 				Theme:                   "classic",
 				Language:                "en",
 				Subject:                 "Not important",
-				Title:                   "New items from {{.StartDayName}} {{.StartMonthName}} {{.StartYear}} {{.StartDate}} {{}.StartDayNumber}} to {{.DayName}} {{.DayNumber}} {{.MonthName}} {{.Year}} {{.Date}}",
+				Title:                   "New items from {{.StartDayName}} {{.StartMonthName}} {{.StartYear}} {{.StartDate}} {{.StartDayNumber}} to {{.DayName}} {{.DayNumber}} {{.MonthName}} {{.Year}} {{.Date}}",
 				Subtitle:                "Subtitle: New items from {{.StartDayName}} {{.StartMonthName}} {{.StartYear}} {{.StartDate}} {{.StartDayNumber}} to {{.DayName}} {{.DayNumber}} {{.MonthName}} {{.Year}} {{.Date}}",
 				JellyfinURL:             "https://jellyfin.example.com",
 				UnsubscribeEmail:        "stop@example.com",
