@@ -292,13 +292,13 @@ func BuildEmailTitleWithPlaceholders(
 
 	placeholders := titlePlaceholders{
 		Date:             today.Format("2006-01-02"),
-		DayName:          app.Localizer.Localize(daysName[todayDayNumber]),
+		DayName:          app.Localizer.Localize(daysName[int(today.Weekday())]),
 		DayNumber:        strconv.Itoa(todayDayNumber),
 		MonthName:        app.Localizer.Localize(monthsName[todayMonthNumber]),
 		MonthNumber:      strconv.Itoa(todayMonthNumber),
 		Year:             today.Format("2006"),
 		StartDate:        startDate.Format("2006-01-02"),
-		StartDayName:     app.Localizer.Localize(daysName[startDayNumber]),
+		StartDayName:     app.Localizer.Localize(daysName[int(today.Weekday())]),
 		StartDayNumber:   strconv.Itoa(startDayNumber),
 		StartMonthName:   app.Localizer.Localize(monthsName[startMonthNumber]),
 		StartMonthNumber: strconv.Itoa(todayMonthNumber),
