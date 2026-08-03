@@ -258,11 +258,11 @@ func BuildEmailTitleWithPlaceholders(
 	app *app.ApplicationContext,
 ) (string, error) {
 	today := app.Clock.Now()
-	todayDayNumber := int(today.Weekday())
+	todayDayNumber := today.Day()
 	todayMonthNumber := int(today.Month())
 
 	startDate := app.Clock.Now().AddDate(0, 0, observedPeriodDays*-1)
-	startDayNumber := int(startDate.Weekday())
+	startDayNumber := startDate.Day()
 	startMonthNumber := int(startDate.Month())
 
 	daysName := map[int]string{
@@ -292,16 +292,16 @@ func BuildEmailTitleWithPlaceholders(
 
 	placeholders := titlePlaceholders{
 		Date:             today.Format("2006-01-02"),
-		DayName:          app.Localizer.Localize(daysName[todayDayNumber]),
-		DayNumber:        strconv.Itoa(todayDayNumber),
+		DayName:          app.Localizer.Localize(daysName[int(today.Weekday())]),
+		DayNumber:        fmt.Sprintf("%02d", todayDayNumber),
 		MonthName:        app.Localizer.Localize(monthsName[todayMonthNumber]),
-		MonthNumber:      strconv.Itoa(todayMonthNumber),
+		MonthNumber:      fmt.Sprintf("%02d", todayMonthNumber),
 		Year:             today.Format("2006"),
 		StartDate:        startDate.Format("2006-01-02"),
-		StartDayName:     app.Localizer.Localize(daysName[startDayNumber]),
-		StartDayNumber:   strconv.Itoa(startDayNumber),
+		StartDayName:     app.Localizer.Localize(daysName[int(startDate.Weekday())]),
+		StartDayNumber:   fmt.Sprintf("%02d", startDayNumber),
 		StartMonthName:   app.Localizer.Localize(monthsName[startMonthNumber]),
-		StartMonthNumber: strconv.Itoa(todayMonthNumber),
+		StartMonthNumber: fmt.Sprintf("%02d", todayMonthNumber),
 		StartYear:        startDate.Format("2006"),
 	}
 

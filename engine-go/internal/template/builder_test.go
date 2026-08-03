@@ -159,9 +159,9 @@ func getJellyfinNewSeriesItems() []jellyfin.NewlyAddedSeriesItem {
 func getExpectedNewMediaTemplateData() newMediaTemplateData {
 	title := "New items from " + time.Now().
 		AddDate(0, 0, -30).
-		Format("Monday January 2006 2006-01-02") +
+		Format("Monday January 2006 2006-01-02 02 01") +
 		" to " + time.Now().
-		Format("Monday January 2006 2006-01-02")
+		Format("Monday January 2006 2006-01-02 02 01")
 	subtitle := "Subtitle: " + title
 
 	newMovies := []newMovieItemTemplateData{
@@ -276,8 +276,8 @@ func getAppContext() (*app.ApplicationContext, *observer.ObservedLogs) {
 				Theme:                   "classic",
 				Language:                "en",
 				Subject:                 "Not important",
-				Title:                   "New items from {{.StartDayName}} {{.StartMonthName}} {{.StartYear}} {{.StartDate}} to {{.DayName}} {{.MonthName}} {{.Year}} {{.Date}}",
-				Subtitle:                "Subtitle: New items from {{.StartDayName}} {{.StartMonthName}} {{.StartYear}} {{.StartDate}} to {{.DayName}} {{.MonthName}} {{.Year}} {{.Date}}",
+				Title:                   "New items from {{.StartDayName}} {{.StartMonthName}} {{.StartYear}} {{.StartDate}} {{.StartDayNumber}} {{.StartMonthNumber}} to {{.DayName}} {{.MonthName}} {{.Year}} {{.Date}} {{.DayNumber}} {{.MonthNumber}}",
+				Subtitle:                "Subtitle: New items from {{.StartDayName}} {{.StartMonthName}} {{.StartYear}} {{.StartDate}} {{.StartDayNumber}} {{.StartMonthNumber}} to {{.DayName}} {{.MonthName}} {{.Year}} {{.Date}} {{.DayNumber}} {{.MonthNumber}}",
 				JellyfinURL:             "https://jellyfin.example.com",
 				UnsubscribeEmail:        "stop@example.com",
 				JellyfinOwnerName:       "seaweedbrain",
