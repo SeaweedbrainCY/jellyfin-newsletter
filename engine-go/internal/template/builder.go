@@ -301,7 +301,7 @@ func BuildEmailTitleWithPlaceholders(
 		StartDayName:     app.Localizer.Localize(daysName[int(startDate.Weekday())]),
 		StartDayNumber:   fmt.Sprintf("%02d", startDayNumber),
 		StartMonthName:   app.Localizer.Localize(monthsName[startMonthNumber]),
-		StartMonthNumber: fmt.Sprintf("%02d", todayMonthNumber),
+		StartMonthNumber: fmt.Sprintf("%02d", startMonthNumber),
 		StartYear:        startDate.Format("2006"),
 	}
 
