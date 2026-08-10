@@ -1,0 +1,105 @@
+
+[discover_now]
+other = "Ανακάλυψε τώρα"
+
+[new_film]
+other = "Νέες ταινίες:"
+
+[new_tvs]
+other = "Νέες σειρές:"
+
+[currently_available]
+other = "Τώρα διαθέσιμα στο jellyfin:"
+
+[movies]
+one = "Ταινία"
+other = "Ταινίες"
+
+[footer_label]
+other = "Λαμβάνετε αυτό το ιμέιλ επειδή χρησιμοποιείτε τον jellyfin server του {{.JellyfinOwnerName}}. Εάν Θέλετε να σταματήσετε να λαμβάνετε αυτά τα ιμέιλ , μπορείτε να ενημερώσετε το {{.UnsubscribeEmail}}."
+
+[added_on]
+other = "Προστέθηκε στις"
+
+[episode]
+one = "Επεισόδιο"
+other = "Επεισόδια"
+
+[season]
+one = "Σεζόν"
+other = "Σεζόνς"
+
+[new_episodes]
+other = "Νέα επεισόδια"
+
+[footer_project_open_source]
+other = "είναι πρότζεκτ ανοιχτού κώδικα."
+
+[footer_developed_with_hearth]
+other = "Αναπτύχθηκε με ❤️ απο"
+
+[and]
+other = "και"
+
+[the_contributors]
+other = "οι συντελεστές"
+
+[license_and_copyright]
+other = "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3."
+
+[monday]
+other = "Δευτέρα"
+
+[tuesday]
+other = "Τρίτη"
+
+[wednesday]
+other = "Τετάρτη"
+
+[thursday]
+other = "Πέμπτη"
+
+[friday]
+other = "Παρασκευή"
+
+[saturday]
+other = "Σάββατο"
+
+[sunday]
+other = "Κυριακή"
+
+[january]
+other = "Ιανουάριος"
+
+[february]
+other = "Φευρουάριος"
+
+[march]
+other = "Μάρτιος"
+
+[april]
+other = "Απρίλιος"
+
+[may]
+other = "Μάιος"
+
+[june]
+other = "Ιούνιος"
+
+[july]
+other = "Ιούλιος"
+
+[august]
+other = "Άυγουστος"
+
+[september]
+other = "Σεπτέμβριος"
+
+[october]
+other = "Οκτόμβριος"
+
+[november]
+other = "Νοέμβριος"
+
+[december]
+other = "Δεκέμβριος"
