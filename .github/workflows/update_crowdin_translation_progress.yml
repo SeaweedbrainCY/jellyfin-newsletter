@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # V7.0.1
 
-      - uses: SeaweedbrainCY/crowdin-translation-progress@ffe0077298a6d92653e7d07155e2e3312433f8bd
+      - uses: SeaweedbrainCY/crowdin-translation-progress@ca888083b8e9c8818425df10e51c0207ba7d8996
         with:
           crowdin_token: ${{ secrets.CROWDIN_TOKEN }}
           crowdin_project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
