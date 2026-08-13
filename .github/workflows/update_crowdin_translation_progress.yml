@@ -1,0 +1,32 @@
+name: Update Crowdin translation badge
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # V7.0.1
+
+      - uses: SeaweedbrainCY/crowdin-badge-action@a71154256c656a6886328f9dee1d55d8c175eb19
+        with:
+          crowdin_token: ${{ secrets.CROWDIN_TOKEN }}
+          crowdin_project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
+          # output_path: badges/crowdin-status.svg   # optional, this is the default
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- badges/crowdin-status.svg; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add badges/crowdin-status.svg
+          git commit -m "chore: update Crowdin translation status badge"
+          git push
