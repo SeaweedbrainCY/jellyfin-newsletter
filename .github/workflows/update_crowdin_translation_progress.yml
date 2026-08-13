@@ -22,7 +22,7 @@ jobs:
 
       - name: Commit if changed
         run: |
-          if git diff --quiet -- badges/crowdin-status.svg; then
+          if git diff --quiet -- assets/crowdin-status.svg; then
             exit 0
           fi
           git config user.name "github-actions[bot]"
