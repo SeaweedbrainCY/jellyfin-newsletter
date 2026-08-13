@@ -22,7 +22,9 @@ jobs:
 
       - name: Commit if changed
         run: |
-          if git diff --quiet -- assets/crowdin-status.svg; then
+          git add assets/crowdin-status.svg
+          if git diff  --cached --quiet; then
+            echo "No change in translation progress, skipping commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
