@@ -67,6 +67,11 @@ email_template:
   # Always hide summaries : set to -1
   #display_overview_max_items: 10
 
+  # OPTIONAL: Maximum items displayed in the email.
+  # If there is more items than this number, the first x items will be displayed and a '... and y more' will be added
+  # Comment out the line to disable this feature
+  #max_displayed_items: 10
+
   # OPTIONAL: Sorting mode for items in the email
   # Allowed values: "date_asc" (default), "date_desc", "name_asc", "name_desc"
   # - date_asc: sort by date (oldest first)
