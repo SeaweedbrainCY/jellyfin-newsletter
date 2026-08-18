@@ -823,5 +823,4 @@ func TestBuildNewMediaEmailHTMLWithMaxDisplayedItemsLimitReached(t *testing.T) {
 		unescapedHTML,
 		expectedTemplateData.AndMoreTitlesSuffixLabelMovies,
 	) // NotContains is checked in the main check
-
 }
