@@ -37,6 +37,7 @@ type EmailTemplateConfig struct {
 	DisplayOverviewMaxItems int
 	SortMode                string
 	ThemesDirFS             *fs.FS
+	MaxDisplayedItems       int
 }
 
 type SMTPConfig struct {
@@ -99,6 +100,7 @@ type yamlConfiguration struct {
 		JellyfinOwnerName       string `yaml:"jellyfin_owner_name,omitempty"`
 		DisplayOverviewMaxItems *int   `yaml:"display_overview_max_items,omitempty" validate:"omitempty,numeric,min=-1"`
 		SortMode                string `yaml:"sort_mode,omitempty" validate:"omitempty,oneof=date_desc date_asc name_asc name_desc"`
+		MaxDisplayedItems       *int   `yaml:"max_displayed_items,omitempty" validate:"omitempty,numeric,min=0"`
 	} `yaml:"email_template"      validate:"required"`
 	Email struct {
 		SMTPServer     string `yaml:"smtp_server" validate:"required,hostname|ip"`

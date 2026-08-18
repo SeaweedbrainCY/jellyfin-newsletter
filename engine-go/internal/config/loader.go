@@ -127,6 +127,7 @@ func buildTMDBConfig(yamlParsedConfig *yamlConfiguration) TMDBConfig {
 
 func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplateConfig {
 	const defaultDisplayOverviewMaxItem int = 10
+	const defaultMaxDisplayedItems int = 0 // no limit
 
 	emailTemplateConfig := EmailTemplateConfig{
 		Language:                yamlParsedConfig.EmailTemplate.Language,
@@ -136,6 +137,7 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplate
 		JellyfinURL:             yamlParsedConfig.EmailTemplate.JellyfinURL,
 		UnsubscribeEmail:        yamlParsedConfig.EmailTemplate.UnsubscribeEmail,
 		JellyfinOwnerName:       yamlParsedConfig.EmailTemplate.JellyfinOwnerName,
+		MaxDisplayedItems:       defaultMaxDisplayedItems,
 		Theme:                   "classic",
 		DisplayOverviewMaxItems: defaultDisplayOverviewMaxItem,
 		SortMode:                "date_desc",
@@ -148,6 +150,10 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplate
 
 	if yamlParsedConfig.EmailTemplate.DisplayOverviewMaxItems != nil {
 		emailTemplateConfig.DisplayOverviewMaxItems = *yamlParsedConfig.EmailTemplate.DisplayOverviewMaxItems
+	}
+
+	if yamlParsedConfig.EmailTemplate.MaxDisplayedItems != nil {
+		emailTemplateConfig.MaxDisplayedItems = *yamlParsedConfig.EmailTemplate.MaxDisplayedItems
 	}
 
 	if yamlParsedConfig.EmailTemplate.SortMode != "" {
