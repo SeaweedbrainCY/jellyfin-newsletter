@@ -439,7 +439,7 @@ func buildNewMediaTemplateData(
 	displayMovieOverviews := shouldOverviewsBeDisplayed(len(newJellyfinMoviesSorted), app)
 	displaySeriesOverviews := shouldOverviewsBeDisplayed(len(newJellyfinSeriesSorted), app)
 
-	jellyfinParsedURL, _ := url.Parse(app.Config.Jellyfin.URL)
+	jellyfinParsedURL, _ := url.Parse(app.Config.EmailTemplate.JellyfinURL)
 
 	for _, newMovieItem := range newJellyfinMoviesSorted {
 		newMoviesData = append(newMoviesData, newMovieItemTemplateData{
