@@ -425,8 +425,8 @@ func getNewMovieTemplateDataFromSortedNewItems(
 	app *app.ApplicationContext,
 ) []newMovieItemTemplateData {
 	displayMovieOverviews := shouldOverviewsBeDisplayed(len(newJellyfinMoviesSorted), app)
-	jellyfinParsedURL, _ := url.Parse(app.Config.Jellyfin.URL)
-	newMoviesData := []newMovieItemTemplateData{}
+	jellyfinParsedURL, _ := url.Parse(app.Config.EmailTemplate.JellyfinURL)
+
 
 	for i, newMovieItem := range newJellyfinMoviesSorted {
 		if app.Config.EmailTemplate.MaxDisplayedItems != 0 && i >= app.Config.EmailTemplate.MaxDisplayedItems {
