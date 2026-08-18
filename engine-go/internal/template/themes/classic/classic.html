@@ -154,6 +154,14 @@ Template: Classic
                 padding: 10px 15px;
             }
 
+            .more-titles {
+                text-align: center;
+                font-size: 13px !important;
+                font-style: italic;
+                color: #8fa3b8 !important;
+                margin: 0 0 15px !important;
+            }
+
             .stats-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -247,6 +255,11 @@ Template: Classic
 
             /* Keep stats section title centered even in RTL */
             [dir="rtl"] h2[style*="text-align: center"] {
+                text-align: center !important;
+            }
+
+            /* Keep the "more titles" note centered even in RTL */
+            [dir="rtl"] .more-titles {
                 text-align: center !important;
             }
 
@@ -465,6 +478,13 @@ Template: Classic
                                 </a>
                                 {{end}}
                             </div>
+                            {{if (gt .RemainingMoviesNotDisplayedCount 0)}}
+                            <p class="more-titles">
+                                {{.AndMoreTitlesPrefixLabel}}
+                                {{.RemainingMoviesNotDisplayedCount}}
+                                {{.AndMoreTitlesSuffixLabelMovies}}
+                            </p>
+                            {{end}}
                         </div>
                         {{end}} {{if .DisplayNewSeries}}
                         <!-- TV Shows Section -->
@@ -575,6 +595,14 @@ Template: Classic
                                 </a>
                                 {{end}}
                             </div>
+                            {{if (gt .RemainingSeriesNotDisplayedCount 0)}}
+                            <p class="more-titles">
+                                {{.AndMoreTitlesPrefixLabel}}
+                                {{.RemainingSeriesNotDisplayedCount}}
+                                {{.AndMoreTitlesSuffixLabelSeries}}
+
+                            </p>
+                            {{end}}
                         </div>
                         {{end}}
 
