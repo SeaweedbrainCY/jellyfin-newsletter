@@ -47,30 +47,35 @@ type newSeriesItemTemplateData struct {
 }
 
 type newMediaTemplateData struct {
-	HTMLLang                     string
-	HTMLDir                      string
-	Title                        string
-	Subtitle                     string
-	JellyfinURL                  string
-	DiscoverNowLabel             string
-	DisplayNewMovies             bool
-	NewFilmLabel                 string
-	NewMovies                    []newMovieItemTemplateData
-	DisplayNewSeries             bool
-	NewSeriesLabel               string
-	NewSeries                    []newSeriesItemTemplateData
-	CurrentlyAvailableLabel      string
-	MoviesCount                  string
-	MoviesLabel                  string
-	SeriesCount                  string
-	SeriesLabel                  string
-	FooterLabel                  string
-	FooterProjectLinkLabel       string
-	FooterOpenSourceProjectLabel string
-	FooterDevelopedByLabel       string
-	FooterLicenceAndCopyright    string
-	AndLocalized                 string
-	TheContributorsLabel         string
+	HTMLLang                         string
+	HTMLDir                          string
+	Title                            string
+	Subtitle                         string
+	JellyfinURL                      string
+	DiscoverNowLabel                 string
+	DisplayNewMovies                 bool
+	NewFilmLabel                     string
+	NewMovies                        []newMovieItemTemplateData
+	RemainingMoviesNotDisplayedCount int // #151. If 0, all movies are displayed
+	DisplayNewSeries                 bool
+	NewSeriesLabel                   string
+	NewSeries                        []newSeriesItemTemplateData
+	RemainingSeriesNotDisplayedCount int // #151. If 0, all series are displayed
+	CurrentlyAvailableLabel          string
+	MoviesCount                      string
+	MoviesLabel                      string
+	SeriesCount                      string
+	SeriesLabel                      string
+	FooterLabel                      string
+	FooterProjectLinkLabel           string
+	FooterOpenSourceProjectLabel     string
+	FooterDevelopedByLabel           string
+	FooterLicenceAndCopyright        string
+	AndLocalized                     string
+	TheContributorsLabel             string
+	AndMoreTitlesPrefixLabel         string
+	AndMoreTitlesSuffixLabelSeries   string
+	AndMoreTitlesSuffixLabelMovies   string
 }
 
 type titlePlaceholders struct {
@@ -441,7 +446,11 @@ func buildNewMediaTemplateData(
 
 	jellyfinParsedURL, _ := url.Parse(app.Config.Jellyfin.URL)
 
-	for _, newMovieItem := range newJellyfinMoviesSorted {
+	for i, newMovieItem := range newJellyfinMoviesSorted {
+		if app.Config.EmailTemplate.MaxDisplayedItems != 0 && i >= app.Config.EmailTemplate.MaxDisplayedItems {
+			app.Logger.Debug("MaxDisplayedItems setting reached. Next new items will be ignored.", zap.Int("MaxDisplayedItems", app.Config.EmailTemplate.MaxDisplayedItems), zap.Int("newJellyfinMoviesSorted count", len(newJellyfinMoviesSorted)), zap.String("type", "movies"))
+			break
+		}
 		newMoviesData = append(newMoviesData, newMovieItemTemplateData{
 			PosterURL:            newMovieItem.PosterURL,
 			Name:                 newMovieItem.Name,
@@ -453,7 +462,11 @@ func buildNewMediaTemplateData(
 		})
 	}
 
-	for _, newSeriesItem := range newJellyfinSeriesSorted {
+	for i, newSeriesItem := range newJellyfinSeriesSorted {
+		if app.Config.EmailTemplate.MaxDisplayedItems != 0 && i >= app.Config.EmailTemplate.MaxDisplayedItems {
+			app.Logger.Debug("MaxDisplayedItems setting reached. Next new items will be ignored.", zap.Int("MaxDisplayedItems", app.Config.EmailTemplate.MaxDisplayedItems), zap.Int("newJellyfinMoviesSorted count", len(newJellyfinSeriesSorted)), zap.String("type", "series"))
+			break
+		}
 		newSeriesData = append(newSeriesData, newSeriesItemTemplateData{
 			PosterURL:            newSeriesItem.PosterURL,
 			SeriesName:           newSeriesItem.SeriesName,
@@ -485,30 +498,35 @@ func buildNewMediaTemplateData(
 	}
 
 	data := newMediaTemplateData{
-		HTMLLang:                     app.Config.EmailTemplate.Language,
-		HTMLDir:                      htmlDir,
-		Title:                        title,
-		Subtitle:                     subtitle,
-		JellyfinURL:                  app.Config.EmailTemplate.JellyfinURL,
-		DiscoverNowLabel:             app.Localizer.Localize("discover_now"),
-		DisplayNewMovies:             len(newMoviesData) > 0,
-		NewFilmLabel:                 app.Localizer.Localize("new_film"),
-		NewMovies:                    newMoviesData,
-		DisplayNewSeries:             len(newSeriesData) > 0,
-		NewSeriesLabel:               app.Localizer.Localize("new_tvs"),
-		NewSeries:                    newSeriesData,
-		CurrentlyAvailableLabel:      app.Localizer.Localize("currently_available"),
-		MoviesCount:                  strconv.Itoa(int(movieCount)),
-		SeriesCount:                  strconv.Itoa(int(episodesCount)),
-		MoviesLabel:                  app.Localizer.LocalizeWithPlural("movies", int(movieCount)),
-		SeriesLabel:                  app.Localizer.LocalizeWithPlural("episode", int(episodesCount)),
-		FooterLabel:                  buildFooterLabel(app),
-		FooterProjectLinkLabel:       "Jellyfin Newsletter",
-		FooterOpenSourceProjectLabel: app.Localizer.Localize("footer_project_open_source"),
-		FooterDevelopedByLabel:       app.Localizer.Localize("footer_developed_with_hearth"),
-		FooterLicenceAndCopyright:    app.Localizer.Localize("license_and_copyright"),
-		AndLocalized:                 app.Localizer.Localize("and"),
-		TheContributorsLabel:         app.Localizer.Localize("the_contributors"),
+		HTMLLang:                         app.Config.EmailTemplate.Language,
+		HTMLDir:                          htmlDir,
+		Title:                            title,
+		Subtitle:                         subtitle,
+		JellyfinURL:                      app.Config.EmailTemplate.JellyfinURL,
+		DiscoverNowLabel:                 app.Localizer.Localize("discover_now"),
+		DisplayNewMovies:                 len(newMoviesData) > 0,
+		NewFilmLabel:                     app.Localizer.Localize("new_film"),
+		NewMovies:                        newMoviesData,
+		RemainingMoviesNotDisplayedCount: len(newJellyfinMoviesSorted) - len(newMoviesData),
+		DisplayNewSeries:                 len(newSeriesData) > 0,
+		NewSeriesLabel:                   app.Localizer.Localize("new_tvs"),
+		NewSeries:                        newSeriesData,
+		RemainingSeriesNotDisplayedCount: len(newJellyfinSeriesSorted) - len(newSeriesData),
+		CurrentlyAvailableLabel:          app.Localizer.Localize("currently_available"),
+		MoviesCount:                      strconv.Itoa(int(movieCount)),
+		SeriesCount:                      strconv.Itoa(int(episodesCount)),
+		MoviesLabel:                      app.Localizer.LocalizeWithPlural("movies", int(movieCount)),
+		SeriesLabel:                      app.Localizer.LocalizeWithPlural("episode", int(episodesCount)),
+		FooterLabel:                      buildFooterLabel(app),
+		FooterProjectLinkLabel:           "Jellyfin Newsletter",
+		FooterOpenSourceProjectLabel:     app.Localizer.Localize("footer_project_open_source"),
+		FooterDevelopedByLabel:           app.Localizer.Localize("footer_developed_with_hearth"),
+		FooterLicenceAndCopyright:        app.Localizer.Localize("license_and_copyright"),
+		AndLocalized:                     app.Localizer.Localize("and"),
+		TheContributorsLabel:             app.Localizer.Localize("the_contributors"),
+		AndMoreTitlesPrefixLabel:         app.Localizer.Localize("and_more_titles_prefix_label"),
+		AndMoreTitlesSuffixLabelSeries:   app.Localizer.LocalizeWithPlural("and_more_titles_suffix_label", len(newJellyfinSeriesSorted)-len(newSeriesData)),
+		AndMoreTitlesSuffixLabelMovies:   app.Localizer.LocalizeWithPlural("and_more_titles_suffix_label", len(newJellyfinMoviesSorted)-len(newMoviesData)),
 	}
 	return &data, nil
 }
