@@ -233,30 +233,35 @@ func getExpectedNewMediaTemplateData() newMediaTemplateData {
 	}
 
 	return newMediaTemplateData{
-		HTMLLang:                     "en",
-		HTMLDir:                      "ltr",
-		Title:                        title,
-		Subtitle:                     subtitle,
-		JellyfinURL:                  "https://jellyfin.example.com",
-		DiscoverNowLabel:             "Discover now",
-		DisplayNewMovies:             true,
-		NewFilmLabel:                 "New movies:",
-		NewMovies:                    newMovies,
-		DisplayNewSeries:             true,
-		NewSeriesLabel:               "New shows:",
-		NewSeries:                    newSeries,
-		CurrentlyAvailableLabel:      "Currently available in Jellyfin:",
-		MoviesCount:                  strconv.Itoa(54),
-		SeriesCount:                  strconv.Itoa(1253),
-		MoviesLabel:                  "Movies",
-		SeriesLabel:                  "Episodes",
-		FooterLabel:                  "You are recieving this email because you are using seaweedbrain's Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying stop@example.com.",
-		FooterProjectLinkLabel:       "Jellyfin Newsletter",
-		FooterOpenSourceProjectLabel: "is an open source project.",
-		FooterDevelopedByLabel:       "Developed with ❤️ by",
-		AndLocalized:                 "and",
-		TheContributorsLabel:         "the contributors",
-		FooterLicenceAndCopyright:    "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3.",
+		HTMLLang:                         "en",
+		HTMLDir:                          "ltr",
+		Title:                            title,
+		Subtitle:                         subtitle,
+		JellyfinURL:                      "https://jellyfin.example.com",
+		DiscoverNowLabel:                 "Discover now",
+		DisplayNewMovies:                 true,
+		NewFilmLabel:                     "New movies:",
+		NewMovies:                        newMovies,
+		DisplayNewSeries:                 true,
+		NewSeriesLabel:                   "New shows:",
+		NewSeries:                        newSeries,
+		CurrentlyAvailableLabel:          "Currently available in Jellyfin:",
+		MoviesCount:                      strconv.Itoa(54),
+		SeriesCount:                      strconv.Itoa(1253),
+		RemainingMoviesNotDisplayedCount: 0,
+		RemainingSeriesNotDisplayedCount: 0,
+		MoviesLabel:                      "Movies",
+		SeriesLabel:                      "Episodes",
+		FooterLabel:                      "You are recieving this email because you are using seaweedbrain's Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying stop@example.com.",
+		FooterProjectLinkLabel:           "Jellyfin Newsletter",
+		FooterOpenSourceProjectLabel:     "is an open source project.",
+		FooterDevelopedByLabel:           "Developed with ❤️ by",
+		AndLocalized:                     "and",
+		TheContributorsLabel:             "the contributors",
+		FooterLicenceAndCopyright:        "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3.",
+		AndMoreTitlesPrefixLabel:         "... and",
+		AndMoreTitlesSuffixLabelSeries:   "more titles!",
+		AndMoreTitlesSuffixLabelMovies:   "more titles!",
 	}
 }
 
@@ -590,6 +595,41 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			movieCount:                54,
 			episodeCount:              1253,
 		},
+		{
+			name: "Max displayed item limit reached",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.MaxDisplayedItems = 1
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expected := getExpectedNewMediaTemplateData()
+				newMovies := []newMovieItemTemplateData{}
+				newSeries := []newSeriesItemTemplateData{}
+
+				for i, movie := range expected.NewMovies {
+					if i < 1 {
+						newMovies = append(newMovies, movie)
+					}
+				}
+
+				for i, series := range expected.NewSeries {
+					if i < 1 {
+						newSeries = append(newSeries, series)
+					}
+				}
+				expected.NewMovies = newMovies
+				expected.NewSeries = newSeries
+				expected.RemainingMoviesNotDisplayedCount = 1
+				expected.RemainingSeriesNotDisplayedCount = 3
+				expected.AndMoreTitlesSuffixLabelMovies = "more title!"
+				return expected
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+		},
 	}
 
 	for _, test := range tests {
@@ -663,6 +703,7 @@ func TestBuildNewMediaEmailHTML(t *testing.T) {
 	assert.Contains(t, unescapedHTML, expectedTemplateData.FooterOpenSourceProjectLabel)
 	assert.Contains(t, unescapedHTML, expectedTemplateData.FooterDevelopedByLabel)
 	assert.Contains(t, unescapedHTML, expectedTemplateData.FooterLicenceAndCopyright)
+	assert.NotContains(t, unescapedHTML, expectedTemplateData.AndMoreTitlesSuffixLabelMovies)
 	for _, movies := range expectedTemplateData.NewMovies {
 		assert.Contains(t, unescapedHTML, movies.PosterURL)
 		assert.Contains(t, unescapedHTML, movies.Name)
@@ -758,4 +799,24 @@ func TestBuildNewMediaEmailHTMLWithThemeFallBack(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Contains(t, unescapedHTML, expectedTemplateData.Subtitle)
+}
+
+func TestBuildNewMediaEmailHTMLWithMaxDisplayedItemsLimitReached(t *testing.T) {
+	newMovies := getJellyfinNewMovies()
+	newSeries := getJellyfinNewSeriesItems()
+	movieCount := int32(54)
+	seriesCount := int32(1253)
+	app, _ := getAppContext()
+	app.Config.EmailTemplate.MaxDisplayedItems = 1
+	expectedTemplateData := getExpectedNewMediaTemplateData()
+
+	escapedHTML, err := BuildNewMediaEmailHTML(&newMovies, &newSeries, movieCount, seriesCount, app)
+	unescapedHTML := html.UnescapeString(escapedHTML)
+
+	require.NoError(t, err)
+
+	assert.NotContains(t, unescapedHTML, "{{")
+	assert.NotContains(t, unescapedHTML, "}}")
+	assert.Contains(t, unescapedHTML, expectedTemplateData.AndMoreTitlesSuffixLabelMovies) // NotContains is checked in the main check
+
 }
