@@ -110,3 +110,10 @@ other = "Novembre"
 
 [december]
 other = "Décembre"
+
+[and_more_titles_prefix_label]
+other = ".... et"
+
+[and_more_titles_suffix_label]
+one = "titre en plus !"
+other = "titres en plus !"
