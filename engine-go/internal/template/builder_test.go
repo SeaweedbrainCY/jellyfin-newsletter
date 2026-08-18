@@ -293,6 +293,7 @@ func getAppContext() (*app.ApplicationContext, *observer.ObservedLogs) {
 	}, recordedLogs
 }
 
+//nolint:gocognit // Long by design
 func TestBuildNewMediaTemplateData(t *testing.T) {
 	tests := []struct {
 		name                                string
@@ -817,6 +818,10 @@ func TestBuildNewMediaEmailHTMLWithMaxDisplayedItemsLimitReached(t *testing.T) {
 
 	assert.NotContains(t, unescapedHTML, "{{")
 	assert.NotContains(t, unescapedHTML, "}}")
-	assert.Contains(t, unescapedHTML, expectedTemplateData.AndMoreTitlesSuffixLabelMovies) // NotContains is checked in the main check
+	assert.Contains(
+		t,
+		unescapedHTML,
+		expectedTemplateData.AndMoreTitlesSuffixLabelMovies,
+	) // NotContains is checked in the main check
 
 }

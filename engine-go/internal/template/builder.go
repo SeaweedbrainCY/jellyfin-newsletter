@@ -491,7 +491,6 @@ func buildNewMediaTemplateData(
 	movieCount int32,
 	episodesCount int32,
 	app *app.ApplicationContext) (*newMediaTemplateData, error) {
-
 	htmlDir := "ltr"
 	if slices.Contains(
 		[]string{"ar", "he", "fa", "ur", "ku", "ps", "yi", "dv", "qrc"},
