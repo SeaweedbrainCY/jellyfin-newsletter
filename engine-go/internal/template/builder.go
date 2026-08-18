@@ -420,35 +420,22 @@ func getAdditionDateForSeries(seriesItem jellyfin.NewlyAddedSeriesItem) time.Tim
 	return additionDate
 }
 
-func buildNewMediaTemplateData(
-	newJellyfinMovies *[]jellyfin.MovieItem,
-	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem,
-	movieCount int32,
-	episodesCount int32,
-	app *app.ApplicationContext) (*newMediaTemplateData, error) {
-	newMoviesData := []newMovieItemTemplateData{}
-	newSeriesData := []newSeriesItemTemplateData{}
-
-	htmlDir := "ltr"
-	if slices.Contains(
-		[]string{"ar", "he", "fa", "ur", "ku", "ps", "yi", "dv", "qrc"},
-		app.Config.EmailTemplate.Language,
-	) {
-		htmlDir = "rtl"
-	}
-
-	newJellyfinMoviesSorted := sortJellyfinNewMovies(newJellyfinMovies, app)
-
-	newJellyfinSeriesSorted := sortJellyfinNewSeriesItems(newJellyfinSeries, app)
-
+func getNewMovieTemplateDataFromSortedNewItems(
+	newJellyfinMoviesSorted []jellyfin.MovieItem,
+	app *app.ApplicationContext,
+) []newMovieItemTemplateData {
 	displayMovieOverviews := shouldOverviewsBeDisplayed(len(newJellyfinMoviesSorted), app)
-	displaySeriesOverviews := shouldOverviewsBeDisplayed(len(newJellyfinSeriesSorted), app)
-
 	jellyfinParsedURL, _ := url.Parse(app.Config.Jellyfin.URL)
+	newMoviesData := []newMovieItemTemplateData{}
 
 	for i, newMovieItem := range newJellyfinMoviesSorted {
 		if app.Config.EmailTemplate.MaxDisplayedItems != 0 && i >= app.Config.EmailTemplate.MaxDisplayedItems {
-			app.Logger.Debug("MaxDisplayedItems setting reached. Next new items will be ignored.", zap.Int("MaxDisplayedItems", app.Config.EmailTemplate.MaxDisplayedItems), zap.Int("newJellyfinMoviesSorted count", len(newJellyfinMoviesSorted)), zap.String("type", "movies"))
+			app.Logger.Debug(
+				"MaxDisplayedItems setting reached. Next new items will be ignored.",
+				zap.Int("MaxDisplayedItems", app.Config.EmailTemplate.MaxDisplayedItems),
+				zap.Int("newJellyfinMoviesSorted count", len(newJellyfinMoviesSorted)),
+				zap.String("type", "movies"),
+			)
 			break
 		}
 		newMoviesData = append(newMoviesData, newMovieItemTemplateData{
@@ -462,9 +449,25 @@ func buildNewMediaTemplateData(
 		})
 	}
 
+	return newMoviesData
+}
+
+func getNewSerieTemplatesDataFromSortedItems(
+	newJellyfinSeriesSorted []jellyfin.NewlyAddedSeriesItem,
+	app *app.ApplicationContext,
+) []newSeriesItemTemplateData {
+	displaySeriesOverviews := shouldOverviewsBeDisplayed(len(newJellyfinSeriesSorted), app)
+	jellyfinParsedURL, _ := url.Parse(app.Config.Jellyfin.URL)
+	newSeriesData := []newSeriesItemTemplateData{}
+
 	for i, newSeriesItem := range newJellyfinSeriesSorted {
 		if app.Config.EmailTemplate.MaxDisplayedItems != 0 && i >= app.Config.EmailTemplate.MaxDisplayedItems {
-			app.Logger.Debug("MaxDisplayedItems setting reached. Next new items will be ignored.", zap.Int("MaxDisplayedItems", app.Config.EmailTemplate.MaxDisplayedItems), zap.Int("newJellyfinMoviesSorted count", len(newJellyfinSeriesSorted)), zap.String("type", "series"))
+			app.Logger.Debug(
+				"MaxDisplayedItems setting reached. Next new items will be ignored.",
+				zap.Int("MaxDisplayedItems", app.Config.EmailTemplate.MaxDisplayedItems),
+				zap.Int("newJellyfinMoviesSorted count", len(newJellyfinSeriesSorted)),
+				zap.String("type", "series"),
+			)
 			break
 		}
 		newSeriesData = append(newSeriesData, newSeriesItemTemplateData{
@@ -478,6 +481,30 @@ func buildNewMediaTemplateData(
 			MediaURL:             getMediaURL(jellyfinParsedURL, newSeriesItem.SeriesID),
 		})
 	}
+
+	return newSeriesData
+}
+
+func buildNewMediaTemplateData(
+	newJellyfinMovies *[]jellyfin.MovieItem,
+	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem,
+	movieCount int32,
+	episodesCount int32,
+	app *app.ApplicationContext) (*newMediaTemplateData, error) {
+
+	htmlDir := "ltr"
+	if slices.Contains(
+		[]string{"ar", "he", "fa", "ur", "ku", "ps", "yi", "dv", "qrc"},
+		app.Config.EmailTemplate.Language,
+	) {
+		htmlDir = "rtl"
+	}
+
+	newJellyfinMoviesSorted := sortJellyfinNewMovies(newJellyfinMovies, app)
+	newMoviesData := getNewMovieTemplateDataFromSortedNewItems(newJellyfinMoviesSorted, app)
+
+	newJellyfinSeriesSorted := sortJellyfinNewSeriesItems(newJellyfinSeries, app)
+	newSeriesData := getNewSerieTemplatesDataFromSortedItems(newJellyfinSeriesSorted, app)
 
 	title, err := BuildEmailTitleWithPlaceholders(
 		app.Config.EmailTemplate.Title,
@@ -525,8 +552,14 @@ func buildNewMediaTemplateData(
 		AndLocalized:                     app.Localizer.Localize("and"),
 		TheContributorsLabel:             app.Localizer.Localize("the_contributors"),
 		AndMoreTitlesPrefixLabel:         app.Localizer.Localize("and_more_titles_prefix_label"),
-		AndMoreTitlesSuffixLabelSeries:   app.Localizer.LocalizeWithPlural("and_more_titles_suffix_label", len(newJellyfinSeriesSorted)-len(newSeriesData)),
-		AndMoreTitlesSuffixLabelMovies:   app.Localizer.LocalizeWithPlural("and_more_titles_suffix_label", len(newJellyfinMoviesSorted)-len(newMoviesData)),
+		AndMoreTitlesSuffixLabelSeries: app.Localizer.LocalizeWithPlural(
+			"and_more_titles_suffix_label",
+			len(newJellyfinSeriesSorted)-len(newSeriesData),
+		),
+		AndMoreTitlesSuffixLabelMovies: app.Localizer.LocalizeWithPlural(
+			"and_more_titles_suffix_label",
+			len(newJellyfinMoviesSorted)-len(newMoviesData),
+		),
 	}
 	return &data, nil
 }
