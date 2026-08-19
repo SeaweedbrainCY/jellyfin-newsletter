@@ -1,0 +1,6 @@
+- [Presentation](README.md)
+- [Configuration parameters](configuration.md)
+- [Use local theme files](local-themes.md)
+- [Use placeholders](placeholders.md)
+- [Troubleshoot](troubleshooting.md)
+- [GitHub](https://github.com/SeaweedbrainCY/jellyfin-newsletter)

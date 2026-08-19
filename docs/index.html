@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jellyfin-Newsletter</title>
+  <meta name="description" content="Description">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@5/dist/themes/core.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@5/dist/themes/addons/core-dark.min.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+  window.$docsify = {
+    name: 'Jellyfin Newsletter',
+    logo: 'https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/assets/jellyfin_newsletter.png',
+    repo: 'SeaweedbrainCY/jellyfin-newsletter',
+    loadSidebar: true,
+    subMaxLevel: 2,
+    auto2top: true,
+    //maxLevel: 4,
+    alias: {
+      '/.*/_sidebar.md': '/_sidebar.md'
+    },
+    search: {
+      maxAge: 86400000,
+      paths: 'auto',
+      placeholder: 'Search documentation',
+      noData: 'No results found.',
+      depth: 4
+    },
+    copyCode: {
+      buttonText: 'Copy',
+      errorText: 'Error',
+      successText: 'Copied'
+    },
+    pagination: {
+      crossChapter: true,
+      crossChapterText: true
+    }
+  }
+  </script>
+  <!-- Docsify resource -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@5"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-docker.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-git.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+</body>
+</html>
