@@ -1,0 +1,111 @@
+[discover_now]
+other = "Discover now"
+
+[new_film]
+other = "New movies:"
+
+[new_tvs]
+other = "New shows:"
+
+[currently_available]
+other = "Currently available in Jellyfin:"
+
+[movies]
+one = "Movie"
+other = "Movies"
+
+[footer_label]
+other = "You are recieving this email because you are using {{.JellyfinOwnerName}}'s Jellyfin server. If you want to stop receiving these emails, you can unsubscribe by notifying {{.UnsubscribeEmail}}."
+
+[added_on]
+other = "Added on"
+
+[episode]
+one = "Episode"
+other = "Episodes"
+
+[season]
+one = "Season"
+other = "Seasons"
+
+[new_episodes]
+other = "new episodes"
+
+[footer_project_open_source]
+other = "is an open source project."
+
+[footer_developed_with_hearth]
+other = "Developed with ❤️ by"
+
+[and]
+other = "and"
+
+[the_contributors]
+other = "the contributors"
+
+[license_and_copyright]
+other = "Copyright © 2025 Nathan Stchepinsky, licensed under AGPLv3."
+
+[and_more_titles_prefix_label]
+other = "... and"
+
+[and_more_titles_suffix_label]
+one = "more title!"
+other = "more titles!"
+
+[monday]
+other = "Monday"
+
+[tuesday]
+other = "Tuesday"
+
+[wednesday]
+other = "Wednesday"
+
+[thursday]
+other = "Thursday"
+
+[friday]
+other = "Friday"
+
+[saturday]
+other = "Saturday"
+
+[sunday]
+other = "Sunday"
+
+[january]
+other = "January"
+
+[february]
+other = "February"
+
+[march]
+other = "March"
+
+[april]
+other = "April"
+
+[may]
+other = "May"
+
+[june]
+other = "June"
+
+[july]
+other = "July"
+
+[august]
+other = "August"
+
+[september]
+other = "September"
+
+[october]
+other = "October"
+
+[november]
+other = "November"
+
+[december]
+other = "December"
