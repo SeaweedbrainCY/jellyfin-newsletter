@@ -1,0 +1,3 @@
+files:
+  - source: engine-go/internal/i18n/active.en.toml
+    translation: engine-go/internal/i18n/active.%two_letters_code%.toml
