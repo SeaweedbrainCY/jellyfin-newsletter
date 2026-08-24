@@ -1,4 +1,3 @@
-
 [discover_now]
 other = "Tutustu nyt"
 
@@ -21,9 +20,13 @@ other = "Saat tämän sähköpostin, koska käytät {{.JellyfinOwnerName}}:n Jel
 [added_on]
 other = "Lisätty"
 
-[episodes]
+[episode]
 one = "Jakso"
 other = "Jaksot"
+
+[season]
+one = "Kausi"
+other = "Kaudet"
 
 [new_episodes]
 other = "uudet jaksot"
@@ -31,15 +34,24 @@ other = "uudet jaksot"
 [footer_project_open_source]
 other = "on avoimen lähdekoodin projekti."
 
-[footer_developed_by]
-other = "Kehitetty ❤️:lla <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> ja <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">yhteistyökumppanit</a>."
+[footer_developed_with_hearth]
+other = "Kehittänyt ❤️"
+
+[and]
+other = "ja"
+
+[the_contributors]
+other = "Avustajat"
 
 [license_and_copyright]
 other = "Copyright © 2025 Nathan Stchepinsky, lisensoitu AGPLv3-lisenssillä."
 
-[season]
-one = "Kausi"
-other = "Kaudet"
+[and_more_titles_prefix_label]
+other = "... and"
+
+[and_more_titles_suffix_label]
+one = "more title!"
+other = "more titles!"
 
 [monday]
 other = "Maanantai"
@@ -97,16 +109,3 @@ other = "Marraskuu"
 
 [december]
 other = "Joulukuu"
-
-[episode]
-one = "Jakso"
-other = "Jaksot"
-
-[footer_developed_with_hearth]
-other = "Kehittänyt ❤️"
-
-[and]
-other = "ja"
-
-[the_contributors]
-other = "Avustajat"
