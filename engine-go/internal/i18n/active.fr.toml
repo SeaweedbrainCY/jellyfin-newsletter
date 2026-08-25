@@ -47,11 +47,11 @@ other = "les contributeurs"
 other = "Copyright © 2025 Nathan Stchepinsky, sous licence AGPLv3."
 
 [and_more_titles_prefix_label]
-other = "... and"
+other = "... et"
 
 [and_more_titles_suffix_label]
-one = "more title!"
-other = "more titles!"
+one = "titre en plus !"
+other = "titres en plus !"
 
 [monday]
 other = "Lundi"
