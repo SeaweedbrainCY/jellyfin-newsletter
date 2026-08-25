@@ -1,4 +1,3 @@
-
 [discover_now]
 other = "Descubrir ahora"
 
@@ -15,15 +14,19 @@ other = "Disponible actualmente en Jellyfin:"
 one = "Película"
 other = "Películas"
 
-[episodes]
-other = "Episodios"
-one = "Episodio"
-
 [footer_label]
 other = "Recibes este correo electrónico porque utilizas el servidor Jellyfin de {{.JellyfinOwnerName}}. Si no deseas seguir recibiendo estos correos, puedes darte de baja notificándolo a {{.UnsubscribeEmail}}."
 
 [added_on]
 other = "Añadido el"
+
+[episode]
+one = "Episodio"
+other = "Episodios"
+
+[season]
+one = "Temporada"
+other = "Temporadas"
 
 [new_episodes]
 other = "nuevos episodios"
@@ -31,15 +34,24 @@ other = "nuevos episodios"
 [footer_project_open_source]
 other = "es un proyecto de código abierto."
 
-[footer_developed_by]
-other = "Desarrollado con ❤️ por <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> y <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">los colaboradores</a>."
+[footer_developed_with_hearth]
+other = "Desarrollado con ❤️ por"
+
+[and]
+other = "y"
+
+[the_contributors]
+other = "los contribuidores"
 
 [license_and_copyright]
 other = "Copyright © 2025 Nathan Stchepinsky, bajo licencia AGPLv3."
 
-[season]
-one = "Temporada"
-other = "Temporadas"
+[and_more_titles_prefix_label]
+other = "... and"
+
+[and_more_titles_suffix_label]
+one = "more title!"
+other = "more titles!"
 
 [monday]
 other = "Lunes"
@@ -97,16 +109,3 @@ other = "Noviembre"
 
 [december]
 other = "Diciembre"
-
-[episode]
-one = "Episodio"
-other = "Episodios"
-
-[footer_developed_with_hearth]
-other = "Desarrollado con ❤️ por"
-
-[and]
-other = "y"
-
-[the_contributors]
-other = "los contribuidores"

@@ -1,4 +1,3 @@
-
 [discover_now]
 other = "גלה עכשיו"
 
@@ -12,6 +11,7 @@ other = "סדרות חדשות:\\u200f"
 other = "זמין כעת בג'ליפין:\\u200f"
 
 [movies]
+one = "Movie"
 other = "סרטים"
 
 [footer_label]
@@ -20,9 +20,13 @@ other = "אתם מקבלים מייל זה משום שאתם משתמשים בש
 [added_on]
 other = "נוסף בתאריך"
 
-[episodes]
-one = "פרק"
-other = "פרקים"
+[episode]
+one = "Episode"
+other = "Episodes"
+
+[season]
+one = "Season"
+other = "Seasons"
 
 [new_episodes]
 other = "פרקים חדשים"
@@ -30,8 +34,78 @@ other = "פרקים חדשים"
 [footer_project_open_source]
 other = "הוא פרויקט קוד פתוח."
 
-[footer_developed_by]
-other = "פותח באהבה ❤️ על ידי <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> ו<a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">תורמים</a>."
+[footer_developed_with_hearth]
+other = "Developed with ❤️ by"
+
+[and]
+other = "and"
+
+[the_contributors]
+other = "the contributors"
 
 [license_and_copyright]
 other = "זכויות יוצרים © 2025 Nathan Stchepinsky, ברישיון AGPLv3."
+
+[and_more_titles_prefix_label]
+other = "... and"
+
+[and_more_titles_suffix_label]
+one = "more title!"
+other = "more titles!"
+
+[monday]
+other = "Monday"
+
+[tuesday]
+other = "Tuesday"
+
+[wednesday]
+other = "Wednesday"
+
+[thursday]
+other = "Thursday"
+
+[friday]
+other = "Friday"
+
+[saturday]
+other = "Saturday"
+
+[sunday]
+other = "Sunday"
+
+[january]
+other = "January"
+
+[february]
+other = "February"
+
+[march]
+other = "March"
+
+[april]
+other = "April"
+
+[may]
+other = "May"
+
+[june]
+other = "June"
+
+[july]
+other = "July"
+
+[august]
+other = "August"
+
+[september]
+other = "September"
+
+[october]
+other = "October"
+
+[november]
+other = "November"
+
+[december]
+other = "December"

@@ -1,6 +1,8 @@
-
 [discover_now]
 other = "Descobreix ara"
+
+[new_film]
+other = "Pel·lícules noves:"
 
 [new_tvs]
 other = "Sèries noves:"
@@ -8,28 +10,9 @@ other = "Sèries noves:"
 [currently_available]
 other = "Disponible actualment a Jellyfin:"
 
-[new_film]
-other = "Pel·lícules noves:"
-
 [movies]
-other = "Pel·lícules"
 one = "Pel·lícula"
-
-[episodes]
-other = "Episodis"
-one = "Episodi"
-
-[new_episodes]
-other = "episodis nous"
-
-[footer_project_open_source]
-other = "és un projecte de codi obert."
-
-[footer_developed_by]
-other = "Desenvolupat amb ❤️ per <a href=\"https://github.com/SeaweedbrainCY/\" class=\"footer-link\">SeaweedbrainCY</a> i <a href=\"https://github.com/seaweedbraincy/jellyfin-newsletter/graphs/contributors\" class=\"footer-link\">els col·laboradors</a>."
-
-[license_and_copyright]
-other = "Copyright © 2025 Nathan Stchepinsky, amb llicència AGPLv3."
+other = "Pel·lícules"
 
 [footer_label]
 other = "Rebeu aquest correu electrònic perquè utilitzeu el servidor Jellyfin de {{.JellyfinOwnerName}}. Si no voleu rebre més aquests correus, podeu donar-vos de baixa notificant-ho a {{.UnsubscribeEmail}}."
@@ -37,9 +20,38 @@ other = "Rebeu aquest correu electrònic perquè utilitzeu el servidor Jellyfin 
 [added_on]
 other = "Afegit el"
 
+[episode]
+one = "Episodi"
+other = "Episodis"
+
 [season]
 one = "Temporada"
 other = "Temporades"
+
+[new_episodes]
+other = "episodis nous"
+
+[footer_project_open_source]
+other = "és un projecte de codi obert."
+
+[footer_developed_with_hearth]
+other = "Desenvolupat amb ❤️per"
+
+[and]
+other = "i"
+
+[the_contributors]
+other = "els contribuidors"
+
+[license_and_copyright]
+other = "Copyright © 2025 Nathan Stchepinsky, amb llicència AGPLv3."
+
+[and_more_titles_prefix_label]
+other = "... and"
+
+[and_more_titles_suffix_label]
+one = "more title!"
+other = "more titles!"
 
 [monday]
 other = "Dilluns"
@@ -97,16 +109,3 @@ other = "Novembre"
 
 [december]
 other = "Desembre"
-
-[episode]
-one = "Episodi"
-other = "Episodis"
-
-[footer_developed_with_hearth]
-other = "Desenvolupat amb ❤️per"
-
-[and]
-other = "i"
-
-[the_contributors]
-other = "els contribuidors"
