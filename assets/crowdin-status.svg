@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="450" viewBox="0 0 420 450">
+  <defs>
+    <clipPath id="rounded">
+      <rect x="0" y="0" width="420" height="450" rx="14"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#rounded)">
+    <rect x="0" y="0" width="420" height="450" fill="#0d1117"/>
+    <rect x="0.5" y="0.5" width="419" height="449" rx="14" fill="none" stroke="#30363d" stroke-width="1"/>
+    <text x="24" y="30" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="16" font-weight="700" fill="#58a6ff">Translation Status</text>
+    <text x="396" y="30" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="11" fill="#8b949e">via Crowdin</text>
+    <line x1="24" y1="42" x2="396" y2="42" stroke="#21262d" stroke-width="1"/>
+  <text x="24" y="79" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">English</text>
+  <rect x="150" y="69" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="69" width="190" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="190" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="79" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">100%</text>
+  <text x="24" y="113" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Catalan</text>
+  <rect x="150" y="103" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="103" width="178" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="178" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="113" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">94%</text>
+  <text x="24" y="147" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Finnish</text>
+  <rect x="150" y="137" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="137" width="178" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="178" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="147" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">94%</text>
+  <text x="24" y="181" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">French</text>
+  <rect x="150" y="171" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="171" width="178" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="178" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="181" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">94%</text>
+  <text x="24" y="215" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Italian</text>
+  <rect x="150" y="205" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="205" width="178" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="178" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="215" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">94%</text>
+  <text x="24" y="249" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Portuguese</text>
+  <rect x="150" y="239" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="239" width="178" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="178" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="249" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">94%</text>
+  <text x="24" y="283" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Spanish</text>
+  <rect x="150" y="273" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="273" width="178" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="178" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="283" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">94%</text>
+  <text x="24" y="317" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">German</text>
+  <rect x="150" y="307" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="307" width="171" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="171" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="317" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">90%</text>
+  <text x="24" y="351" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Greek</text>
+  <rect x="150" y="341" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="341" width="163" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="163" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="351" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">86%</text>
+  <text x="24" y="385" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Hebrew</text>
+  <rect x="150" y="375" width="190" height="10" rx="5" fill="#21262d"/>
+  <rect x="150" y="375" width="114" height="10" rx="5" fill="#d29922">
+    <animate attributeName="width" from="0" to="114" dur="0.8s" fill="freeze" />
+  </rect>
+  <text x="396" y="385" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#d29922">60%</text>
+    <text x="24" y="440" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="10" fill="#6e7681">SeaweedbrainCY/crowdin-translation-progress · updated automatically</text>
+  </g>
+</svg>
