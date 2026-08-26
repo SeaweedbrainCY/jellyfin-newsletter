@@ -16,19 +16,19 @@
     <animate attributeName="width" from="0" to="190" dur="0.8s" fill="freeze" />
   </rect>
   <text x="396" y="79" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">100%</text>
-  <text x="24" y="113" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Catalan</text>
+  <text x="24" y="113" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">French</text>
   <rect x="150" y="103" width="190" height="10" rx="5" fill="#21262d"/>
-  <rect x="150" y="103" width="178" height="10" rx="5" fill="#3fb950">
-    <animate attributeName="width" from="0" to="178" dur="0.8s" fill="freeze" />
+  <rect x="150" y="103" width="190" height="10" rx="5" fill="#3fb950">
+    <animate attributeName="width" from="0" to="190" dur="0.8s" fill="freeze" />
   </rect>
-  <text x="396" y="113" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">94%</text>
-  <text x="24" y="147" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Finnish</text>
+  <text x="396" y="113" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">100%</text>
+  <text x="24" y="147" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Catalan</text>
   <rect x="150" y="137" width="190" height="10" rx="5" fill="#21262d"/>
   <rect x="150" y="137" width="178" height="10" rx="5" fill="#3fb950">
     <animate attributeName="width" from="0" to="178" dur="0.8s" fill="freeze" />
   </rect>
   <text x="396" y="147" text-anchor="end" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" font-weight="600" fill="#3fb950">94%</text>
-  <text x="24" y="181" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">French</text>
+  <text x="24" y="181" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#c9d1d9">Finnish</text>
   <rect x="150" y="171" width="190" height="10" rx="5" fill="#21262d"/>
   <rect x="150" y="171" width="178" height="10" rx="5" fill="#3fb950">
     <animate attributeName="width" from="0" to="178" dur="0.8s" fill="freeze" />
