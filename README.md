@@ -14,6 +14,10 @@ A newsletter for Jellyfin to notify your users of your latest additions. Jellyfi
 
 It is fully customizable and can be run on a schedule using a cron job or a task scheduler.
 
+> [!warning]
+> **Upgrading to Jellyfin 12 ?**
+>
+> [Read this first](https://github.com/SeaweedbrainCY/jellyfin-newsletter/discussions/162)
 
 ## Table of Contents
 1. [What it looks like](#what-it-looks-like)
