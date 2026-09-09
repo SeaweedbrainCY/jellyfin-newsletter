@@ -2,16 +2,16 @@
 other = "גלה עכשיו"
 
 [new_film]
-other = "סרטים חדשים:\\u200f"
+other = "סרטים חדשים:"
 
 [new_tvs]
-other = "סדרות חדשות:\\u200f"
+other = "סדרות חדשות:"
 
 [currently_available]
-other = "זמין כעת בג'ליפין:\\u200f"
+other = "זמין כעת בג'ליפין:"
 
 [movies]
-one = "Movie"
+one = "סרט"
 other = "סרטים"
 
 [footer_label]
@@ -21,12 +21,12 @@ other = "אתם מקבלים מייל זה משום שאתם משתמשים בש
 other = "נוסף בתאריך"
 
 [episode]
-one = "Episode"
-other = "Episodes"
+one = "פרק"
+other = "פרקים"
 
 [season]
-one = "Season"
-other = "Seasons"
+one = "עונה"
+other = "עונות"
 
 [new_episodes]
 other = "פרקים חדשים"
@@ -35,77 +35,77 @@ other = "פרקים חדשים"
 other = "הוא פרויקט קוד פתוח."
 
 [footer_developed_with_hearth]
-other = "Developed with ❤️ by"
+other = "פותח ב ❤️על ידי"
 
 [and]
-other = "and"
+other = "וגם"
 
 [the_contributors]
-other = "the contributors"
+other = "התורמים"
 
 [license_and_copyright]
 other = "זכויות יוצרים © 2025 Nathan Stchepinsky, ברישיון AGPLv3."
 
 [and_more_titles_prefix_label]
-other = "... and"
+other = "... וגם"
 
 [and_more_titles_suffix_label]
-one = "more title!"
-other = "more titles!"
+one = "עוד כותרת!"
+other = "עוד כותרת!"
 
 [monday]
-other = "Monday"
+other = "יום שני"
 
 [tuesday]
-other = "Tuesday"
+other = "יום שלישי"
 
 [wednesday]
-other = "Wednesday"
+other = "יום רביעי"
 
 [thursday]
-other = "Thursday"
+other = "יום חמישי"
 
 [friday]
-other = "Friday"
+other = "יום שישי"
 
 [saturday]
-other = "Saturday"
+other = "יום שבת"
 
 [sunday]
-other = "Sunday"
+other = "יום ראשון"
 
 [january]
-other = "January"
+other = "ינואר"
 
 [february]
-other = "February"
+other = "פברואר"
 
 [march]
-other = "March"
+other = "מרץ"
 
 [april]
-other = "April"
+other = "אפריל"
 
 [may]
-other = "May"
+other = "מאי"
 
 [june]
-other = "June"
+other = "יוני"
 
 [july]
-other = "July"
+other = "יולי"
 
 [august]
-other = "August"
+other = "אוגוסט"
 
 [september]
-other = "September"
+other = "ספטמבר"
 
 [october]
-other = "October"
+other = "אוקטובר"
 
 [november]
-other = "November"
+other = "נובמבר"
 
 [december]
-other = "December"
+other = "דצמבר"
