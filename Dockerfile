@@ -2,7 +2,7 @@
 # Jellyfin-Newsletter Go-engine entrypoint builder
 ######
 
-FROM golang:1.26-alpine AS entrypoint-builder
+FROM golang:1.27-alpine AS entrypoint-builder
 WORKDIR /app
 
 COPY engine-go/entrypoint/main.go .
@@ -14,7 +14,7 @@ RUN go mod init entrypoint && \
 # Jellyfin-Newsletter Go-engine application builder
 ######
 
-FROM golang:1.26-alpine AS app-builder
+FROM golang:1.27-alpine AS app-builder
 WORKDIR /app
 ARG VERSION="dev"
 
