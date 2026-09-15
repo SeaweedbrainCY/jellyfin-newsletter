@@ -48,6 +48,9 @@ email_template:
   jellyfin_owner_name: Admin
   sort_mode: "date_asc"
   display_overview_max_items: 10
+  ignored_items:
+ 	- 23ec50dd52f0ed9077cc2c8913206a76
+    - "Heaven's Half Hour"
 
 dry-run:
   enabled: true
@@ -209,6 +212,7 @@ func TestLoadConfig_ValidConfig(t *testing.T) {
 	assert.Equal(t, "user1@example.com", config.EmailRecipients[0])
 	assert.Equal(t, "user2@example.com", config.EmailRecipients[1])
 	assert.Equal(t, "./config/config.yml", config.ConfigFilePath)
+	assert.Equal(t, []string{"23ec50dd52f0ed9077cc2c8913206a76", "Heaven's Half Hour"}, config.EmailTemplate.IgnoredItems)
 }
 
 func TestLoadContext_MissingRequiredField(t *testing.T) {

@@ -141,6 +141,7 @@ func buildEmailTemplateConfig(yamlParsedConfig *yamlConfiguration) EmailTemplate
 		Theme:                   "classic",
 		DisplayOverviewMaxItems: defaultDisplayOverviewMaxItem,
 		SortMode:                "date_desc",
+		IgnoredItems:            yamlParsedConfig.EmailTemplate.IgnoredItems,
 	}
 
 	if yamlParsedConfig.EmailTemplate.Theme != "" {
