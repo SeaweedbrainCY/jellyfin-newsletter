@@ -80,6 +80,14 @@ email_template:
   # - name_desc: sort entirely by name (Z->A), ignore date
   #sort_mode: "date_asc"
 
+
+  # OPTIONAL : Ignore items by id or name
+  # You can provide a list of items id (prefered) or name (movie name, series name, series episode, etc..), spelled as in Jellyfin.
+  # Those items will be ignored even if they were added recently
+  #ignored_items
+  #  - 23ec50dd52f0ed9077cc2c8913206a76
+  #  - "Heaven's Half Hour"
+
 # SMTP server configuration, TLS is required for now
 # Check your email provider for more information
 email:

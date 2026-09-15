@@ -38,6 +38,7 @@ type EmailTemplateConfig struct {
 	SortMode                string
 	ThemesDirFS             *fs.FS
 	MaxDisplayedItems       int
+	IgnoredItems            []string
 }
 
 type SMTPConfig struct {
@@ -90,17 +91,18 @@ type yamlConfiguration struct {
 		APIKey Secret `yaml:"api_key" validate:"required,jwt"`
 	} `yaml:"tmdb"                validate:"required"`
 	EmailTemplate struct {
-		Theme                   string `yaml:"theme,omitempty" validate:"omitempty"`
-		Language                string `yaml:"language" validate:"required,alpha"`
-		Subject                 string `yaml:"subject"  validate:"required"`
-		Title                   string `yaml:"title"   validate:"required"`
-		Subtitle                string `yaml:"subtitle, omitempty"`
-		JellyfinURL             string `yaml:"jellyfin_url,omitempty" validate:"omitempty,url"`
-		UnsubscribeEmail        string `yaml:"unsubscribe_email,omitempty" validate:"omitempty,email"`
-		JellyfinOwnerName       string `yaml:"jellyfin_owner_name,omitempty"`
-		DisplayOverviewMaxItems *int   `yaml:"display_overview_max_items,omitempty" validate:"omitempty,numeric,min=-1"`
-		SortMode                string `yaml:"sort_mode,omitempty" validate:"omitempty,oneof=date_desc date_asc name_asc name_desc"`
-		MaxDisplayedItems       *int   `yaml:"max_displayed_items,omitempty" validate:"omitempty,numeric,min=0"`
+		Theme                   string   `yaml:"theme,omitempty" validate:"omitempty"`
+		Language                string   `yaml:"language" validate:"required,alpha"`
+		Subject                 string   `yaml:"subject"  validate:"required"`
+		Title                   string   `yaml:"title"   validate:"required"`
+		Subtitle                string   `yaml:"subtitle, omitempty"`
+		JellyfinURL             string   `yaml:"jellyfin_url,omitempty" validate:"omitempty,url"`
+		UnsubscribeEmail        string   `yaml:"unsubscribe_email,omitempty" validate:"omitempty,email"`
+		JellyfinOwnerName       string   `yaml:"jellyfin_owner_name,omitempty"`
+		DisplayOverviewMaxItems *int     `yaml:"display_overview_max_items,omitempty" validate:"omitempty,numeric,min=-1"`
+		SortMode                string   `yaml:"sort_mode,omitempty" validate:"omitempty,oneof=date_desc date_asc name_asc name_desc"`
+		MaxDisplayedItems       *int     `yaml:"max_displayed_items,omitempty" validate:"omitempty,numeric,min=0"`
+		IgnoredItems            []string `yaml:"ignored_items,omitempty" validate:"omitempty"`
 	} `yaml:"email_template"      validate:"required"`
 	Email struct {
 		SMTPServer     string `yaml:"smtp_server" validate:"required,hostname|ip"`
