@@ -457,7 +457,7 @@ func getNewSerieTemplatesDataFromSortedItems(
 	app *app.ApplicationContext,
 ) []newSeriesItemTemplateData {
 	displaySeriesOverviews := shouldOverviewsBeDisplayed(len(newJellyfinSeriesSorted), app)
-	jellyfinParsedURL, _ := url.Parse(app.Config.Jellyfin.URL)
+	jellyfinParsedURL, _ := url.Parse(app.Config.EmailTemplate.JellyfinURL)
 	newSeriesData := []newSeriesItemTemplateData{}
 
 	for i, newSeriesItem := range newJellyfinSeriesSorted {
