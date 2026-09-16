@@ -85,7 +85,7 @@ email_template:
   # You can provide a list of items id (prefered) or name (movie name, series name, series episode, etc..), spelled as in Jellyfin.
   # Those items will be ignored even if they were added recently
   #ignored_items
-  #  - 23ec50dd52f0ed9077cc2c8913206a76
+  #  - "23ec50dd52f0ed9077cc2c8913206a76"
   #  - "Heaven's Half Hour"
 
 # SMTP server configuration, TLS is required for now
