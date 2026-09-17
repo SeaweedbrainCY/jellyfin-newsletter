@@ -638,7 +638,10 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
 				app, obs := getAppContext()
 				//fd9416da9026421995b40dae418d2b5d ->  Oppenheimer
-				app.Config.EmailTemplate.IgnoredItems = []string{"fd9416da9026421995b40dae418d2b5d", "00000000000000000000000000000"}
+				app.Config.EmailTemplate.IgnoredItems = []string{
+					"fd9416da9026421995b40dae418d2b5d",
+					"00000000000000000000000000000",
+				}
 				return app, obs
 			},
 			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
@@ -674,7 +677,10 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			name: "Ignore 1 movie by name",
 			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
 				app, obs := getAppContext()
-				app.Config.EmailTemplate.IgnoredItems = []string{"Star Wars: Episode II - Attack of the Clones", "00000000000000000000000000000"}
+				app.Config.EmailTemplate.IgnoredItems = []string{
+					"Star Wars: Episode II - Attack of the Clones",
+					"00000000000000000000000000000",
+				}
 				return app, obs
 			},
 			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
@@ -710,7 +716,10 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			name: "Ignore 1 series by series id",
 			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
 				app, obs := getAppContext()
-				app.Config.EmailTemplate.IgnoredItems = []string{"3d7b0576370c48d3b7c37c49f612afc9", "00000000000000000000000000000"}
+				app.Config.EmailTemplate.IgnoredItems = []string{
+					"3d7b0576370c48d3b7c37c49f612afc9",
+					"00000000000000000000000000000",
+				}
 				return app, obs
 			},
 			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
@@ -782,7 +791,10 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			name: "Ignore an entire series by 1 Season id",
 			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
 				app, obs := getAppContext()
-				app.Config.EmailTemplate.IgnoredItems = []string{"4d747e44b8074360a30862c098026e6f", "00000000000000000000000000000"}
+				app.Config.EmailTemplate.IgnoredItems = []string{
+					"4d747e44b8074360a30862c098026e6f",
+					"00000000000000000000000000000",
+				}
 				return app, obs
 			},
 			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
@@ -819,7 +831,10 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			name: "Ignore 1 Season by season id and keep series",
 			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
 				app, obs := getAppContext()
-				app.Config.EmailTemplate.IgnoredItems = []string{"d4da2014b39a4d2f9f12b45492af4ae6", "00000000000000000000000000000"}
+				app.Config.EmailTemplate.IgnoredItems = []string{
+					"d4da2014b39a4d2f9f12b45492af4ae6",
+					"00000000000000000000000000000",
+				}
 				return app, obs
 			},
 			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {

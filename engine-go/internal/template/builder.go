@@ -363,13 +363,25 @@ func getMediaURL(jellyfinParsedURL *url.URL, mediaID string) string {
 	return mediaURL.String()
 }
 
-func removeIgnoredItemsFromNewJellyfinEpisodes(seriesName string, seasonName string, episodes map[string]jellyfin.EpisodeItem, app *app.ApplicationContext) map[string]jellyfin.EpisodeItem {
+func removeIgnoredItemsFromNewJellyfinEpisodes(
+	seriesName string,
+	seasonName string,
+	episodes map[string]jellyfin.EpisodeItem,
+	app *app.ApplicationContext,
+) map[string]jellyfin.EpisodeItem {
 	nonIgnoredEpisodes := map[string]jellyfin.EpisodeItem{}
 	for episodeID, episodeItem := range episodes {
 		isEpisodeIgnored := false
 		for _, itemIdentifier := range app.Config.EmailTemplate.IgnoredItems {
 			if episodeID == itemIdentifier || episodeItem.Name == itemIdentifier {
-				app.Logger.Info("An episod is ignored because its id or name matches one of the ignored_items.", zap.String("episode_id", episodeID), zap.String("episode_name", episodeItem.Name), zap.String("ignored_item_matched", itemIdentifier), zap.String("series_name", seriesName), zap.String("season_name", seasonName))
+				app.Logger.Info(
+					"An episod is ignored because its id or name matches one of the ignored_items.",
+					zap.String("episode_id", episodeID),
+					zap.String("episode_name", episodeItem.Name),
+					zap.String("ignored_item_matched", itemIdentifier),
+					zap.String("series_name", seriesName),
+					zap.String("season_name", seasonName),
+				)
 				isEpisodeIgnored = true
 				break
 			}
@@ -381,13 +393,23 @@ func removeIgnoredItemsFromNewJellyfinEpisodes(seriesName string, seasonName str
 	return nonIgnoredEpisodes
 }
 
-func removeIgnoredItemsFromNewJellyfinSeasons(seriesName string, seasons map[string]jellyfin.SeasonItem, app *app.ApplicationContext) map[string]jellyfin.SeasonItem {
+func removeIgnoredItemsFromNewJellyfinSeasons(
+	seriesName string,
+	seasons map[string]jellyfin.SeasonItem,
+	app *app.ApplicationContext,
+) map[string]jellyfin.SeasonItem {
 	nonIgnoredSeasons := map[string]jellyfin.SeasonItem{}
 	for seasonID, seasonItem := range seasons {
 		isSeasonIgnored := false
 		for _, itemIdentifier := range app.Config.EmailTemplate.IgnoredItems {
 			if seasonID == itemIdentifier || seasonItem.Name == itemIdentifier {
-				app.Logger.Info("A season is ignored because its id or name matches one of the ignored_items.", zap.String("season_id", seasonID), zap.String("season_name", seasonItem.Name), zap.String("ignored_item_matched", itemIdentifier), zap.String("series_name", seriesName))
+				app.Logger.Info(
+					"A season is ignored because its id or name matches one of the ignored_items.",
+					zap.String("season_id", seasonID),
+					zap.String("season_name", seasonItem.Name),
+					zap.String("ignored_item_matched", itemIdentifier),
+					zap.String("series_name", seriesName),
+				)
 				isSeasonIgnored = true
 				break
 			}
@@ -400,7 +422,12 @@ func removeIgnoredItemsFromNewJellyfinSeasons(seriesName string, seasons map[str
 			continue
 		}
 		// The season is not new, we check there are still new episodes once ignored one removed
-		episodesWithoutIgnoredItems := removeIgnoredItemsFromNewJellyfinEpisodes(seriesName, seasonItem.Name, seasonItem.Episodes, app)
+		episodesWithoutIgnoredItems := removeIgnoredItemsFromNewJellyfinEpisodes(
+			seriesName,
+			seasonItem.Name,
+			seasonItem.Episodes,
+			app,
+		)
 		if len(episodesWithoutIgnoredItems) != 0 {
 			seasonItem.Episodes = episodesWithoutIgnoredItems
 			nonIgnoredSeasons[seasonID] = seasonItem
@@ -423,7 +450,12 @@ func removeIgnoredItemsFromNewJellyfinSeries(
 		isSeriesIgnored := false
 		for _, itemIdentifier := range app.Config.EmailTemplate.IgnoredItems {
 			if series.SeriesID == itemIdentifier || series.SeriesName == itemIdentifier {
-				app.Logger.Info("A series is ignored because its id or name matches one of the ignored_items.", zap.String("series_id", series.SeriesID), zap.String("series_name", series.SeriesName), zap.String("ignored_item_matched", itemIdentifier))
+				app.Logger.Info(
+					"A series is ignored because its id or name matches one of the ignored_items.",
+					zap.String("series_id", series.SeriesID),
+					zap.String("series_name", series.SeriesName),
+					zap.String("ignored_item_matched", itemIdentifier),
+				)
 				isSeriesIgnored = true
 				break
 			}
@@ -436,7 +468,11 @@ func removeIgnoredItemsFromNewJellyfinSeries(
 			continue
 		}
 		// The series is not new, we check there are still new seasons once ignored one removed
-		seasonsWithoutIgnoredItems := removeIgnoredItemsFromNewJellyfinSeasons(series.SeriesName, series.NewSeasons, app)
+		seasonsWithoutIgnoredItems := removeIgnoredItemsFromNewJellyfinSeasons(
+			series.SeriesName,
+			series.NewSeasons,
+			app,
+		)
 		if len(seasonsWithoutIgnoredItems) != 0 {
 			series.NewSeasons = seasonsWithoutIgnoredItems
 			nonIgnoredSeries = append(nonIgnoredSeries, series)
@@ -567,7 +603,10 @@ func getNewSerieTemplatesDataFromSortedItems(
 	return newSeriesData
 }
 
-func removeIgnoredItemsFromNewJellyfinMovies(newJellyfinMovies *[]jellyfin.MovieItem, app *app.ApplicationContext) []jellyfin.MovieItem {
+func removeIgnoredItemsFromNewJellyfinMovies(
+	newJellyfinMovies *[]jellyfin.MovieItem,
+	app *app.ApplicationContext,
+) []jellyfin.MovieItem {
 	if len(app.Config.EmailTemplate.IgnoredItems) == 0 {
 		return *newJellyfinMovies
 	}
@@ -576,7 +615,12 @@ func removeIgnoredItemsFromNewJellyfinMovies(newJellyfinMovies *[]jellyfin.Movie
 		isItemIgnored := false
 		for _, itemIdentifier := range app.Config.EmailTemplate.IgnoredItems {
 			if movie.ID == itemIdentifier || movie.Name == itemIdentifier {
-				app.Logger.Info("A movie is ignored because its id or name matches one of the ignored_items.", zap.String("movie_id", movie.ID), zap.String("movie_name", movie.Name), zap.String("ignored_item_matched", itemIdentifier))
+				app.Logger.Info(
+					"A movie is ignored because its id or name matches one of the ignored_items.",
+					zap.String("movie_id", movie.ID),
+					zap.String("movie_name", movie.Name),
+					zap.String("ignored_item_matched", itemIdentifier),
+				)
 				isItemIgnored = true
 				break
 			}
