@@ -869,6 +869,174 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Ignore 1 episode by episode id and keep season",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.IgnoredItems = []string{
+					"1c50012a8c354c319225f063f563b83e",
+					"00000000000000000000000000000",
+				}
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
+				seriesWithoutIgnoredItem := []newSeriesItemTemplateData{}
+				for _, series := range expectedMediaTemplateData.NewSeries {
+					if series.SeriesName == "Family Guy" {
+						series.NewSeriesTitle = "Family Guy: Season 24, Episodes 2-3 & 7"
+						series.AdditionDate = "2026-01-05"
+					}
+					seriesWithoutIgnoredItem = append(seriesWithoutIgnoredItem, series)
+				}
+				expectedMediaTemplateData.NewSeries = seriesWithoutIgnoredItem
+				return expectedMediaTemplateData
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+			expectedLogsEntries: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "An episode is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("episode_id", "1c50012a8c354c319225f063f563b83e"),
+						zap.String("episode_name", "Episode 1"),
+						zap.String("ignored_item_matched", "1c50012a8c354c319225f063f563b83e"),
+						zap.String("series_name", "Family Guy"),
+						zap.String("season_name", "Season 24"),
+					},
+				},
+			},
+		},
+		{
+			name: "Ignore 1 episode by episode name and keep season",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.IgnoredItems = []string{
+					"Episode 7",
+					"00000000000000000000000000000",
+				}
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
+				seriesWithoutIgnoredItem := []newSeriesItemTemplateData{}
+				for _, series := range expectedMediaTemplateData.NewSeries {
+					if series.SeriesName == "Family Guy" {
+						series.NewSeriesTitle = "Family Guy: Season 24, Episodes 1-3"
+						series.AdditionDate = "2026-01-05"
+					}
+					seriesWithoutIgnoredItem = append(seriesWithoutIgnoredItem, series)
+				}
+				expectedMediaTemplateData.NewSeries = seriesWithoutIgnoredItem
+				return expectedMediaTemplateData
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+			expectedLogsEntries: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "An episode is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("episode_id", "48558cb62b634a9f89f0e9369bd751e3"),
+						zap.String("episode_name", "Episode 7"),
+						zap.String("ignored_item_matched", "Episode 7"),
+						zap.String("series_name", "Family Guy"),
+						zap.String("season_name", "Season 24"),
+					},
+				},
+			},
+		},
+		{
+			name: "Ignore a whole series because all episodes are ignored",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.IgnoredItems = []string{
+					"1c50012a8c354c319225f063f563b83e",
+					"3140d8050c1b42689ee11acca7ba565a",
+					"48558cb62b634a9f89f0e9369bd751e3",
+					"5dec0e7c11a4459eae05a292810851bf",
+				}
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
+				seriesWithoutIgnoredItem := []newSeriesItemTemplateData{}
+				for _, series := range expectedMediaTemplateData.NewSeries {
+					if series.SeriesName != "Family Guy" {
+						seriesWithoutIgnoredItem = append(seriesWithoutIgnoredItem, series)
+					}
+				}
+				expectedMediaTemplateData.NewSeries = seriesWithoutIgnoredItem
+				return expectedMediaTemplateData
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+			expectedLogsEntries: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "An episode is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("episode_id", "1c50012a8c354c319225f063f563b83e"),
+						zap.String("episode_name", "Episode 1"),
+						zap.String("ignored_item_matched", "1c50012a8c354c319225f063f563b83e"),
+						zap.String("series_name", "Family Guy"),
+						zap.String("season_name", "Season 24"),
+					},
+				},
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "An episode is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("episode_id", "3140d8050c1b42689ee11acca7ba565a"),
+						zap.String("episode_name", "Episode 2"),
+						zap.String("ignored_item_matched", "3140d8050c1b42689ee11acca7ba565a"),
+						zap.String("series_name", "Family Guy"),
+						zap.String("season_name", "Season 24"),
+					},
+				},
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "An episode is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("episode_id", "48558cb62b634a9f89f0e9369bd751e3"),
+						zap.String("episode_name", "Episode 7"),
+						zap.String("ignored_item_matched", "48558cb62b634a9f89f0e9369bd751e3"),
+						zap.String("series_name", "Family Guy"),
+						zap.String("season_name", "Season 24"),
+					},
+				},
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "An episode is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("episode_id", "5dec0e7c11a4459eae05a292810851bf"),
+						zap.String("episode_name", "Episode 3"),
+						zap.String("ignored_item_matched", "5dec0e7c11a4459eae05a292810851bf"),
+						zap.String("series_name", "Family Guy"),
+						zap.String("season_name", "Season 24"),
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
