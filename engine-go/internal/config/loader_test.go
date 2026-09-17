@@ -49,7 +49,7 @@ email_template:
   sort_mode: "date_asc"
   display_overview_max_items: 10
   ignored_items:
- 	- 23ec50dd52f0ed9077cc2c8913206a76
+    - "23ec50dd52f0ed9077cc2c8913206a76"
     - "Heaven's Half Hour"
 
 dry-run:
@@ -427,15 +427,15 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		{
 			name:            "Missing dry-run.output_directory",
 			yamlKeyToRemove: "dry-run.output_directory",
-			expectedError: `failed to decode configuration file: [43:8] Key: 'OutputDirectory' Error:Field validation for 'OutputDirectory' failed on the 'required_if' tag
-  40 |   sort_mode: "date_asc"
-  41 |   display_overview_max_items: 10
-  42 |
-> 43 | dry-run:
+			expectedError: `failed to decode configuration file: [46:8] Key: 'OutputDirectory' Error:Field validation for 'OutputDirectory' failed on the 'required_if' tag
+  43 |       - "23ec50dd52f0ed9077cc2c8913206a76"
+  44 |       - "Heaven's Half Hour"
+  45 |
+> 46 | dry-run:
               ^
-  44 |   enabled: true
-  45 |   test_smtp_connection: false
-  46 |   output_filename: "newsletter_{date}.html"`,
+  47 |   enabled: true
+  48 |   test_smtp_connection: false
+  49 |   output_filename: "newsletter_{date}.html"`,
 		},
 	}
 
