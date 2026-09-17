@@ -17,6 +17,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest/observer"
 )
 
@@ -303,6 +304,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 		getJellyfinNewSeriesItems           func() []jellyfin.NewlyAddedSeriesItem
 		movieCount                          int
 		episodeCount                        int
+		expectedLogsEntries                 []observer.LoggedEntry
 	}{
 		{
 			name:                                "Valid data",
@@ -512,7 +514,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			episodeCount:              1253,
 		},
 		{
-			name: "Sorting, name asc",
+			name: "Sorting, name desc",
 			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
 				app, obs := getAppContext()
 				app.Config.EmailTemplate.SortMode = "name_desc"
@@ -631,6 +633,225 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			movieCount:                54,
 			episodeCount:              1253,
 		},
+		{
+			name: "Ignore 1 movie by id",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				//fd9416da9026421995b40dae418d2b5d ->  Oppenheimer
+				app.Config.EmailTemplate.IgnoredItems = []string{"fd9416da9026421995b40dae418d2b5d", "00000000000000000000000000000"}
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
+				moviesWithoutIgnoredItem := []newMovieItemTemplateData{}
+				for _, movies := range expectedMediaTemplateData.NewMovies {
+					if movies.Name != "Oppenheimer" {
+						moviesWithoutIgnoredItem = append(moviesWithoutIgnoredItem, movies)
+					}
+				}
+				expectedMediaTemplateData.NewMovies = moviesWithoutIgnoredItem
+				return expectedMediaTemplateData
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+			expectedLogsEntries: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "A movie is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("movie_id", "fd9416da9026421995b40dae418d2b5d"),
+						zap.String("movie_name", "Oppenheimer"),
+						zap.String("ignored_item_matched", "fd9416da9026421995b40dae418d2b5d"),
+					},
+				},
+			},
+		},
+		{
+			name: "Ignore 1 movie by name",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.IgnoredItems = []string{"Star Wars: Episode II - Attack of the Clones", "00000000000000000000000000000"}
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
+				moviesWithoutIgnoredItem := []newMovieItemTemplateData{}
+				for _, movies := range expectedMediaTemplateData.NewMovies {
+					if movies.Name != "Star Wars: Episode II - Attack of the Clones" {
+						moviesWithoutIgnoredItem = append(moviesWithoutIgnoredItem, movies)
+					}
+				}
+				expectedMediaTemplateData.NewMovies = moviesWithoutIgnoredItem
+				return expectedMediaTemplateData
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+			expectedLogsEntries: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "A movie is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("movie_id", "7dcf7149f71046d5a50c626e3486259b"),
+						zap.String("movie_name", "Star Wars: Episode II - Attack of the Clones"),
+						zap.String("ignored_item_matched", "Star Wars: Episode II - Attack of the Clones"),
+					},
+				},
+			},
+		},
+		{
+			name: "Ignore 1 series by series id",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.IgnoredItems = []string{"3d7b0576370c48d3b7c37c49f612afc9", "00000000000000000000000000000"}
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
+				seriesWithoutIgnoredItem := []newSeriesItemTemplateData{}
+				for _, series := range expectedMediaTemplateData.NewSeries {
+					if series.SeriesName != "Game of thrones" {
+						seriesWithoutIgnoredItem = append(seriesWithoutIgnoredItem, series)
+					}
+				}
+				expectedMediaTemplateData.NewSeries = seriesWithoutIgnoredItem
+				return expectedMediaTemplateData
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+			expectedLogsEntries: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "A series is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("series_id", "3d7b0576370c48d3b7c37c49f612afc9"),
+						zap.String("series_name", "Game of thrones"),
+						zap.String("ignored_item_matched", "3d7b0576370c48d3b7c37c49f612afc9"),
+					},
+				},
+			},
+		},
+		{
+			name: "Ignore 1 series by series name",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.IgnoredItems = []string{"Family Guy", "00000000000000000000000000000"}
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
+				seriesWithoutIgnoredItem := []newSeriesItemTemplateData{}
+				for _, series := range expectedMediaTemplateData.NewSeries {
+					if series.SeriesName != "Family Guy" {
+						seriesWithoutIgnoredItem = append(seriesWithoutIgnoredItem, series)
+					}
+				}
+				expectedMediaTemplateData.NewSeries = seriesWithoutIgnoredItem
+				return expectedMediaTemplateData
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+			expectedLogsEntries: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "A series is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("series_id", "94327c537a324e7c84f45b1a6e71dd35"),
+						zap.String("series_name", "Family Guy"),
+						zap.String("ignored_item_matched", "Family Guy"),
+					},
+				},
+			},
+		},
+		{
+			name: "Ignore an entire season by 1 Season id",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.IgnoredItems = []string{"4d747e44b8074360a30862c098026e6f", "00000000000000000000000000000"}
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
+				seriesWithoutIgnoredItem := []newSeriesItemTemplateData{}
+				for _, series := range expectedMediaTemplateData.NewSeries {
+					if series.SeriesName != "Family Guy" {
+						seriesWithoutIgnoredItem = append(seriesWithoutIgnoredItem, series)
+					}
+				}
+				expectedMediaTemplateData.NewSeries = seriesWithoutIgnoredItem
+				return expectedMediaTemplateData
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+			expectedLogsEntries: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "A season is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("season_id", "4d747e44b8074360a30862c098026e6f"),
+						zap.String("season_name", "Season 24"),
+						zap.String("ignored_item_matched", "4d747e44b8074360a30862c098026e6f"),
+						zap.String("series_name", "Family Guy"),
+					},
+				},
+			},
+		},
+		{
+			name: "Ignore 1 Season by name",
+			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
+				app, obs := getAppContext()
+				app.Config.EmailTemplate.IgnoredItems = []string{"4d747e44b8074360a30862c098026e6f", "00000000000000000000000000000"}
+				return app, obs
+			},
+			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
+				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
+				seriesWithoutIgnoredItem := []newSeriesItemTemplateData{}
+				for _, series := range expectedMediaTemplateData.NewSeries {
+					if series.SeriesName != "Family Guy" {
+						seriesWithoutIgnoredItem = append(seriesWithoutIgnoredItem, series)
+					}
+				}
+				expectedMediaTemplateData.NewSeries = seriesWithoutIgnoredItem
+				return expectedMediaTemplateData
+			},
+			getJellyfinNewMovies:      getJellyfinNewMovies,
+			getJellyfinNewSeriesItems: getJellyfinNewSeriesItems,
+			movieCount:                54,
+			episodeCount:              1253,
+			expectedLogsEntries: []observer.LoggedEntry{
+				{
+					Entry: zapcore.Entry{
+						Level:   zapcore.InfoLevel,
+						Message: "A season is ignored because its id or name matches one of the ignored_items.",
+					},
+					Context: []zapcore.Field{
+						zap.String("season_id", "4d747e44b8074360a30862c098026e6f"),
+						zap.String("season_name", "Season 24"),
+						zap.String("ignored_item_matched", "4d747e44b8074360a30862c098026e6f"),
+						zap.String("series_name", "Family Guy"),
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -646,9 +867,8 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 				int32(test.episodeCount),
 				app,
 			)
-			require.NoError(t,
-				err)
-			assert.Empty(t, recordedLogs)
+			require.NoError(t, err)
+			assert.ElementsMatch(t, test.expectedLogsEntries, recordedLogs.AllUntimed())
 			assert.Equal(t, expectedTemplateData, *templateData)
 		})
 	}
