@@ -90,7 +90,7 @@ func getJellyfinNewSeriesItems() []jellyfin.NewlyAddedSeriesItem {
 					Episodes: map[string]jellyfin.EpisodeItem{
 						"a915c746c2dc4f5ea9e7f6a4a8595d2e": {
 							Name:          "Episode 10",
-							AdditionDate:  time.Date(2026, 01, 02, 01, 01, 0, 0, time.UTC),
+							AdditionDate:  time.Date(2026, 01, 04, 01, 01, 0, 0, time.UTC),
 							EpisodeNumber: int32(10),
 						},
 					},
@@ -779,7 +779,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			},
 		},
 		{
-			name: "Ignore an entire season by 1 Season id",
+			name: "Ignore an entire series by 1 Season id",
 			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
 				app, obs := getAppContext()
 				app.Config.EmailTemplate.IgnoredItems = []string{"4d747e44b8074360a30862c098026e6f", "00000000000000000000000000000"}
@@ -816,19 +816,21 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			},
 		},
 		{
-			name: "Ignore 1 Season by name",
+			name: "Ignore 1 Season by season id and keep series",
 			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
 				app, obs := getAppContext()
-				app.Config.EmailTemplate.IgnoredItems = []string{"4d747e44b8074360a30862c098026e6f", "00000000000000000000000000000"}
+				app.Config.EmailTemplate.IgnoredItems = []string{"d4da2014b39a4d2f9f12b45492af4ae6", "00000000000000000000000000000"}
 				return app, obs
 			},
 			getExpectedNewMediaTemplateDataFunc: func() newMediaTemplateData {
 				expectedMediaTemplateData := getExpectedNewMediaTemplateData()
 				seriesWithoutIgnoredItem := []newSeriesItemTemplateData{}
 				for _, series := range expectedMediaTemplateData.NewSeries {
-					if series.SeriesName != "Family Guy" {
-						seriesWithoutIgnoredItem = append(seriesWithoutIgnoredItem, series)
+					if series.SeriesName == "Stranger Things" {
+						series.NewSeriesTitle = "Stranger Things: Season 2, Episode 10"
+						series.AdditionDate = "2026-01-04"
 					}
+					seriesWithoutIgnoredItem = append(seriesWithoutIgnoredItem, series)
 				}
 				expectedMediaTemplateData.NewSeries = seriesWithoutIgnoredItem
 				return expectedMediaTemplateData
@@ -844,10 +846,10 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 						Message: "A season is ignored because its id or name matches one of the ignored_items.",
 					},
 					Context: []zapcore.Field{
-						zap.String("season_id", "4d747e44b8074360a30862c098026e6f"),
-						zap.String("season_name", "Season 24"),
-						zap.String("ignored_item_matched", "4d747e44b8074360a30862c098026e6f"),
-						zap.String("series_name", "Family Guy"),
+						zap.String("season_id", "d4da2014b39a4d2f9f12b45492af4ae6"),
+						zap.String("season_name", "Season 1"),
+						zap.String("ignored_item_matched", "d4da2014b39a4d2f9f12b45492af4ae6"),
+						zap.String("series_name", "Stranger Things"),
 					},
 				},
 			},
