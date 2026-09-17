@@ -637,7 +637,7 @@ func TestBuildNewMediaTemplateData(t *testing.T) {
 			name: "Ignore 1 movie by id",
 			getAppContextFunc: func() (*app.ApplicationContext, *observer.ObservedLogs) {
 				app, obs := getAppContext()
-				//fd9416da9026421995b40dae418d2b5d ->  Oppenheimer
+				// fd9416da9026421995b40dae418d2b5d ->  Oppenheimer
 				app.Config.EmailTemplate.IgnoredItems = []string{
 					"fd9416da9026421995b40dae418d2b5d",
 					"00000000000000000000000000000",
