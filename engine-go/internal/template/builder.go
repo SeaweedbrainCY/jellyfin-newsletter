@@ -367,9 +367,9 @@ func removeIgnoredItemsFromNewJellyfinEpisodes(seriesName string, seasonName str
 	nonIgnoredEpisodes := map[string]jellyfin.EpisodeItem{}
 	for episodeID, episodeItem := range episodes {
 		isEpisodeIgnored := false
-		for _, item_identifier := range app.Config.EmailTemplate.IgnoredItems {
-			if episodeID == item_identifier || episodeItem.Name == item_identifier {
-				app.Logger.Info("An episod is ignored because its id or name matches one of the ignored_items.", zap.String("episode_id", episodeID), zap.String("episode_name", episodeItem.Name), zap.String("ignored_item_matched", item_identifier), zap.String("series_name", seriesName), zap.String("season_name", seasonName))
+		for _, itemIdentifier := range app.Config.EmailTemplate.IgnoredItems {
+			if episodeID == itemIdentifier || episodeItem.Name == itemIdentifier {
+				app.Logger.Info("An episod is ignored because its id or name matches one of the ignored_items.", zap.String("episode_id", episodeID), zap.String("episode_name", episodeItem.Name), zap.String("ignored_item_matched", itemIdentifier), zap.String("series_name", seriesName), zap.String("season_name", seasonName))
 				isEpisodeIgnored = true
 				break
 			}
@@ -385,9 +385,9 @@ func removeIgnoredItemsFromNewJellyfinSeasons(seriesName string, seasons map[str
 	nonIgnoredSeasons := map[string]jellyfin.SeasonItem{}
 	for seasonID, seasonItem := range seasons {
 		isSeasonIgnored := false
-		for _, item_identifier := range app.Config.EmailTemplate.IgnoredItems {
-			if seasonID == item_identifier || seasonItem.Name == item_identifier {
-				app.Logger.Info("A season is ignored because its id or name matches one of the ignored_items.", zap.String("season_id", seasonID), zap.String("season_name", seasonItem.Name), zap.String("ignored_item_matched", item_identifier), zap.String("series_name", seriesName))
+		for _, itemIdentifier := range app.Config.EmailTemplate.IgnoredItems {
+			if seasonID == itemIdentifier || seasonItem.Name == itemIdentifier {
+				app.Logger.Info("A season is ignored because its id or name matches one of the ignored_items.", zap.String("season_id", seasonID), zap.String("season_name", seasonItem.Name), zap.String("ignored_item_matched", itemIdentifier), zap.String("series_name", seriesName))
 				isSeasonIgnored = true
 				break
 			}
@@ -421,9 +421,9 @@ func removeIgnoredItemsFromNewJellyfinSeries(
 
 	for _, series := range *newJellyfinSeries {
 		isSeriesIgnored := false
-		for _, item_identifier := range app.Config.EmailTemplate.IgnoredItems {
-			if series.SeriesID == item_identifier || series.SeriesName == item_identifier {
-				app.Logger.Info("A series is ignored because its id or name matches one of the ignored_items.", zap.String("series_id", series.SeriesID), zap.String("series_name", series.SeriesName), zap.String("ignored_item_matched", item_identifier))
+		for _, itemIdentifier := range app.Config.EmailTemplate.IgnoredItems {
+			if series.SeriesID == itemIdentifier || series.SeriesName == itemIdentifier {
+				app.Logger.Info("A series is ignored because its id or name matches one of the ignored_items.", zap.String("series_id", series.SeriesID), zap.String("series_name", series.SeriesName), zap.String("ignored_item_matched", itemIdentifier))
 				isSeriesIgnored = true
 				break
 			}
@@ -574,9 +574,9 @@ func removeIgnoredItemsFromNewJellyfinMovies(newJellyfinMovies *[]jellyfin.Movie
 	nonIgnoredJellyfinMovies := []jellyfin.MovieItem{}
 	for _, movie := range *newJellyfinMovies {
 		isItemIgnored := false
-		for _, item_identifier := range app.Config.EmailTemplate.IgnoredItems {
-			if movie.ID == item_identifier || movie.Name == item_identifier {
-				app.Logger.Info("A movie is ignored because its id or name matches one of the ignored_items.", zap.String("movie_id", movie.ID), zap.String("movie_name", movie.Name), zap.String("ignored_item_matched", item_identifier))
+		for _, itemIdentifier := range app.Config.EmailTemplate.IgnoredItems {
+			if movie.ID == itemIdentifier || movie.Name == itemIdentifier {
+				app.Logger.Info("A movie is ignored because its id or name matches one of the ignored_items.", zap.String("movie_id", movie.ID), zap.String("movie_name", movie.Name), zap.String("ignored_item_matched", itemIdentifier))
 				isItemIgnored = true
 				break
 			}
