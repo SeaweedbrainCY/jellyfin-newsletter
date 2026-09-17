@@ -375,7 +375,7 @@ func removeIgnoredItemsFromNewJellyfinEpisodes(
 		for _, itemIdentifier := range app.Config.EmailTemplate.IgnoredItems {
 			if episodeID == itemIdentifier || episodeItem.Name == itemIdentifier {
 				app.Logger.Info(
-					"An episod is ignored because its id or name matches one of the ignored_items.",
+					"An episode is ignored because its id or name matches one of the ignored_items.",
 					zap.String("episode_id", episodeID),
 					zap.String("episode_name", episodeItem.Name),
 					zap.String("ignored_item_matched", itemIdentifier),
