@@ -333,8 +333,8 @@ func buildFooterLabel(app *app.ApplicationContext) string {
 	return app.Localizer.LocalizeWithTemplate("footer_label", footerData)
 }
 
-func sortJellyfinNewMovies(newJellyfinMovies *[]jellyfin.MovieItem, app *app.ApplicationContext) []jellyfin.MovieItem {
-	newJellyfinMoviesSorted := slices.Clone(*newJellyfinMovies)
+func sortJellyfinNewMovies(newJellyfinMovies []jellyfin.MovieItem, app *app.ApplicationContext) []jellyfin.MovieItem {
+	newJellyfinMoviesSorted := slices.Clone(newJellyfinMovies)
 	slices.SortFunc(newJellyfinMoviesSorted, func(a, b jellyfin.MovieItem) int {
 		switch app.Config.EmailTemplate.SortMode {
 		case SortModeNameAsc:
@@ -363,11 +363,93 @@ func getMediaURL(jellyfinParsedURL *url.URL, mediaID string) string {
 	return mediaURL.String()
 }
 
-func sortJellyfinNewSeriesItems(
+func removeIgnoredItemsFromNewJellyfinEpisodes(seriesName string, seasonName string, episodes map[string]jellyfin.EpisodeItem, app *app.ApplicationContext) map[string]jellyfin.EpisodeItem {
+	nonIgnoredEpisodes := map[string]jellyfin.EpisodeItem{}
+	for episodeID, episodeItem := range episodes {
+		isEpisodeIgnored := false
+		for _, item_identifier := range app.Config.EmailTemplate.IgnoredItems {
+			if episodeID == item_identifier || episodeItem.Name == item_identifier {
+				app.Logger.Info("An episod is ignored because its id or name matches one of the ignored_items.", zap.String("episode_id", episodeID), zap.String("episode_name", episodeItem.Name), zap.String("ignored_item_matched", item_identifier), zap.String("series_name", seriesName), zap.String("season_name", seasonName))
+				isEpisodeIgnored = true
+				break
+			}
+		}
+		if !isEpisodeIgnored {
+			nonIgnoredEpisodes[episodeID] = episodeItem
+		}
+	}
+	return nonIgnoredEpisodes
+}
+
+func removeIgnoredItemsFromNewJellyfinSeasons(seriesName string, seasons map[string]jellyfin.SeasonItem, app *app.ApplicationContext) map[string]jellyfin.SeasonItem {
+	nonIgnoredSeasons := map[string]jellyfin.SeasonItem{}
+	for seasonID, seasonItem := range seasons {
+		isSeasonIgnored := false
+		for _, item_identifier := range app.Config.EmailTemplate.IgnoredItems {
+			if seasonID == item_identifier || seasonItem.Name == item_identifier {
+				app.Logger.Info("A season is ignored because its id or name matches one of the ignored_items.", zap.String("season_id", seasonID), zap.String("season_name", seasonItem.Name), zap.String("ignored_item_matched", item_identifier), zap.String("series_name", seriesName))
+				isSeasonIgnored = true
+				break
+			}
+		}
+		if isSeasonIgnored {
+			continue
+		}
+		if seasonItem.IsSeasonNew {
+			nonIgnoredSeasons[seasonID] = seasonItem
+			continue
+		}
+		// The season is not new, we check there are still new episodes once ignored one removed
+		episodesWithoutIgnoredItems := removeIgnoredItemsFromNewJellyfinEpisodes(seriesName, seasonItem.Name, seasonItem.Episodes, app)
+		if len(episodesWithoutIgnoredItems) != 0 {
+			seasonItem.Episodes = episodesWithoutIgnoredItems
+			nonIgnoredSeasons[seasonID] = seasonItem
+		}
+	}
+	return nonIgnoredSeasons
+}
+
+func removeIgnoredItemsFromNewJellyfinSeries(
 	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem,
 	app *app.ApplicationContext,
 ) []jellyfin.NewlyAddedSeriesItem {
-	newJellyfinSeriesSorted := slices.Clone(*newJellyfinSeries)
+	if len(app.Config.EmailTemplate.IgnoredItems) == 0 {
+		return *newJellyfinSeries
+	}
+
+	nonIgnoredSeries := []jellyfin.NewlyAddedSeriesItem{}
+
+	for _, series := range *newJellyfinSeries {
+		isSeriesIgnored := false
+		for _, item_identifier := range app.Config.EmailTemplate.IgnoredItems {
+			if series.SeriesID == item_identifier || series.SeriesName == item_identifier {
+				app.Logger.Info("A series is ignored because its id or name matches one of the ignored_items.", zap.String("series_id", series.SeriesID), zap.String("series_name", series.SeriesName), zap.String("ignored_item_matched", item_identifier))
+				isSeriesIgnored = true
+				break
+			}
+		}
+		if isSeriesIgnored {
+			continue
+		}
+		if series.IsSeriesNew {
+			nonIgnoredSeries = append(nonIgnoredSeries, series)
+			continue
+		}
+		// The series is not new, we check there are still new seasons once ignored one removed
+		seasonsWithoutIgnoredItems := removeIgnoredItemsFromNewJellyfinSeasons(series.SeriesName, series.NewSeasons, app)
+		if len(seasonsWithoutIgnoredItems) != 0 {
+			series.NewSeasons = seasonsWithoutIgnoredItems
+			nonIgnoredSeries = append(nonIgnoredSeries, series)
+		}
+	}
+	return nonIgnoredSeries
+}
+
+func sortJellyfinNewSeriesItems(
+	newJellyfinSeries []jellyfin.NewlyAddedSeriesItem,
+	app *app.ApplicationContext,
+) []jellyfin.NewlyAddedSeriesItem {
+	newJellyfinSeriesSorted := slices.Clone(newJellyfinSeries)
 	slices.SortFunc(newJellyfinSeriesSorted, func(a, b jellyfin.NewlyAddedSeriesItem) int {
 		switch app.Config.EmailTemplate.SortMode {
 		case SortModeNameAsc:
@@ -485,6 +567,27 @@ func getNewSerieTemplatesDataFromSortedItems(
 	return newSeriesData
 }
 
+func removeIgnoredItemsFromNewJellyfinMovies(newJellyfinMovies *[]jellyfin.MovieItem, app *app.ApplicationContext) []jellyfin.MovieItem {
+	if len(app.Config.EmailTemplate.IgnoredItems) == 0 {
+		return *newJellyfinMovies
+	}
+	nonIgnoredJellyfinMovies := []jellyfin.MovieItem{}
+	for _, movie := range *newJellyfinMovies {
+		isItemIgnored := false
+		for _, item_identifier := range app.Config.EmailTemplate.IgnoredItems {
+			if movie.ID == item_identifier || movie.Name == item_identifier {
+				app.Logger.Info("A movie is ignored because its id or name matches one of the ignored_items.", zap.String("movie_id", movie.ID), zap.String("movie_name", movie.Name), zap.String("ignored_item_matched", item_identifier))
+				isItemIgnored = true
+				break
+			}
+		}
+		if !isItemIgnored {
+			nonIgnoredJellyfinMovies = append(nonIgnoredJellyfinMovies, movie)
+		}
+	}
+	return nonIgnoredJellyfinMovies
+}
+
 func buildNewMediaTemplateData(
 	newJellyfinMovies *[]jellyfin.MovieItem,
 	newJellyfinSeries *[]jellyfin.NewlyAddedSeriesItem,
@@ -499,10 +602,12 @@ func buildNewMediaTemplateData(
 		htmlDir = "rtl"
 	}
 
-	newJellyfinMoviesSorted := sortJellyfinNewMovies(newJellyfinMovies, app)
+	newJellyfinMoviesWithoutIgnoredItems := removeIgnoredItemsFromNewJellyfinMovies(newJellyfinMovies, app)
+	newJellyfinMoviesSorted := sortJellyfinNewMovies(newJellyfinMoviesWithoutIgnoredItems, app)
 	newMoviesData := getNewMovieTemplateDataFromSortedNewItems(newJellyfinMoviesSorted, app)
 
-	newJellyfinSeriesSorted := sortJellyfinNewSeriesItems(newJellyfinSeries, app)
+	newJellyfinSeriesWithoutIgnoredItems := removeIgnoredItemsFromNewJellyfinSeries(newJellyfinSeries, app)
+	newJellyfinSeriesSorted := sortJellyfinNewSeriesItems(newJellyfinSeriesWithoutIgnoredItems, app)
 	newSeriesData := getNewSerieTemplatesDataFromSortedItems(newJellyfinSeriesSorted, app)
 
 	title, err := BuildEmailTitleWithPlaceholders(
