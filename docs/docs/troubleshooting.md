@@ -29,7 +29,9 @@ By default, this saves preview output to `/app/previews/` for Docker installs (o
 
 Dry-run mode does **not** send any email or test the SMTP connection by default.
 
-?> If you're running via Docker, remember to **mount the `/app/previews/` folder** so you can access the generated preview files from the host.
+::: tip
+If you're running via Docker, remember to mount the `/app/previews/` folder so you can access the generated preview files from the host.
+:::
 
 ### Customizing dry-run behavior
 

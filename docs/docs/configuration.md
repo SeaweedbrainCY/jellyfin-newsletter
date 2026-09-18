@@ -18,7 +18,9 @@ Controls when the newsletter is sent automatically.
 |---|---|---|---|
 | `cron` | Optional | — | Crontab expression defining when the newsletter is sent. Test your expression at [crontab.guru](https://crontab.guru/). |
 
-!> If the entire `scheduler` section is commented out / omitted, the built-in scheduler is disabled and **the newsletter runs once immediately when the container starts**.
+::: warning
+If the entire `scheduler` section is commented out or omitted, the built-in scheduler is disabled and the newsletter runs once immediately when the container starts.
+:::
 
 ```yaml
 scheduler:
@@ -88,7 +90,7 @@ Controls the appearance and content of the newsletter email.
 | Parameter | Required | Default | Description |
 |---|---|---|---|
 | `theme` | Yes | — | Theme used to render the email. See [available themes](https://github.com/SeaweedbrainCY/jellyfin-newsletter/tree/main/engine-go/internal/template/themes). Currently: `classic`. |
-| `language` | Yes | — | ISO 639 (2-letter) language code for the email content, e.g. `en`, `fr`, `el`. See supported languages on the project's [Weblate](https://weblate.seaweedbrain.xyz). |
+| `language` | Yes | — | ISO 639 (2-letter) language code for the email content, e.g. `en`, `fr`, `el`. See supported languages on the project's [Crowdin](https://crowdin.com/project/jellyfin-Newsletter). |
 | `subject` | Yes | — | Subject line of the email. |
 | `title` | Yes | — | Title displayed in the email body. |
 | `subtitle` | Yes | — | Subtitle displayed in the email body. |
@@ -99,7 +101,7 @@ Controls the appearance and content of the newsletter email.
 | `max_displayed_items` | Optional | disabled (unlimited) | Maximum number of items shown in the email. Extra items are collapsed into a "... and y more" line. Comment out to disable the limit. |
 | `sort_mode` | Optional | `date_asc` | Sort order for items in the email. One of `date_asc`, `date_desc`, `name_asc`, `name_desc`. |
 
-Text fields such as `subject`, `title`, and `subtitle` support dynamic placeholders (e.g. `{{.MonthName}}`, `{{.Date}}`) — see the [Placeholders guide](placeholders.md) for the full list and examples.
+Text fields such as `subject`, `title`, and `subtitle` support dynamic placeholders (e.g.<span v-pre> `{{.MonthName}}`, `{{.Date}}`</span>) — see the [Placeholders guide](placeholders.md) for the full list and examples.
 
 ```yaml
 email_template:
@@ -116,7 +118,7 @@ email_template:
   sort_mode: "date_asc"
 ```
 
-Want a custom look? See the [Local theme files guide](local-themes.md) to bring your own theme, or [contribute a new one](https://github.com/SeaweedbrainCY/jellyfin-newsletter/blob/main/engine-go/internal/template/themes/README.md) to the built-in set.
+Want a custom look? See the [Local theme docs](./themes.md) to bring your own theme, or [contribute a new one](https://github.com/SeaweedbrainCY/jellyfin-newsletter/blob/main/engine-go/internal/template/themes/README.md) to the built-in set.
 
 ---
 

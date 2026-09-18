@@ -1,10 +1,22 @@
-# Run Jellyfin Newsletter with a local theme file
+# Jellyfin-Newsletter's themes
+You can customize your newsletter with already included themes, or use your own, locally on your machine. 
+
+## Available themes
+The following themes are available: 
+
+| Theme name | Preview |
+| --- | --- |
+|`classic`|<img src="https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/assets/new_media_notification_preview.png"  alt="Preview of a newsletter email" />|
+
+Not the themes your are looking for ? You can [contribute a new one](https://github.com/SeaweedbrainCY/jellyfin-newsletter/blob/main/engine-go/internal/template/themes/README.md) and help the entire community.
+
+## Use a local theme file
 
 Jellyfin Newsletter ships with [built-in embedded themes](https://github.com/SeaweedbrainCY/jellyfin-newsletter#custom-themes). Before a new theme gets merged into the official set, you can point Jellyfin Newsletter at your own local theme file instead.
 
-## Docker Compose
+### Docker Compose
 
-### Instructions
+#### Instructions
 
 To use a local theme file:
 
@@ -17,7 +29,7 @@ To use a local theme file:
    ```
 5. Reference your theme name in `config.yml`, e.g. `theme: "dracula"`.
 
-### Full example
+#### Full example
 
 `~/jellyfin-newsletter/my_themes/dracula.html`:
 
@@ -67,7 +79,9 @@ services:
 
 And you're good to go!
 
-?> **If your local theme directory doesn't contain the theme referenced in your config file, Jellyfin Newsletter falls back to the default embedded themes.** If the theme still can't be found, the script fails to start.
+::: tip
+If your local theme directory doesn't contain the theme referenced in your config file, Jellyfin Newsletter falls back to the default embedded themes. If the theme still can't be found, the script fails to start.
+:::
 
 ## See also
 

@@ -4,6 +4,7 @@ You may want to use dynamic values in your newsletter — that's what placeholde
 
 ## Available placeholders
 
+::: v-pre
 | Placeholder | Old placeholder (`< v1.0.0`) | Example | Description | Version |
 |---|---|---|---|---|
 | `{{.Date}}` | `{date}` | `2025-06-19` | Date of the day. Format `Y-m-d`. | `>= v1.0.0` |
@@ -18,10 +19,16 @@ You may want to use dynamic values in your newsletter — that's what placeholde
 | `{{.StartMonthName}}` | `{start_month_name}` | `May` | Month name of the first observed date. | `>= v1.0.0` |
 | `{{.StartMonthNumber}}` | `{start_month_number}` | `05` | Month number of the first observed date. | `>= v1.0.0` |
 | `{{.StartYear}}` | `{start_year}` | `2025` | Year of the first observed date. | `>= v1.0.0` |
+:::
 
-?> Don't see what you're looking for? [Open an issue](https://github.com/SeaweedbrainCY/jellyfin-newsletter/issues) to request a new placeholder.
 
-!> If you use a placeholder that doesn't exist, its key (e.g. `{{.ExamplePlaceholder}}`) will **not** be replaced and will show up literally in the final email.
+::: tip
+Don't see what you're looking for? [Open an issue](https://github.com/SeaweedbrainCY/jellyfin-newsletter/issues) to request a new placeholder.
+:::
+
+::: warning
+If you use a placeholder that doesn't exist, its key (e.g. <span v-pre>`{{.ExamplePlaceholder}}`</span>) will not be replaced and will show up literally in the final email.
+:::
 
 ## Example
 
@@ -41,9 +48,10 @@ Result:
   <img width="261" alt="Rendered subject line showing the month name placeholder replaced" src="https://github.com/user-attachments/assets/33a8909d-fd00-4a6f-8292-89f3a7618da5">
 </p>
 
-?> Change the `language` field to one of the [supported languages](https://github.com/SeaweedbrainCY/jellyfin-newsletter#supported-languages) to get localized day and month names.
+::: tip
+Change the `language` field to one of the [supported languages](https://github.com/SeaweedbrainCY/jellyfin-newsletter#supported-languages) to get localized day and month names.
+:::
 
 ## See also
 
 - [Configuration parameters](configuration.md#email_template) — where these placeholders can be used
-- [Local theme files guide](local-themes.md) — placeholders are also available inside custom theme HTML
