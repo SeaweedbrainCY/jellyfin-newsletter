@@ -100,6 +100,7 @@ Controls the appearance and content of the newsletter email.
 | `display_overview_max_items` | Optional | `10` | If the number of new items exceeds this value, item summaries are hidden. `0` = always show summaries, `-1` = always hide summaries. |
 | `max_displayed_items` | Optional | disabled (unlimited) | Maximum number of items shown in the email. Extra items are collapsed into a "... and y more" line. Comment out to disable the limit. |
 | `sort_mode` | Optional | `date_asc` | Sort order for items in the email. One of `date_asc`, `date_desc`, `name_asc`, `name_desc`. |
+| `ignored_items` | Optional | - | A list of items id (prefered) or name (movie name, series name, series episode, etc..), spelled as in Jellyfin.  Those items will be ignored even if they were added recently|
 
 Text fields such as `subject`, `title`, and `subtitle` support dynamic placeholders (e.g.<span v-pre> `{{.MonthName}}`, `{{.Date}}`</span>) — see the [Placeholders guide](placeholders.md) for the full list and examples.
 
@@ -116,6 +117,9 @@ email_template:
   display_overview_max_items: 10
   max_displayed_items: 10
   sort_mode: "date_asc"
+  ignored_items:
+    - "Game of thrones"
+    - "e2346c8e73a4e9de418f8143fd128ef6"
 ```
 
 Want a custom look? See the [Local theme docs](./themes.md) to bring your own theme, or [contribute a new one](https://github.com/SeaweedbrainCY/jellyfin-newsletter/blob/main/engine-go/internal/template/themes/README.md) to the built-in set.
