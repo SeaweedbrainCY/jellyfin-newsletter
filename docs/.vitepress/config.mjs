@@ -27,6 +27,7 @@ export default defineConfig({
                     { text: 'Installation', link: '/docs/installation' },
                     { text: 'Configuration', link: '/docs/configuration' },
                     { text: 'Placeholders', link: '/docs/placeholders' },
+                    { text: "Languages", link: "/docs/i18n" },
                     { text: 'Themes', link: '/docs/themes' },
                     { text: 'Troubleshooting', link: '/docs/troubleshooting' },
                 ]
