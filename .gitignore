@@ -5,6 +5,10 @@ template/new_media_notification_preview.html
 # binary
 main
 
+docs/.vitepress/cache
+docs/.vitepress/dist
+docs/node_modules
+
 
 # Used for development purposes, contains local settings and other files that should not be committed
 dev/
