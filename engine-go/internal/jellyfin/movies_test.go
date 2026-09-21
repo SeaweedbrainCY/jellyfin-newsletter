@@ -284,6 +284,37 @@ func TestGetRecentlyAddedMoviesByFolderWithNoTMDBID(t *testing.T) {
 	assert.True(t, isMovieNameDefault, "No movie with ID 8b54388aca994d4fb867944d3150a7e0 found. This is not expected.")
 }
 
+func TestGetRecentlyAddedMoviesByFolderWithTMDBIDNil(t *testing.T) {
+	app, recordedLogs := initApp()
+	mockItemsAPI := MockJellyfinItemsAPI{
+		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			items := baseMovie()
+			items[0].ProviderIds = map[string]*string{"Tmdb": nil}
+			return &items, nil
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
+	}
+	client := APIClient{
+		ItemsAPI: mockItemsAPI,
+	}
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	newlyAddedMovies, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", app)
+
+	require.NoError(t, err)
+	assert.Equal(t, 0, recordedLogs.Len())
+	assert.Len(t, newlyAddedMovies, 2)
+	isMovieNameDefault := false
+	for _, movie := range newlyAddedMovies {
+		if movie.ID == "8b54388aca994d4fb867944d3150a7e0" {
+			assert.Empty(t, movie.TMDBId)
+			isMovieNameDefault = true
+		}
+	}
+	assert.True(t, isMovieNameDefault, "No movie with ID 8b54388aca994d4fb867944d3150a7e0 found. This is not expected.")
+}
+
 func TestGetRecentlyAddedMoviesByFolderWithNoCreationDate(t *testing.T) {
 	app, recordedLogs := initApp()
 	mockItemsAPI := MockJellyfinItemsAPI{
