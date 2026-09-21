@@ -506,7 +506,7 @@ func runGetNewlyAddedSeriesTest(t *testing.T, tt TableTests) {
 	mockedJellyfinBaseItem := tt.getSeriesBaseItems()
 	expectedResult := tt.getExpectedResultFromBaseItem()
 
-	mockItemsAPI := MockJellyfinItemsAPI{
+	mockLibraryAPI := MockJellyfinLibraryAPI{
 		ExecuteGetAllItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
 			return &mockedJellyfinBaseItem, nil
 		},
@@ -516,7 +516,7 @@ func runGetNewlyAddedSeriesTest(t *testing.T, tt TableTests) {
 	}
 
 	client := APIClient{
-		ItemsAPI: mockItemsAPI,
+		LibraryAPI: mockLibraryAPI,
 	}
 	returnedNewSeriesItems := client.GetNewlyAddedSeries(mockedApp)
 

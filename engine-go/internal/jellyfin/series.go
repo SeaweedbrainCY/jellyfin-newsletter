@@ -222,12 +222,12 @@ func (client *APIClient) fetchAndParseSeries(
 	folderName string,
 	app *app.ApplicationContext,
 ) (map[string]seriesItem, error) {
-	folderID, err := client.ItemsAPI.GetRootFolderIDByName(folderName, app)
+	folderID, err := client.LibraryAPI.GetRootFolderIDByName(folderName, app)
 	if err != nil {
 		return nil, err
 	}
 
-	jellyfinItems, err := client.ItemsAPI.GetAllItemsByFolderID(folderID, app)
+	jellyfinItems, err := client.LibraryAPI.GetAllItemsByFolderID(folderID, app)
 	if err != nil {
 		return nil, err
 	}

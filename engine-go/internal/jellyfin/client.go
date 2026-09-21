@@ -14,9 +14,6 @@ type SystemAPIInterface interface {
 
 type LibraryAPIInterface interface {
 	GetItemsStats(app *app.ApplicationContext) (int32, int32, error)
-}
-
-type ItemsAPIInterface interface {
 	GetMoviesItemsByFolderID(
 		folderID string,
 		recursive bool,
@@ -31,7 +28,6 @@ type ItemsAPIInterface interface {
 
 type APIClient struct {
 	SystemAPI  SystemAPIInterface
-	ItemsAPI   ItemsAPIInterface
 	LibraryAPI LibraryAPIInterface
 }
 

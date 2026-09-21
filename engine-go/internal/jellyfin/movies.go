@@ -60,12 +60,12 @@ func (client *APIClient) getRecentlyAddedMoviesByFolder(
 		zap.String("FolderName", folderName),
 		zap.String("StartAdditionDate", minimumAdditionDate.String()),
 	)
-	folderID, err := client.ItemsAPI.GetRootFolderIDByName(folderName, app)
+	folderID, err := client.LibraryAPI.GetRootFolderIDByName(folderName, app)
 	if err != nil {
 		return nil, err
 	}
 
-	movies, err := client.ItemsAPI.GetMoviesItemsByFolderID(folderID, true, app)
+	movies, err := client.LibraryAPI.GetMoviesItemsByFolderID(folderID, true, app)
 
 	if err != nil {
 		return nil, err
