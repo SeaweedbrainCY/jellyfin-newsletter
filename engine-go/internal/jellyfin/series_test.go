@@ -153,7 +153,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			Name:           *jellyfinAPI.NewNullableString(new("Series 1")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -7))),
-			ProviderIds:    map[string]string{"Tmdb": "1027", "Imdb": "2276"},
+			ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
 			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 		},
@@ -162,7 +162,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			Name:           *jellyfinAPI.NewNullableString(new("Season 1")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -7))),
-			ProviderIds:    map[string]string{"Tmdb": "1027", "Imdb": "2276"},
+			ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
 			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			SeriesId:       *jellyfinAPI.NewNullableString(new("1813f4b17e9d4a799641c09319b5ffcc")),
@@ -173,7 +173,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			Name:           *jellyfinAPI.NewNullableString(new("Episode 1")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -7))),
-			ProviderIds:    map[string]string{"Tmdb": "1027", "Imdb": "2276"},
+			ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
 			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
 			SeriesId:       *jellyfinAPI.NewNullableString(new("1813f4b17e9d4a799641c09319b5ffcc")),
@@ -185,7 +185,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			Name:           *jellyfinAPI.NewNullableString(new("Series 2")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2024))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -5))),
-			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
 			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 		},
@@ -217,7 +217,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			Name:           *jellyfinAPI.NewNullableString(new("Old Series 1")),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -90))),
 			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
-			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
 			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
 		},
@@ -229,7 +229,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			SeriesId:       *jellyfinAPI.NewNullableString(new("bb2222")),
-			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
 			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
 			SeriesName:     *jellyfinAPI.NewNullableString(new("Old Series 1")),
@@ -244,7 +244,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
 			SeriesId:       *jellyfinAPI.NewNullableString(new("bb2222")),
-			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
 			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(2))),
 		},
@@ -268,7 +268,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 		{
 			Id:             new("cc3333"),
 			Name:           *jellyfinAPI.NewNullableString(new("Very Old Series")),
-			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -180))),
 			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
@@ -326,7 +326,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 		{
 			Id:             new("ee5555"),
 			Name:           *jellyfinAPI.NewNullableString(new("Very Old Series")),
-			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -180))),
 			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
 			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
@@ -381,7 +381,7 @@ func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
 		{
 			Id:             new("dd4444"),
 			Name:           *jellyfinAPI.NewNullableString(new("Legacy Series")),
-			ProviderIds:    map[string]string{"Tmdb": "3001"},
+			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2019))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -120))),
 			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
@@ -755,8 +755,24 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			loggedMessages: []observer.LoggedEntry{},
 			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
 				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProviderIds = map[string]string{
-					"imdb": "1726",
+				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProviderIds = map[string]*string{
+					"imdb": new("1726"),
+				}
+				return baseItems
+			},
+			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
+				expected := getExpectedResultFromBaseItem()
+				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].TMDBId = ""
+				return expected
+			},
+		},
+		{
+			name:           "series with no TMDB ID nil",
+			loggedMessages: []observer.LoggedEntry{},
+			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
+				baseItems := getSeriesBaseItems()
+				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProviderIds = map[string]*string{
+					"Tmdb": nil,
 				}
 				return baseItems
 			},
