@@ -7,6 +7,7 @@ on:
 
 jobs:
   update-version:
+    if: github.event_name == 'workflow_dispatch' || github.event.release.prerelease == false
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -53,6 +54,6 @@ jobs:
           TAG="${{ steps.version.outputs.tag }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md docker-compose.yml
+          git add README.md docker-compose.yml docs/docs/installation.md
           git commit -m "chore: bump image version to ${TAG}"
           git push origin HEAD:main
