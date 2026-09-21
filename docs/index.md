@@ -4,7 +4,7 @@ layout: home
 hero:
   name: Jellyfin Newsletter
   text: Keep your users updated 
-  tagline: Connect to your Jellyfin library, enrich media details with TMDB, and send a polished newsletter by email. <br><div style="display:flex; margin-top:20px;""> <img src="https://img.shields.io/github/stars/seaweedbraincy/jellyfin-newsletter" alt="GitHub stars" style="margin-right:10px" /> <img src="https://img.shields.io/badge/GHCR%20pulls-48.9K-blue?logo=docker" alt="GHCR pulls" /></div>
+  tagline: Connect to your Jellyfin library, enrich media details with TMDB, and send a polished newsletter by email. <br><div style="display:flex; margin-top:20px;""> <img src="https://img.shields.io/github/stars/seaweedbraincy/jellyfin-newsletter" alt="GitHub stars" style="margin-right:10px" /> <img src="https://img.shields.io/badge/GHCR%20pulls-50K-blue?logo=docker" alt="GHCR pulls" /></div>
   actions:
     - theme: brand
       text: What is Jellyfin-Newsletter ?
