@@ -30,12 +30,12 @@ func (libraryAPI libraryItemAPI) GetItemsStats(app *app.ApplicationContext) (int
 	return *itemsCounts.MovieCount, *itemsCounts.EpisodeCount, nil
 }
 
-func (itemsAPI libraryItemAPI) GetMoviesItemsByFolderID(
+func (libraryAPI libraryItemAPI) GetMoviesItemsByFolderID(
 	folderID string,
 	recursive bool,
 	app *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
-	movies, getMoviesHTTPResponse, httpErr := itemsAPI.GetItems(context.Background()).
+	movies, getMoviesHTTPResponse, httpErr := libraryAPI.GetItems(context.Background()).
 		Recursive(recursive).
 		ParentId(folderID).
 		LocationTypes([]jellyfinAPI.LocationType{jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM}).
@@ -51,11 +51,11 @@ func (itemsAPI libraryItemAPI) GetMoviesItemsByFolderID(
 	return &movies.Items, nil
 }
 
-func (itemsAPI libraryItemAPI) GetAllItemsByFolderID(
+func (libraryAPI libraryItemAPI) GetAllItemsByFolderID(
 	folderID string,
 	app *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
-	items, httpResponse, httpErr := itemsAPI.GetItems(context.Background()).
+	items, httpResponse, httpErr := libraryAPI.GetItems(context.Background()).
 		Recursive(true).
 		ParentId(folderID).
 		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear", "IndexNumber", "SeriesId", "Type", "SeasonId"}).
@@ -71,8 +71,8 @@ func (itemsAPI libraryItemAPI) GetAllItemsByFolderID(
 	return &items.Items, nil
 }
 
-func (itemsAPI libraryItemAPI) GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error) {
-	foldersItems, httpResponse, httpErr := itemsAPI.GetItems(context.Background()).
+func (libraryAPI libraryItemAPI) GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error) {
+	foldersItems, httpResponse, httpErr := libraryAPI.GetItems(context.Background()).
 		Recursive(false).
 		LocationTypes([]jellyfinAPI.LocationType{jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM}).
 		Execute()
