@@ -12,6 +12,11 @@ type libraryItemAPI struct {
 	jellyfinAPI.LibraryAPI
 }
 
+type Nullable[T any] interface {
+	IsSet() bool
+	Get() *T
+}
+
 func (libraryAPI libraryItemAPI) GetItemsStats(app *app.ApplicationContext) (int32, int32, error) {
 	itemsCounts, httpResponse, httpErr := libraryAPI.GetItemCounts(context.Background()).Execute()
 
