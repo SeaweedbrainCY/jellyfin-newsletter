@@ -38,14 +38,14 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 			Name:           *jellyfinAPI.NewNullableString(new("Movie 1")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2026))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now())),
-			ProviderIds:    map[string]string{"Tmdb": "2876", "Imdb": "2653"},
+			ProviderIds:    map[string]*string{"Tmdb": new("2876"), "Imdb": new("2653")},
 		},
 		{
 			Id:             new("2264338b9fe1475b8f2b8095531dd1ff"),
 			Name:           *jellyfinAPI.NewNullableString(new("Movie 2")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -7))),
-			ProviderIds:    map[string]string{"Tmdb": "1027", "Imdb": "2276"},
+			ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
 		},
 		{
 
@@ -53,7 +53,7 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 			Name:           *jellyfinAPI.NewNullableString(new("Movie 3")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2022))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -30.))),
-			ProviderIds:    map[string]string{"Tmdb": "1092"},
+			ProviderIds:    map[string]*string{"Tmdb": new("1092")},
 		},
 	}
 
@@ -63,21 +63,21 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 			Name:           *jellyfinAPI.NewNullableString(new("Movie 4")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2026))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -31))),
-			ProviderIds:    map[string]string{"Tmdb": "2173"},
+			ProviderIds:    map[string]*string{"Tmdb": new("2173")},
 		},
 		{
 			Id:             new("ee1b42664d9a41ca9d7db8ca114f3fdb"),
 			Name:           *jellyfinAPI.NewNullableString(new("Movie 5")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, -2, 0))),
-			ProviderIds:    map[string]string{"Tmdb": "9876"},
+			ProviderIds:    map[string]*string{"Tmdb": new("9876")},
 		},
 		{
 			Id:             new("bd9fb02655f54c79932431a342763c8b"),
 			Name:           *jellyfinAPI.NewNullableString(new("Movie 6")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2021))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(-1, 0, 0))),
-			ProviderIds:    map[string]string{"Tmdb": "1098"},
+			ProviderIds:    map[string]*string{"Tmdb": new("1098")},
 		},
 	}
 
@@ -172,21 +172,21 @@ func baseMovie() []jellyfinAPI.BaseItemDto {
 			Name:           *jellyfinAPI.NewNullableString(new("Movie 1")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2026))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now())),
-			ProviderIds:    map[string]string{"Tmdb": "2876", "Imdb": "2653"},
+			ProviderIds:    map[string]*string{"Tmdb": new("2876"), "Imdb": new("2653")},
 		},
 		{
 			Id:             new("2264338b9fe1475b8f2b8095531dd1ff"),
 			Name:           *jellyfinAPI.NewNullableString(new("Movie 2")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -7))),
-			ProviderIds:    map[string]string{"Tmdb": "1027", "Imdb": "2276"},
+			ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
 		},
 		{
 			Id:             new("7c48cba998264cea90880b9efd0d9c9b"),
 			Name:           *jellyfinAPI.NewNullableString(new("Movie 3")),
 			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2022))),
 			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, -2, 0.))),
-			ProviderIds:    map[string]string{"Tmdb": "1092"},
+			ProviderIds:    map[string]*string{"Tmdb": new("1092")},
 		},
 	}
 }
@@ -258,7 +258,7 @@ func TestGetRecentlyAddedMoviesByFolderWithNoTMDBID(t *testing.T) {
 	mockItemsAPI := MockJellyfinItemsAPI{
 		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
 			items := baseMovie()
-			items[0].ProviderIds = map[string]string{}
+			items[0].ProviderIds = map[string]*string{}
 			return &items, nil
 		},
 		ExecuteGetRootFolderIDByName: func() (string, error) {
