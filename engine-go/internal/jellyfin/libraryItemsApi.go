@@ -108,6 +108,9 @@ func OrDefault[T any](n Nullable[T], def T) T {
 
 func getTMDBIDIfExist(item *jellyfinAPI.BaseItemDto) string {
 	if value, ok := item.ProviderIds["Tmdb"]; ok {
+		if value == nil {
+			return ""
+		}
 		return *value
 	}
 	return ""
