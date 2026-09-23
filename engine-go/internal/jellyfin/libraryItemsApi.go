@@ -48,7 +48,11 @@ func (libraryAPI libraryItemAPI) GetMoviesItemsByFolderID(
 		return nil, err
 	}
 	defer getMoviesHTTPResponse.Body.Close()
-	app.Logger.Debug("Successfully retrieved all movies from API", zap.String("Folder", folderID), zap.Any("Movies", movies.Items))
+	app.Logger.Debug(
+		"Successfully retrieved all movies from API",
+		zap.String("Folder", folderID),
+		zap.Any("Movies", movies.Items),
+	)
 	return &movies.Items, nil
 }
 
@@ -69,7 +73,11 @@ func (libraryAPI libraryItemAPI) GetAllItemsByFolderID(
 	}
 
 	defer httpResponse.Body.Close()
-	app.Logger.Debug("Successfully retrieved all items from API", zap.String("Folder", folderID), zap.Any("Items", items.Items))
+	app.Logger.Debug(
+		"Successfully retrieved all items from API",
+		zap.String("Folder", folderID),
+		zap.Any("Items", items.Items),
+	)
 	return &items.Items, nil
 }
 
