@@ -146,7 +146,7 @@ func TestGetRecentlyAddedMoviesByFolder(t *testing.T) {
 				)
 				assert.Equal(
 					t,
-					expectedMovie.ProviderIds["Tmdb"],
+					*expectedMovie.ProviderIds["Tmdb"],
 					movie.TMDBId,
 					"Movie ID %s: Not the TMDBID. Expected: %s. Actual: %d",
 					movie.ID,
