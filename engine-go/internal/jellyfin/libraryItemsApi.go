@@ -32,11 +32,10 @@ func (libraryAPI libraryItemAPI) GetItemsStats(app *app.ApplicationContext) (int
 
 func (libraryAPI libraryItemAPI) GetMoviesItemsByFolderID(
 	folderID string,
-	recursive bool,
 	app *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
 	movies, getMoviesHTTPResponse, httpErr := libraryAPI.GetItems(context.Background()).
-		Recursive(recursive).
+		Recursive(false).
 		ParentId(folderID).
 		LocationTypes([]jellyfinAPI.LocationType{jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM}).
 		IsMovie(true).
@@ -48,6 +47,7 @@ func (libraryAPI libraryItemAPI) GetMoviesItemsByFolderID(
 		return nil, err
 	}
 	defer getMoviesHTTPResponse.Body.Close()
+	app.Logger.Debug("Successfully retrieved all movies from API", zap.String("Folder", folderID), zap.Any("Movies", movies.Items))
 	return &movies.Items, nil
 }
 
@@ -67,7 +67,7 @@ func (libraryAPI libraryItemAPI) GetAllItemsByFolderID(
 	}
 
 	defer httpResponse.Body.Close()
-
+	app.Logger.Debug("Successfully retrieved all items from API", zap.String("Folder", folderID), zap.Any("Items", items.Items))
 	return &items.Items, nil
 }
 

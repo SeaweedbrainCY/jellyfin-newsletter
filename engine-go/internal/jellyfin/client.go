@@ -16,7 +16,6 @@ type LibraryAPIInterface interface {
 	GetItemsStats(app *app.ApplicationContext) (int32, int32, error)
 	GetMoviesItemsByFolderID(
 		folderID string,
-		recursive bool,
 		app *app.ApplicationContext,
 	) (*[]jellyfinAPI.BaseItemDto, error)
 	GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error)

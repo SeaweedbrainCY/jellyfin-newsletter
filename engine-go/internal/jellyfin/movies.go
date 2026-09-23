@@ -65,7 +65,7 @@ func (client *APIClient) getRecentlyAddedMoviesByFolder(
 		return nil, err
 	}
 
-	movies, err := client.LibraryAPI.GetMoviesItemsByFolderID(folderID, true, app)
+	movies, err := client.LibraryAPI.GetMoviesItemsByFolderID(folderID, app)
 
 	if err != nil {
 		return nil, err

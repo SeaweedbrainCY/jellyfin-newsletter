@@ -14,7 +14,6 @@ type MockJellyfinLibraryAPI struct {
 
 func (m MockJellyfinLibraryAPI) GetMoviesItemsByFolderID(
 	_ string,
-	_ bool,
 	_ *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
 	return m.ExecuteGetMoviesItemsByFolderID()
