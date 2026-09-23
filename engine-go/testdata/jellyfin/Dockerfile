@@ -1,4 +1,4 @@
-FROM jellyfin/jellyfin
+FROM jellyfin/jellyfin:12
 
 RUN mkdir /movies
 RUN mkdir /tvshows
