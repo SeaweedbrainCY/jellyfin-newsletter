@@ -54,6 +54,17 @@ func checkHTTPRequest(ctx string, resp *http.Response, httpErr error, logger *za
 			zap.String("context", ctx),
 			zap.Error(httpErr),
 		)
+		return httpErr
+	}
+
+	if resp == nil {
+		err := errors.New("nil HTTP response")
+		logger.Error(
+			"HTTP request returned nil response",
+			zap.String("context", ctx),
+			zap.Error(err),
+		)
+		return err
 	}
 
 	defer resp.Body.Close()
