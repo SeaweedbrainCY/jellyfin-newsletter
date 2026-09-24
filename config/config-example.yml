@@ -1,5 +1,6 @@
 ### Example configuration file.
 ## All values are mandatory, except for the ones that are commented out.
+## Read the docs at: https://jellyfin-newsletter.seaweedbrain.xyz/docs/
 
 scheduler:
   # Crontab expression to send the newsletter.
@@ -40,12 +41,12 @@ tmdb:
   api_key: ""
 
 # Email template to use for the newsletter
-# You can use placeholders to dynamically insert values. See available placeholders here : https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/How-to-use-placeholder
+# You can use placeholders to dynamically insert values. See available placeholders here : https://jellyfin-newsletter.seaweedbrain.xyz/docs/placeholders
 email_template:
-  # See https://github.com/SeaweedbrainCY/jellyfin-newsletter/tree/main/engine-go/internal/template/themes for available themes
+  # See https://jellyfin-newsletter.seaweedbrain.xyz/docs/themes for available themes
   theme: "classic"
   # Language code of the email.
-  # Available lang are: https://github.com/SeaweedbrainCY/jellyfin-newsletter#supported-languages
+  # Available lang are: https://jellyfin-newsletter.seaweedbrain.xyz/docs/i18n
   # Use the ISO 639 (2 letter code). For example, fr for french, el for greek, ...
   language: "en"
   # Subject of the email
@@ -80,7 +81,6 @@ email_template:
   # - name_desc: sort entirely by name (Z->A), ignore date
   #sort_mode: "date_asc"
 
-
   # OPTIONAL : Ignore items by id or name
   # You can provide a list of items id (prefered) or name (movie name, series name, series episode, etc..), spelled as in Jellyfin.
   # Those items will be ignored even if they were added recently
@@ -111,7 +111,7 @@ email:
 #   format: console
 
 # You can run the newsletter as dry-run to test the rendered HTML and test the SMTP connection
-# More information : https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/Troubleshoot-the-setup-and-newsletter-generation
+# More information : https://jellyfin-newsletter.seaweedbrain.xyz/docs/troubleshooting
 #dry-run:
 #    enabled: false
 #    output_directory: /app/config/
