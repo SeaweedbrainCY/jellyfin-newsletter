@@ -2,7 +2,6 @@
 
 Thank you for your interest in contributing to Jellyfin-Newsletter! This document reflects the current Go-based engine (`engine-go`).
 
-> **Note on the Python codebase:** The original Python implementation is kept in the repository for historical reference only. It is deprecated and will be removed in a future release. All active development happens in `engine-go`.
 
 ## Table of Contents
 
@@ -123,9 +122,9 @@ Contributions that introduce new features or fix bugs should include appropriate
 
 ## Translations
 
-Translations are managed via **Weblate** at [weblate.seaweedbrain.xyz](https://weblate.seaweedbrain.xyz). If you want to add or improve a translation:
+Translations are managed via [**Crowdin**](https://crowdin.com/project/jellyfin-Newsletter). If you want to add or improve a translation:
 
-1. Head to the Weblate project and contribute there directly — no PR needed for translation-only changes.
+1. Head to the WeCrowdinblate project and contribute there directly — no PR needed for translation-only changes.
 
 Do **not** edit translation files manually in the repository — they are synced from Weblate.
 
