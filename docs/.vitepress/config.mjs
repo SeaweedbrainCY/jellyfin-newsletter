@@ -6,7 +6,7 @@ export default defineConfig({
     lang: 'en-US',
     lastUpdated: true,
     cleanUrls: true,
-    head: [['link', { rel: 'icon', href: '/favicon.png' }]],
+    head: [['link', { rel: 'icon', href: 'https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/docs/favicon.png' }]],
     themeConfig: {
         logo: "https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/assets/jellyfin_newsletter.png",
         nav: [
