@@ -2,15 +2,13 @@
 
 Jellyfin Newsletter has several built-in tools to help you diagnose setup issues or inspect what a run will produce before it emails anyone.
 
-## Debug mode
-
-Enable verbose logging by setting, in `config.yml`:
-
+## Increase logs verbosity
+You can increase logs verbosity in your `config.yml` by updating the default minimum log level (default INFO): 
 ```yaml
-debug: true
+log:
+  level: DEBUG
+  format: console
 ```
-
-This turns on more detailed logging and additional diagnostic output. It does **not** change the script's behavior — it's purely for visibility into what's happening under the hood.
 
 ## Dry-run mode
 
