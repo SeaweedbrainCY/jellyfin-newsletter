@@ -15,6 +15,8 @@ A newsletter for Jellyfin to notify your users of your latest additions. Jellyfi
 
 It is fully customizable and can be run on a schedule using a cron job or a task scheduler.
 
+[Official documentation](https://jellyfin-newsletter.seaweedbrain.xyz/)
+
 > [!warning]
 > **Upgrading to Jellyfin 12 ?**
 >
@@ -51,19 +53,6 @@ You can contribute to the translation of Jellyfin-Newsletter on [Crowdin](https:
 <img src="https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/assets/crowdin-status.svg" alt="State of localization" />
 </a>
 </p>
-
-### Custom themes
-#### Create a new theme
-You can create and propose a new theme by following the [theme creation guide](engine-go/internal/template/themes/README.md).
-
-Currently available themes:
-- `Classic`
-
-#### Bring your own themes
-Jellyfin-Newsletter comes with built-in and embedded themes (listed above). However, before your new beautiful theme gets included in the official themes, you can just instruct Jellyfin-Newsletter to use a local theme file. 
-
-[Follow these instructions to use your own local theme files](https://github.com/SeaweedbrainCY/jellyfin-newsletter/wiki/Bring-your-own-themes)
-
 
 ## Getting started
 
