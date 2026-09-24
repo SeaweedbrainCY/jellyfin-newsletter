@@ -12,7 +12,7 @@ Not the themes your are looking for ? You can [contribute a new one](https://git
 
 ## Use a local theme file
 
-Jellyfin Newsletter ships with [built-in embedded themes](https://github.com/SeaweedbrainCY/jellyfin-newsletter#custom-themes). Before a new theme gets merged into the official set, you can point Jellyfin Newsletter at your own local theme file instead.
+Jellyfin Newsletter ships with built-in embedded themes. Before a new theme gets merged into the official set, you can point Jellyfin Newsletter at your own local theme file instead.
 
 ### Docker Compose
 
