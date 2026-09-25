@@ -154,7 +154,7 @@ func TestJellyfinNewsletter(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, messages, 1)
 	msg := messages[0]
-	assert.Equal(t, "[Jellyfin] New movies ans TV shows of April", msg.Subject)
+	assert.Equal(t, "[Jellyfin] New movies ans TV shows of September", msg.Subject)
 	html, err := mailpitCT.GetMessageHTML(msg.ID)
 	normalizedHTML := normalizeHTML(html)
 	require.NoError(t, err)
