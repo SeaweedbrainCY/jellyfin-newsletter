@@ -61,9 +61,9 @@ type MailpitMessagesResponse struct {
 }
 
 func (c FakeClock) Now() time.Time {
-	// Fixtures data are fixed in the time. They are currently captured on 2026-04-01.
+	// Fixtures data are fixed in the time. They are currently captured on 2026-09-23.
 	// Altering this date or the fixtures without aletring the other one will break the tests.
-	return time.Date(2026, 04, 01, 12, 00, 00, 00, time.UTC)
+	return time.Date(2026, 9, 23, 12, 00, 00, 00, time.UTC)
 }
 
 func initApp(t *testing.T) (*app.ApplicationContext, *observer.ObservedLogs, error) {
@@ -159,7 +159,7 @@ func TestJellyfinNewsletter(t *testing.T) {
 	normalizedHTML := normalizeHTML(html)
 	require.NoError(t, err)
 	assert.Contains(t, normalizedHTML, "Love Actually")
-	assert.Contains(t, normalizedHTML, "Added on 2026-03-31")
+	assert.Contains(t, normalizedHTML, "Added on 2026-09-23")
 	assert.Contains(t, normalizedHTML, "No Time to Die")
 	assert.Contains(t, normalizedHTML, "The Last of Us")
 	assert.Contains(t, normalizedHTML, "Severance: Season 1, Episodes 2-3")
