@@ -14,12 +14,8 @@ type SystemAPIInterface interface {
 
 type LibraryAPIInterface interface {
 	GetItemsStats(app *app.ApplicationContext) (int32, int32, error)
-}
-
-type ItemsAPIInterface interface {
 	GetMoviesItemsByFolderID(
 		folderID string,
-		recursive bool,
 		app *app.ApplicationContext,
 	) (*[]jellyfinAPI.BaseItemDto, error)
 	GetRootFolderIDByName(folderName string, app *app.ApplicationContext) (string, error)
@@ -31,7 +27,6 @@ type ItemsAPIInterface interface {
 
 type APIClient struct {
 	SystemAPI  SystemAPIInterface
-	ItemsAPI   ItemsAPIInterface
 	LibraryAPI LibraryAPIInterface
 }
 
@@ -46,9 +41,6 @@ func NewJellyfinAPIClient(httpClient *http.Client, app *app.ApplicationContext) 
 	return APIClient{
 		SystemAPI: jellyfinSystemAPI{
 			client.SystemAPI,
-		},
-		ItemsAPI: jellyfinItemsAPI{
-			client.ItemsAPI,
 		},
 		LibraryAPI: libraryItemAPI{
 			client.LibraryAPI,

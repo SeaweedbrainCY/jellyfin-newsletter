@@ -88,7 +88,7 @@ func TestLocalizeValidStrings(t *testing.T) {
 		{
 			name:           "Test Get Localization of currently_available in he",
 			lang:           "he",
-			expectedString: "זמין כעת בג'ליפין:\\u200f",
+			expectedString: "זמין כעת בג'ליפין:",
 		},
 		{
 			name:           "Test Get Localization of currently_available in de",

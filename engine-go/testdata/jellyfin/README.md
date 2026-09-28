@@ -1,15 +1,71 @@
 ## Jellyfin test data
 
-The folder contains the docker files used to spin up a test-dedicated jellyfin tenant to create original data for go-vcr. It should only be used to generate thoses cassettes, which shouldn't happen often. 
+This directory contains the Docker setup and mounted volumes used to run a **test-only Jellyfin instance** for generating `go-vcr` cassettes.
 
-It only populates media fake files. Configuration of API keys and of the tenant need to be manually done. Some metadata such as folder (series folder/season folder) need to be manually fixed as well. 
+Use it only when fixtures need to be refreshed (for example after upgrading Jellyfin, changing API usage, or updating expected newsletter content).
 
-The folder contains mounted volume used by the jellyfin container managed by go-testcontainer. 
+### Notes
 
-It is a test-specific installation/configuration with fake media data.
+- This environment is test-specific and uses fake media files.
+- API keys/tokens/config values are temporary and test-only.
+- Media files are created at runtime so Jellyfin `DateCreated` values are deterministic for integration tests.
+- If fixture data changes, update test assertions accordingly.
 
-All the secrets/token/configuration correspond to a temporary, test-only instance. There is no point of hidden them.
+---
 
-Only necessary data is committed. If fixture data change, it should be reflected in tests code
+## Regenerate cassettes (integration fixtures)
 
-The movies/tvshows data (fake data with only a relevant name) are populated at runtime to manage the creation datetime used by Jellyfin to compute de DateCreated metadata.
+### 1) Start Jellyfin test container
+
+From this directory (`engine-go/testdata/jellyfin`), start the stack:
+
+```sh
+docker-compose up -d
+```
+
+### 2) Configure Jellyfin manually
+
+Open Jellyfin and complete initial setup.  
+Create exactly 2 libraries:
+
+- Movies library -> `/movies`
+- TV Shows library -> `/tvshows`
+
+### 3) Create API key and update integration config
+
+Create a Jellyfin API key, then temporarily update:
+
+`engine-go/testdata/fixtures/config/config.test.yml`
+
+with the correct Jellyfin URL and API key.
+
+### 4) Run integration test from `engine-go`
+
+```sh
+cd engine-go
+export INTEGRATION_TEST_CONFIG_FILE=../../testdata/fixtures/config/config.test.yml
+go test -tags=integration ./internal/newsletter -run TestJellyfinNewsletter -v
+```
+
+This will record/update cassettes under `engine-go/testdata/fixtures/`.
+
+### 5) Update fixed test date
+
+Update the fixed date in:
+
+`engine-go/internal/newsletter/newsletter_integration_test.go`
+
+Specifically, adjust `FakeClock.Now()` and expected addition date to the date used for the newly recorded fixtures.
+
+---
+
+## After recording
+
+- Re-run the same test once more to ensure playback is stable.
+- Review cassette diffs and update assertions in `newsletter_integration_test.go` if expected content changed.
+- Stop containers when finished:
+
+```sh
+docker-compose down
+```
+- Revert the config.test.yml

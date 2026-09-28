@@ -1,3 +1,5 @@
 files:
   - source: /engine-go/internal/i18n/active.en.toml
     translation: /engine-go/internal/i18n/active.%two_letters_code%.toml
+commit_message: "i18n: New translations %original_file_name% from Crowdin"
+append_commit_message: false
