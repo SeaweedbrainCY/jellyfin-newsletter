@@ -62,7 +62,7 @@ func parseSeriesItems(app *app.ApplicationContext, jellyfinItems *[]jellyfinAPI.
 			}
 			if seriesItems[*item.Id].AdditionDate.Equal(time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)) {
 				app.Logger.Warn(
-					"Found a series with no addition date. This can lead to inaccuracy when detecting newly added media.",
+					"Found a series with no addition date. This can lead to inaccuracies.",
 					zap.String("Series ID", *item.Id),
 					zap.String("Series Name", seriesItems[*item.Id].Name),
 				)
@@ -278,20 +278,17 @@ func (client *APIClient) createNewlyAddedSeriesItem(
 		AdditionDate:   series.AdditionDate,
 	}
 
-	if series.AdditionDate.After(minimumAdditionDate) {
-		newSeries.IsSeriesNew = true
-		return newSeries
-	}
-
-	newSeries.IsSeriesNew = false
 	newSeries.NewSeasons = client.findNewSeasons(series.Seasons, minimumAdditionDate)
+	if len(newSeries.NewSeasons) != 0 && len(newSeries.NewSeasons) == len(series.Seasons) {
+		newSeries.IsSeriesNew = true
+	}
 
 	return newSeries
 }
 
 // findNewSeasons iterates over seasons and returns a map of seasons
 // that are newly added or contain newly added episodes relative to
-// `minimumAdditionDate`. The returned map is nil when no new seasons
+// `minimumAdditionDate`. The returned map is empty when no new seasons
 // are found.
 func (client *APIClient) findNewSeasons(
 	seasons map[string]SeasonItem,
@@ -314,10 +311,9 @@ func (client *APIClient) findNewSeasons(
 }
 
 // processSeasonForNewContent returns a `SeasonItem` describing whether
-// the season itself is new (based on addition date) or contains newly
-// added episodes. If the season is new it is marked accordingly and
-// returned without episode details; otherwise the episode map is
-// scanned and returned when new episodes are present.
+// the season itself is new (based on if all its episode are new) or contains newly
+// added episodes. If the season is new it is marked accordingly the episode map is
+// scanned and returned with new episodes.
 func (client *APIClient) processSeasonForNewContent(
 	season SeasonItem,
 	minimumAdditionDate time.Time,
@@ -328,20 +324,19 @@ func (client *APIClient) processSeasonForNewContent(
 		AdditionDate: season.AdditionDate,
 	}
 
-	if season.AdditionDate.After(minimumAdditionDate) {
-		newSeason.IsSeasonNew = true
-		return newSeason
-	}
-
 	newSeason.IsSeasonNew = false
 	newSeason.Episodes = client.findNewEpisodes(season.Episodes, minimumAdditionDate)
+	if len(newSeason.Episodes) != 0 && len(newSeason.Episodes) == len(season.Episodes) {
+		// All episodes of the season have been added recently, so the whole season is new
+		newSeason.IsSeasonNew = true
+	}
 
 	return newSeason
 }
 
 // findNewEpisodes filters episodes and returns a map containing only
 // those episodes whose addition date is after `minimumAdditionDate`.
-// Returns nil when no new episodes are found.
+// Returns empty when no new episodes are found.
 func (client *APIClient) findNewEpisodes(
 	episodes map[string]EpisodeItem,
 	minimumAdditionDate time.Time,

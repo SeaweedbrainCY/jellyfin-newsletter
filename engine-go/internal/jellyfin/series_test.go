@@ -1,8 +1,12 @@
 package jellyfin
 
 import (
+	"crypto/md5"
 	"errors"
+	"fmt"
+	"maps"
 	"slices"
+	"strconv"
 	"testing"
 	"time"
 
@@ -18,10 +22,9 @@ import (
 )
 
 type TableTests struct {
-	getSeriesBaseItems            func() []jellyfinAPI.BaseItemDto
-	getExpectedResultFromBaseItem func() []NewlyAddedSeriesItem
-	name                          string
-	loggedMessages                []observer.LoggedEntry
+	getBaseItemsAndExpectedResults func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem)
+	name                           string
+	loggedMessages                 []observer.LoggedEntry
 }
 
 func testSeriesInitApp() (*app.ApplicationContext, *observer.ObservedLogs) {
@@ -40,392 +43,151 @@ func testSeriesInitApp() (*app.ApplicationContext, *observer.ObservedLogs) {
 	}, recordedLogs
 }
 
-func getExpectedResultFromBaseItem() []NewlyAddedSeriesItem {
-	return []NewlyAddedSeriesItem{
+func getBaseItemsAndExpectedResults() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+	observedDays := 30
+	items := []struct {
+		SeriesName                   string
+		NumberOfEpisodes             int
+		NumberOfEpisodesPerSeason    []int
+		NumberOfNewEpisodesPerSeason []int
+		IsSeriesNew                  bool
+	}{
 		{
-			SeriesName:     "Series 1",
-			SeriesID:       "1813f4b17e9d4a799641c09319b5ffcc",
-			IsSeriesNew:    true,
-			NewSeasons:     nil,
+			SeriesName:                   "Whole new series",
+			IsSeriesNew:                  true,
+			NumberOfEpisodesPerSeason:    []int{30, 30, 30},
+			NumberOfNewEpisodesPerSeason: []int{30, 30, 30},
+		},
+		{
+			SeriesName:                   "Whole new season",
+			IsSeriesNew:                  false,
+			NumberOfEpisodesPerSeason:    []int{30, 30, 30},
+			NumberOfNewEpisodesPerSeason: []int{0, 0, 30},
+		},
+		{
+			SeriesName:                   "Some new episodes",
+			IsSeriesNew:                  false,
+			NumberOfEpisodesPerSeason:    []int{30, 30, 30},
+			NumberOfNewEpisodesPerSeason: []int{5, 0, 20},
+		},
+		{
+			SeriesName:                   "No new episodes",
+			IsSeriesNew:                  false,
+			NumberOfEpisodesPerSeason:    []int{30, 30, 30},
+			NumberOfNewEpisodesPerSeason: []int{0, 0, 0},
+		},
+	}
+
+	baseItemDto := []jellyfinAPI.BaseItemDto{}
+	expectedNewSeries := []NewlyAddedSeriesItem{}
+
+	for _, item := range items {
+		// Create the series
+		seriesID := fmt.Sprintf("%x", md5.Sum([]byte(item.SeriesName)))
+		baseItemDto = append(baseItemDto, jellyfinAPI.BaseItemDto{
+			Id:             new(seriesID),
+			Name:           *jellyfinAPI.NewNullableString(new(item.SeriesName)),
+			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
+			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -7))),
+			ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
+			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
+			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+		})
+
+		newSeries := NewlyAddedSeriesItem{
+			SeriesName:     item.SeriesName,
+			SeriesID:       seriesID,
+			IsSeriesNew:    item.IsSeriesNew,
 			TMDBId:         "1027",
 			ProductionYear: 2023,
 			AdditionDate:   time.Now().AddDate(0, 0, -7),
-		},
-		{
-			SeriesName:     "Series 2",
-			SeriesID:       "aa1111",
-			IsSeriesNew:    true,
-			NewSeasons:     nil,
-			TMDBId:         "3001",
-			ProductionYear: 2024,
-			AdditionDate:   time.Now().AddDate(0, 0, -5),
-		},
-		{
-			SeriesName:  "Old Series 1",
-			SeriesID:    "bb2222",
-			IsSeriesNew: false,
-			NewSeasons: map[string]SeasonItem{
-				"bb2222-s2": {
-					Name:         "Season 2",
-					AdditionDate: time.Now().AddDate(0, 0, -30),
-					SeasonNumber: 2,
-					Episodes:     nil,
-					IsSeasonNew:  true,
-				},
-			},
-			TMDBId:         "3001",
-			ProductionYear: 2023,
-			AdditionDate:   time.Now().AddDate(0, 0, -90),
-		},
-		{
-			SeriesName:  "Very Old Series",
-			SeriesID:    "cc3333",
-			IsSeriesNew: false,
-			NewSeasons: map[string]SeasonItem{
-				"cc3333-s1": {
-					Name:         "Season 1",
-					AdditionDate: time.Now().AddDate(0, 0, -150),
-					SeasonNumber: 1,
-					IsSeasonNew:  false,
-					Episodes: map[string]EpisodeItem{
-						"cc3333-s1-e5": {
-							Name:          "Episode 5",
-							AdditionDate:  time.Now().AddDate(0, 0, -2),
-							EpisodeNumber: 5,
-						},
-					},
-				},
-				"cc3333-s2": {
-					Name:         "Season 2",
-					AdditionDate: time.Now().AddDate(0, 0, -140),
-					SeasonNumber: 2,
-					IsSeasonNew:  false,
-					Episodes: map[string]EpisodeItem{
-						"cc3333-s2-e5": {
-							Name:          "Episode 5",
-							AdditionDate:  time.Now().AddDate(0, 0, -1),
-							EpisodeNumber: 5,
-						},
-					},
-				},
-			},
-			TMDBId:         "3001",
-			ProductionYear: 2023,
-			AdditionDate:   time.Now().AddDate(0, 0, -180),
-		},
-		{
-			SeriesName:  "Very Old Series",
-			SeriesID:    "ee5555",
-			IsSeriesNew: false,
-			NewSeasons: map[string]SeasonItem{
-				"ee5555-s1": {
-					Name:         "Season 1",
-					AdditionDate: time.Now().AddDate(0, 0, -150),
-					SeasonNumber: 1,
-					IsSeasonNew:  false,
-					Episodes: map[string]EpisodeItem{
-						"ee5555-s1-e5": {
-							Name:          "Episode 5",
-							AdditionDate:  time.Now().AddDate(0, 0, -2),
-							EpisodeNumber: 5,
-						},
-					},
-				},
-				"ee5555-s2": {
-					Name:         "Season 2",
-					AdditionDate: time.Now().AddDate(0, 0, -5),
-					SeasonNumber: 2,
-					IsSeasonNew:  true,
-					Episodes:     nil,
-				},
-			},
-			TMDBId:         "3001",
-			ProductionYear: 2023,
-			AdditionDate:   time.Now().AddDate(0, 0, -180),
-		},
+		}
+
+		// Create the seasons
+		newSeasons := map[string]SeasonItem{}
+		for seasonNumber, numberOfEpisodes := range item.NumberOfEpisodesPerSeason {
+			seasonName := item.SeriesName + " Season " + strconv.Itoa(seasonNumber)
+			seasonID := fmt.Sprintf("%x", md5.Sum([]byte(seasonName)))
+			baseItemDto = append(baseItemDto, jellyfinAPI.BaseItemDto{
+				Id:             new(seasonID),
+				Name:           *jellyfinAPI.NewNullableString(new(seasonName)),
+				ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
+				DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -4))),
+				ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
+				Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
+				LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+				SeriesId:       *jellyfinAPI.NewNullableString(new(seriesID)),
+				IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(seasonNumber))),
+			})
+
+			// Create the episodes
+			newEpisodes := map[string]EpisodeItem{}
+			for episodeNumber := range numberOfEpisodes {
+				episodeName := seasonName + " Episode " + strconv.Itoa(episodeNumber)
+				episodeID := fmt.Sprintf("%x", md5.Sum([]byte(episodeName)))
+				additionDate := time.Now().AddDate(0, 0, -2)
+				if episodeNumber >= item.NumberOfNewEpisodesPerSeason[seasonNumber] {
+					additionDate = time.Now().AddDate(0, 0, -50)
+				}
+				baseItemDto = append(baseItemDto, jellyfinAPI.BaseItemDto{
+					Id:             new(episodeID),
+					Name:           *jellyfinAPI.NewNullableString(new(episodeName)),
+					DateCreated:    *jellyfinAPI.NewNullableTime(new(additionDate)),
+					SeasonName:     *jellyfinAPI.NewNullableString(new(seasonName)),
+					SeriesName:     *jellyfinAPI.NewNullableString(new(item.SeriesName)),
+					Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
+					LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
+					SeriesId:       *jellyfinAPI.NewNullableString(new(seriesID)),
+					SeasonId:       *jellyfinAPI.NewNullableString(new(seasonID)),
+					ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
+					IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(episodeNumber))),
+				})
+				if additionDate.After(time.Now().AddDate(0, 0, observedDays*-1)) {
+					newEpisodes[episodeID] = EpisodeItem{
+						Name:          episodeName,
+						AdditionDate:  additionDate,
+						EpisodeNumber: int32(episodeNumber),
+					}
+				}
+			}
+			if len(newEpisodes) != 0 {
+				newSeasons[seasonID] = SeasonItem{
+					SeasonNumber: int32(seasonNumber),
+					Name:         seasonName,
+					AdditionDate: time.Now().AddDate(0, 0, -4),
+					IsSeasonNew:  numberOfEpisodes == item.NumberOfNewEpisodesPerSeason[seasonNumber],
+					Episodes:     newEpisodes,
+				}
+			}
+		}
+		if len(newSeasons) != 0 {
+			newSeries.NewSeasons = newSeasons
+			expectedNewSeries = append(expectedNewSeries, newSeries)
+		}
 	}
+	return baseItemDto, expectedNewSeries
 }
 
-func getSeriesBaseItems() []jellyfinAPI.BaseItemDto {
-	return []jellyfinAPI.BaseItemDto{
-		{
-			Id:             new("1813f4b17e9d4a799641c09319b5ffcc"),
-			Name:           *jellyfinAPI.NewNullableString(new("Series 1")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -7))),
-			ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
-			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-		},
-		{
-			Id:             new("f4971e32089041f3a3d6774277c2ccb9"),
-			Name:           *jellyfinAPI.NewNullableString(new("Season 1")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -7))),
-			ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
-			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("1813f4b17e9d4a799641c09319b5ffcc")),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-		},
-		{
-			Id:             new("bcedb6a404974245b41fe224f31e6460"),
-			Name:           *jellyfinAPI.NewNullableString(new("Episode 1")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -7))),
-			ProviderIds:    map[string]*string{"Tmdb": new("1027"), "Imdb": new("2276")},
-			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("1813f4b17e9d4a799641c09319b5ffcc")),
-			SeasonId:       *jellyfinAPI.NewNullableString(new("f4971e32089041f3a3d6774277c2ccb9")),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-		},
-		{
-			Id:             new("aa1111"),
-			Name:           *jellyfinAPI.NewNullableString(new("Series 2")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2024))),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -5))),
-			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
-			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-		},
-		{
-			Id:             new("aa1111-s1"),
-			Name:           *jellyfinAPI.NewNullableString(new("Season 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -4))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("aa1111")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-		},
-		{
-			Id:             new("aa1111-s1-e1"),
-			Name:           *jellyfinAPI.NewNullableString(new("Episode 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -3))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("aa1111")),
-			SeasonId:       *jellyfinAPI.NewNullableString(new("aa1111-s1")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-		},
-
-		// Old series but recent season
-		{
-			Id:             new("bb2222"),
-			Name:           *jellyfinAPI.NewNullableString(new("Old Series 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -90))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
-			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-		},
-		// old season
-		{
-			Id:             new("bb2222-s1"),
-			Name:           *jellyfinAPI.NewNullableString(new("Season 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -50))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("bb2222")),
-			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-			SeriesName:     *jellyfinAPI.NewNullableString(new("Old Series 1")),
-		},
-
-		// Recent season
-		{
-			Id:             new("bb2222-s2"),
-			Name:           *jellyfinAPI.NewNullableString(new("Season 2")),
-			SeriesName:     *jellyfinAPI.NewNullableString(new("Old Series 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -30))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("bb2222")),
-			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(2))),
-		},
-
-		// Episode in that season
-		{
-			Id:             new("bb2222-s2-e1"),
-			Name:           *jellyfinAPI.NewNullableString(new("Episode 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -8))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("bb2222")),
-			SeriesName:     *jellyfinAPI.NewNullableString(new("Old Series 1")),
-			SeasonId:       *jellyfinAPI.NewNullableString(new("bb2222-s2")),
-			SeasonName:     *jellyfinAPI.NewNullableString(new("Season 2")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-		},
-
-		// Old series but recent episodes
-		{
-			Id:             new("cc3333"),
-			Name:           *jellyfinAPI.NewNullableString(new("Very Old Series")),
-			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -180))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-		},
-
-		// Old seasons
-		{
-			Id:             new("cc3333-s1"),
-			Name:           *jellyfinAPI.NewNullableString(new("Season 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -150))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("cc3333")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-		},
-		{
-			Id:             new("cc3333-s2"),
-			Name:           *jellyfinAPI.NewNullableString(new("Season 2")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -140))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("cc3333")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(2))),
-		},
-
-		// Recent episode
-		{
-			Id:             new("cc3333-s1-e5"),
-			Name:           *jellyfinAPI.NewNullableString(new("Episode 5")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -2))),
-			SeasonName:     *jellyfinAPI.NewNullableString(new("Season 1")),
-			SeriesName:     *jellyfinAPI.NewNullableString(new("Very Old Series")),
-			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("cc3333")),
-			SeasonId:       *jellyfinAPI.NewNullableString(new("cc3333-s1")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(5))),
-		},
-		{
-			Id:             new("cc3333-s2-e5"),
-			Name:           *jellyfinAPI.NewNullableString(new("Episode 5")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -1))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("cc3333")),
-			SeasonId:       *jellyfinAPI.NewNullableString(new("cc3333-s2")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(5))),
-		},
-		// series with recent episodes and recent seasons
-		{
-			Id:             new("ee5555"),
-			Name:           *jellyfinAPI.NewNullableString(new("Very Old Series")),
-			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -180))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-		},
-
-		// Old seasons
-		{
-			Id:             new("ee5555-s1"),
-			Name:           *jellyfinAPI.NewNullableString(new("Season 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -150))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("ee5555")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-		},
-		{
-			Id:             new("ee5555-s2"),
-			Name:           *jellyfinAPI.NewNullableString(new("Season 2")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -5))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("ee5555")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(2))),
-		},
-
-		{
-			Id:             new("ee5555-s1-e5"),
-			Name:           *jellyfinAPI.NewNullableString(new("Episode 5")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -2))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("ee5555")),
-			SeasonId:       *jellyfinAPI.NewNullableString(new("ee5555-s1")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(5))),
-		},
-		{
-			Id:             new("ee5555-s2-e5"),
-			Name:           *jellyfinAPI.NewNullableString(new("Episode 5")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -1))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("ee5555")),
-			SeasonId:       *jellyfinAPI.NewNullableString(new("ee5555-s2")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(5))),
-		},
-		// Old series
-		{
-			Id:             new("dd4444"),
-			Name:           *jellyfinAPI.NewNullableString(new("Legacy Series")),
-			ProviderIds:    map[string]*string{"Tmdb": new("3001")},
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2019))),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -120))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SERIES),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-		},
-
-		// Old season
-		{
-			Id:             new("dd4444-s1"),
-			Name:           *jellyfinAPI.NewNullableString(new("Season 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -110))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_SEASON),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("dd4444")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-		},
-
-		// Old episode
-		{
-			Id:             new("dd4444-s1-e1"),
-			Name:           *jellyfinAPI.NewNullableString(new("Episode 1")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -100))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("dd4444")),
-			SeasonId:       *jellyfinAPI.NewNullableString(new("dd4444-s1")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(1))),
-		},
-
-		// Another old episode (for volume / ordering tests)
-		{
-			Id:             new("dd4444-s1-e2"),
-			Name:           *jellyfinAPI.NewNullableString(new("Episode 2")),
-			DateCreated:    *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -95))),
-			Type:           new(jellyfinAPI.BASEITEMKIND_EPISODE),
-			LocationType:   *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM)),
-			SeriesId:       *jellyfinAPI.NewNullableString(new("dd4444")),
-			SeasonId:       *jellyfinAPI.NewNullableString(new("dd4444-s1")),
-			ProductionYear: *jellyfinAPI.NewNullableInt32(new(int32(2023))),
-			IndexNumber:    *jellyfinAPI.NewNullableInt32(new(int32(2))),
-		},
+// cloneTestData returns copies of the shared fixtures so a test case can mutate
+// them without leaking changes into other test cases.
+// Note: BaseItemDto elements are shallow-copied. Replacing a field is safe, but
+// mutating through a pointer/map field (e.g. *item.Id = "x" or item.ProviderIds["k"] = v)
+// would still affect the original.
+func cloneTestData(
+	baseItems []jellyfinAPI.BaseItemDto,
+	expectedResults []NewlyAddedSeriesItem,
+) ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+	baseItemsCopy := slices.Clone(baseItems)
+	expectedCopy := slices.Clone(expectedResults)
+	for i := range expectedCopy {
+		seasons := maps.Clone(expectedCopy[i].NewSeasons)
+		for id, season := range seasons {
+			season.Episodes = maps.Clone(season.Episodes)
+			seasons[id] = season
+		}
+		expectedCopy[i].NewSeasons = seasons
 	}
+	return baseItemsCopy, expectedCopy
 }
 
 func testReturnedSeriesIsCorrect(t *testing.T, expected *NewlyAddedSeriesItem, returned *NewlyAddedSeriesItem) {
@@ -503,8 +265,7 @@ func assertLogsAreCorrect(t *testing.T, tt TableTests, recordedLogs *observer.Ob
 
 func runGetNewlyAddedSeriesTest(t *testing.T, tt TableTests) {
 	mockedApp, recordedLogs := testSeriesInitApp()
-	mockedJellyfinBaseItem := tt.getSeriesBaseItems()
-	expectedResult := tt.getExpectedResultFromBaseItem()
+	mockedJellyfinBaseItem, expectedResult := tt.getBaseItemsAndExpectedResults()
 
 	mockLibraryAPI := MockJellyfinLibraryAPI{
 		ExecuteGetAllItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
@@ -549,59 +310,75 @@ func runGetNewlyAddedSeriesTest(t *testing.T, tt TableTests) {
 	}
 }
 
-func getBaseItemIndexByID(id string) int {
-	baseItems := getSeriesBaseItems()
+func getBaseItemIndexByName(baseItems []jellyfinAPI.BaseItemDto, name string) int {
 	for i, item := range baseItems {
-		if *item.Id == id {
+		if item.Name.Get() != nil && *item.Name.Get() == name {
 			return i
 		}
 	}
 	return 0
 }
 
-func getExpectedSeriesItemIndexByID(id string) int {
-	expected := getExpectedResultFromBaseItem()
-	for i, series := range expected {
-		if series.SeriesID == id {
+func getExpectedSeriesIdIndexByName(expectedResults []NewlyAddedSeriesItem, name string) int {
+	for i, series := range expectedResults {
+		if series.SeriesName == name {
 			return i
 		}
 	}
 	return 0
+}
+
+func getExpectedSeriesItemBySeriesName(expectedResults []NewlyAddedSeriesItem, name string) NewlyAddedSeriesItem {
+	for _, series := range expectedResults {
+		if series.SeriesName == name {
+			return series
+		}
+	}
+	return NewlyAddedSeriesItem{}
+}
+
+// idFromName rebuilds the ID generated by the fixtures for a given item name.
+func idFromName(name string) string {
+	return fmt.Sprintf("%x", md5.Sum([]byte(name)))
+}
+
+// removeExpectedEpisode drops an episode from the expected results, for test cases
+// where the episode is supposed to be ignored by the parser.
+func removeExpectedEpisode(
+	expectedResults []NewlyAddedSeriesItem,
+	seriesName string,
+	seasonName string,
+	episodeName string,
+) {
+	seriesIndex := getExpectedSeriesIdIndexByName(expectedResults, seriesName)
+	delete(expectedResults[seriesIndex].NewSeasons[idFromName(seasonName)].Episodes, idFromName(episodeName))
 }
 
 func TestGetNewlyAddedSeries(t *testing.T) {
+	baseItems, expectedResults := getBaseItemsAndExpectedResults()
 	tests := []TableTests{
 		{
-			name:                          "Valid data",
-			getSeriesBaseItems:            getSeriesBaseItems,
-			getExpectedResultFromBaseItem: getExpectedResultFromBaseItem,
+			name:                           "Valid data",
+			getBaseItemsAndExpectedResults: getBaseItemsAndExpectedResults,
 		},
 		{
 			name:           "seriesName is null",
 			loggedMessages: []observer.LoggedEntry{},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].Name = *jellyfinAPI.NewNullableString(nil)
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].SeriesName = ""
-				return expected
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].Name = *jellyfinAPI.NewNullableString(nil)
+				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].SeriesName = ""
+				return baseItems, expectedResults
 			},
 		},
 		{
 			name:           "series productionYear is null",
 			loggedMessages: []observer.LoggedEntry{},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProductionYear = *jellyfinAPI.NewNullableInt32(nil)
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProductionYear = 0
-				return expected
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].ProductionYear = *jellyfinAPI.NewNullableInt32(nil)
+				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].ProductionYear = 0
+				return baseItems, expectedResults
 			},
 		},
 		{
@@ -610,22 +387,18 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				{
 					Entry: zapcore.Entry{
 						Level:   zapcore.WarnLevel,
-						Message: "Found a series with no addition date. This can lead to inaccuracy when detecting newly added media.",
+						Message: "Found a series with no addition date. This can lead to inaccuracies.",
 					},
 					Context: []zapcore.Field{
-						zap.String("Series ID", "1813f4b17e9d4a799641c09319b5ffcc"),
-						zap.String("Series Name", "Series 1"),
+						zap.String("Series ID", getExpectedSeriesItemBySeriesName(expectedResults, "Whole new series").SeriesID),
+						zap.String("Series Name", "Whole new series"),
 					},
 				},
 			},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].AdditionDate = time.Date(
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
+				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].AdditionDate = time.Date(
 					1970,
 					01,
 					01,
@@ -635,56 +408,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 					00,
 					time.UTC,
 				)
-				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].IsSeriesNew = false
-				// since the series has no creation date, the underlying season is taken
-				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].NewSeasons = map[string]SeasonItem{
-					"f4971e32089041f3a3d6774277c2ccb9": {
-						SeasonNumber: 1,
-						Name:         "Season 1",
-						AdditionDate: time.Now().AddDate(0, 0, -7),
-						Episodes:     nil,
-						IsSeasonNew:  true,
-					},
-				}
-				return expected
-			},
-		},
-		{
-			name: "season dateCreated is null",
-			loggedMessages: []observer.LoggedEntry{
-				{
-					Entry: zapcore.Entry{
-						Level:   zapcore.WarnLevel,
-						Message: "Found a season with no addition date. This can lead to inaccuracy when detecting newly added media.",
-					},
-					Context: []zapcore.Field{
-						zap.String("Series ID", "bb2222"),
-						zap.String("Series Name", "Old Series 1"),
-						zap.String("Season ID", "bb2222-s2"),
-						zap.String("Season Name", "Season 2"),
-					},
-				},
-			},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("bb2222-s2")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				newSeason := expected[getExpectedSeriesItemIndexByID("bb2222")].NewSeasons["bb2222-s2"]
-				newSeason.AdditionDate = time.Date(1970, 01, 01, 00, 00, 00, 00, time.UTC)
-				newSeason.IsSeasonNew = false
-				// since the season has no creation date, the underlying episode is taken
-				newSeason.Episodes = map[string]EpisodeItem{
-					"bb2222-s2-e1": {
-						EpisodeNumber: 1,
-						Name:          "Episode 1",
-						AdditionDate:  time.Now().AddDate(0, 0, -8),
-					},
-				}
-				expected[getExpectedSeriesItemIndexByID("bb2222")].NewSeasons["bb2222-s2"] = newSeason
-				return expected
+				return baseItems, expectedResults
 			},
 		},
 		{
@@ -696,94 +420,95 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 						Message: "Found an episode with no addition date. This can lead to inaccuracy when detecting newly added media.",
 					},
 					Context: []zapcore.Field{
-						zap.String("Episode ID", "cc3333-s1-e5"),
-						zap.String("Episode Name", "Episode 5"),
-						zap.String("Season Name", "Season 1"),
-						zap.String("Season ID", "cc3333-s1"),
-						zap.String("Series Name", "Very Old Series"),
-						zap.String("Series ID", "cc3333"),
+						zap.String("Episode ID", fmt.Sprintf("%x", md5.Sum([]byte("Whole new series Season 1 Episode 1")))),
+						zap.String("Episode Name", "Whole new series Season 1 Episode 1"),
+						zap.String("Season Name", "Whole new series Season 1"),
+						zap.String("Season ID", fmt.Sprintf("%x", md5.Sum([]byte("Whole new series Season 1")))),
+						zap.String("Series Name", "Whole new series"),
+						zap.String("Series ID", fmt.Sprintf("%x", md5.Sum([]byte("Whole new series")))),
 					},
 				},
 			},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("cc3333-s1-e5")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons = map[string]SeasonItem{
-					"cc3333-s2": expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons["cc3333-s2"],
-				}
-				return expected
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems[getBaseItemIndexByName(baseItems, "Whole new series Season 1 Episode 1")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
+				seriesIndex := getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")
+
+				newEpisode := expectedResults[seriesIndex].NewSeasons[fmt.Sprintf("%x", md5.Sum([]byte("Whole new series Season 1")))].Episodes[fmt.Sprintf("%x", md5.Sum([]byte("Whole new series Season 1 Episode 1")))]
+				newEpisode.AdditionDate = time.Date(
+					1970,
+					01,
+					01,
+					00,
+					00,
+					00,
+					00,
+					time.UTC,
+				)
+				return baseItems, expectedResults
 			},
 		},
 		{
 			name:           "episode is virtual",
 			loggedMessages: []observer.LoggedEntry{},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("cc3333-s1-e5")].LocationType = *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL))
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons = map[string]SeasonItem{
-					"cc3333-s2": expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons["cc3333-s2"],
-				}
-				return expected
-			},
-		},
-		{
-			name:           "episode file location is nil",
-			loggedMessages: []observer.LoggedEntry{},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("cc3333-s1-e5")].LocationType = *jellyfinAPI.NewNullableLocationType(nil)
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons = map[string]SeasonItem{
-					"cc3333-s2": expected[getExpectedSeriesItemIndexByID("cc3333")].NewSeasons["cc3333-s2"],
-				}
-				return expected
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				episodeIndex := getBaseItemIndexByName(baseItems, "Some new episodes Season 0 Episode 1")
+				baseItems[episodeIndex].LocationType = *jellyfinAPI.NewNullableLocationType(
+					new(jellyfinAPI.LOCATIONTYPE_VIRTUAL),
+				)
+				removeExpectedEpisode(
+					expectedResults,
+					"Some new episodes",
+					"Some new episodes Season 0",
+					"Some new episodes Season 0 Episode 1",
+				)
+				return baseItems, expectedResults
 			},
 		},
 		{
-			name:           "series with no TMDBID",
+			name:           "episode locationType is null",
 			loggedMessages: []observer.LoggedEntry{},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProviderIds = map[string]*string{
-					"imdb": new("1726"),
-				}
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].TMDBId = ""
-				return expected
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				episodeIndex := getBaseItemIndexByName(baseItems, "Some new episodes Season 0 Episode 1")
+				baseItems[episodeIndex].LocationType = *jellyfinAPI.NewNullableLocationType(nil)
+				removeExpectedEpisode(
+					expectedResults,
+					"Some new episodes",
+					"Some new episodes Season 0",
+					"Some new episodes Season 0 Episode 1",
+				)
+				return baseItems, expectedResults
 			},
 		},
 		{
-			name:           "series with no TMDB ID nil",
+			name:           "series has no TMDB ID",
 			loggedMessages: []observer.LoggedEntry{},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems[getBaseItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].ProviderIds = map[string]*string{
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].ProviderIds = map[string]*string{
+					"Imdb": new("2276"),
+				}
+				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].TMDBId = ""
+				return baseItems, expectedResults
+			},
+		},
+		{
+			name:           "series TMDB ID is null",
+			loggedMessages: []observer.LoggedEntry{},
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].ProviderIds = map[string]*string{
 					"Tmdb": nil,
+					"Imdb": new("2276"),
 				}
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				expected[getExpectedSeriesItemIndexByID("1813f4b17e9d4a799641c09319b5ffcc")].TMDBId = ""
-				return expected
+				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].TMDBId = ""
+				return baseItems, expectedResults
 			},
 		},
 		{
-			name: "Orphelin season",
+			name: "season belongs to an unknown series",
 			loggedMessages: []observer.LoggedEntry{
 				{
 					Entry: zapcore.Entry{
@@ -791,56 +516,34 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 						Message: "A season item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
 					},
 					Context: []zapcore.Field{
-						zap.String("Season ID", "bb2222-s1"),
-						zap.String("Season Name", "Season 1"),
-						zap.String("Not found Series Name", "Old Series 1"),
-						zap.String("Not found Series ID", "bb2222"),
-					},
-				},
-				{
-					Entry: zapcore.Entry{
-						Level:   zapcore.WarnLevel,
-						Message: "A season item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
-					},
-					Context: []zapcore.Field{
-						zap.String("Season ID", "bb2222-s2"),
-						zap.String("Season Name", "Season 2"),
-						zap.String("Not found Series Name", "Old Series 1"),
-						zap.String("Not found Series ID", "bb2222"),
-					},
-				},
-				{
-					Entry: zapcore.Entry{
-						Level:   zapcore.WarnLevel,
-						Message: "An episode item is ignored because it belongs to a Series that doesn't exist in Jellyfin's API response.",
-					},
-					Context: []zapcore.Field{
-						zap.String("Expected Season ID", "bb2222-s2"),
-						zap.String("Expected Season Name", "Season 2"),
-						zap.String("Expected Series Name", "Old Series 1"),
-						zap.String("Expected Series ID", "bb2222"),
-						zap.String("Episode ID", "bb2222-s2-e1"),
-						zap.String("Episode Name", "Episode 1"),
+						zap.String("Season ID", idFromName("Orphan season")),
+						zap.String("Season Name", "Orphan season"),
+						zap.String("Not found Series Name", "Unknown series"),
+						zap.String("Not found Series ID", idFromName("Unknown series")),
 					},
 				},
 			},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				baseItems = slices.Delete(baseItems, getBaseItemIndexByID("bb2222"), getBaseItemIndexByID("bb2222")+1)
-				return baseItems
-			},
-			getExpectedResultFromBaseItem: func() []NewlyAddedSeriesItem {
-				expected := getExpectedResultFromBaseItem()
-				expected = slices.Delete(
-					expected,
-					getExpectedSeriesItemIndexByID("bb2222"),
-					getExpectedSeriesItemIndexByID("bb2222")+1,
-				)
-				return expected
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				seasonID := idFromName("Orphan season")
+				seasonName := "Orphan season"
+				unknownSeriesID := idFromName("Unknown series")
+				unknownSeriesName := "Unknown series"
+				baseItems = append(baseItems, jellyfinAPI.BaseItemDto{
+					Id:           new(seasonID),
+					Name:         *jellyfinAPI.NewNullableString(new(seasonName)),
+					DateCreated:  *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -4))),
+					Type:         new(jellyfinAPI.BASEITEMKIND_SEASON),
+					LocationType: *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+					SeriesId:     *jellyfinAPI.NewNullableString(new(unknownSeriesID)),
+					SeriesName:   *jellyfinAPI.NewNullableString(new(unknownSeriesName)),
+					IndexNumber:  *jellyfinAPI.NewNullableInt32(new(int32(1))),
+				})
+				return baseItems, expectedResults
 			},
 		},
 		{
-			name: "Season without series ID",
+			name: "season has no series ID",
 			loggedMessages: []observer.LoggedEntry{
 				{
 					Entry: zapcore.Entry{
@@ -848,31 +551,28 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 						Message: "A season item is ignored because it has no series ID.",
 					},
 					Context: []zapcore.Field{
-						zap.String("Season ID", "f4971e32089041f3a3d6774277c2ccb9"),
-					},
-				},
-				{
-					Entry: zapcore.Entry{
-						Level:   zapcore.WarnLevel,
-						Message: "An episode item is ignored because it belongs to a Seasons that doesn't exist in Jellyfin's API response.",
-					},
-					Context: []zapcore.Field{
-						zap.String("itemID", "bcedb6a404974245b41fe224f31e6460"),
-						zap.String("seasonID", "f4971e32089041f3a3d6774277c2ccb9"),
+						zap.String("Season ID", idFromName("Season without series")),
 					},
 				},
 			},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				item := baseItems[getBaseItemIndexByID("f4971e32089041f3a3d6774277c2ccb9")]
-				item.SeriesId = *jellyfinAPI.NewNullableString(nil)
-				baseItems[getBaseItemIndexByID("f4971e32089041f3a3d6774277c2ccb9")] = item
-				return baseItems
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				seasonID := idFromName("Season without series")
+				seasonName := "Season without series"
+				baseItems = append(baseItems, jellyfinAPI.BaseItemDto{
+					Id:           new(seasonID),
+					Name:         *jellyfinAPI.NewNullableString(new(seasonName)),
+					DateCreated:  *jellyfinAPI.NewNullableTime(new(time.Now().AddDate(0, 0, -4))),
+					Type:         new(jellyfinAPI.BASEITEMKIND_SEASON),
+					LocationType: *jellyfinAPI.NewNullableLocationType(new(jellyfinAPI.LOCATIONTYPE_VIRTUAL)),
+					SeriesId:     *jellyfinAPI.NewNullableString(nil),
+					IndexNumber:  *jellyfinAPI.NewNullableInt32(new(int32(1))),
+				})
+				return baseItems, expectedResults
 			},
-			getExpectedResultFromBaseItem: getExpectedResultFromBaseItem,
 		},
 		{
-			name: "Episode without Season ID",
+			name: "episode has no season ID",
 			loggedMessages: []observer.LoggedEntry{
 				{
 					Entry: zapcore.Entry{
@@ -880,26 +580,30 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 						Message: "An episode item is ignored because it has no series ID or season ID.",
 					},
 					Context: []zapcore.Field{
-						zap.String("Episode ID", "bcedb6a404974245b41fe224f31e6460"),
-						zap.String("Episode Name", "Episode 1"),
-						zap.String("Expected Series Name", ""),
-						zap.String("Expected Series ID", "1813f4b17e9d4a799641c09319b5ffcc"),
-						zap.String("Expected Season Name", ""),
+						zap.String("Episode ID", idFromName("Some new episodes Season 0 Episode 1")),
+						zap.String("Episode Name", "Some new episodes Season 0 Episode 1"),
+						zap.String("Expected Series Name", "Some new episodes"),
+						zap.String("Expected Series ID", idFromName("Some new episodes")),
+						zap.String("Expected Season Name", "Some new episodes Season 0"),
 						zap.String("Expected Season ID", ""),
 					},
 				},
 			},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				item := baseItems[getBaseItemIndexByID("bcedb6a404974245b41fe224f31e6460")]
-				item.SeasonId = *jellyfinAPI.NewNullableString(nil)
-				baseItems[getBaseItemIndexByID("bcedb6a404974245b41fe224f31e6460")] = item
-				return baseItems
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				episodeIndex := getBaseItemIndexByName(baseItems, "Some new episodes Season 0 Episode 1")
+				baseItems[episodeIndex].SeasonId = *jellyfinAPI.NewNullableString(nil)
+				removeExpectedEpisode(
+					expectedResults,
+					"Some new episodes",
+					"Some new episodes Season 0",
+					"Some new episodes Season 0 Episode 1",
+				)
+				return baseItems, expectedResults
 			},
-			getExpectedResultFromBaseItem: getExpectedResultFromBaseItem,
 		},
 		{
-			name: "Episode without Series ID",
+			name: "episode has no series ID",
 			loggedMessages: []observer.LoggedEntry{
 				{
 					Entry: zapcore.Entry{
@@ -907,23 +611,27 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 						Message: "An episode item is ignored because it has no series ID or season ID.",
 					},
 					Context: []zapcore.Field{
-						zap.String("Episode ID", "bcedb6a404974245b41fe224f31e6460"),
-						zap.String("Episode Name", "Episode 1"),
-						zap.String("Expected Series Name", ""),
+						zap.String("Episode ID", idFromName("Some new episodes Season 0 Episode 1")),
+						zap.String("Episode Name", "Some new episodes Season 0 Episode 1"),
+						zap.String("Expected Series Name", "Some new episodes"),
 						zap.String("Expected Series ID", ""),
-						zap.String("Expected Season Name", ""),
-						zap.String("Expected Season ID", "f4971e32089041f3a3d6774277c2ccb9"),
+						zap.String("Expected Season Name", "Some new episodes Season 0"),
+						zap.String("Expected Season ID", idFromName("Some new episodes Season 0")),
 					},
 				},
 			},
-			getSeriesBaseItems: func() []jellyfinAPI.BaseItemDto {
-				baseItems := getSeriesBaseItems()
-				item := baseItems[getBaseItemIndexByID("bcedb6a404974245b41fe224f31e6460")]
-				item.SeriesId = *jellyfinAPI.NewNullableString(nil)
-				baseItems[getBaseItemIndexByID("bcedb6a404974245b41fe224f31e6460")] = item
-				return baseItems
+			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
+				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				episodeIndex := getBaseItemIndexByName(baseItems, "Some new episodes Season 0 Episode 1")
+				baseItems[episodeIndex].SeriesId = *jellyfinAPI.NewNullableString(nil)
+				removeExpectedEpisode(
+					expectedResults,
+					"Some new episodes",
+					"Some new episodes Season 0",
+					"Some new episodes Season 0 Episode 1",
+				)
+				return baseItems, expectedResults
 			},
-			getExpectedResultFromBaseItem: getExpectedResultFromBaseItem,
 		},
 	}
 

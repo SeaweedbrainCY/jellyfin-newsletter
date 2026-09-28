@@ -229,7 +229,7 @@ func formatRange(start, end int) string {
 //
 // Finally the script aggregate consecutive number as much as possible, i.e. instead of having Episodes 1, 2, 3, 4 the script will squeeze in 1-4.
 func buildNewSeriesItemFromSeriesNewItems(item jellyfin.NewlyAddedSeriesItem, app *app.ApplicationContext) string {
-	if item.IsSeriesNew || len(item.NewSeasons) == 0 {
+	if item.IsSeriesNew {
 		return item.SeriesName
 	}
 
