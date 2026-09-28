@@ -412,7 +412,10 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 						Message: "Found a series with no addition date. This can lead to inaccuracies.",
 					},
 					Context: []zapcore.Field{
-						zap.String("Series ID", getExpectedSeriesItemBySeriesName(expectedResults, "Whole new series").SeriesID),
+						zap.String(
+							"Series ID",
+							getExpectedSeriesItemBySeriesName(expectedResults, "Whole new series").SeriesID,
+						),
 						zap.String("Series Name", "Whole new series"),
 					},
 				},
@@ -442,7 +445,10 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 						Message: "Found an episode with no addition date. This can lead to inaccuracy when detecting newly added media.",
 					},
 					Context: []zapcore.Field{
-						zap.String("Episode ID", fmt.Sprintf("%x", md5.Sum([]byte("Whole new series Season 1 Episode 1")))),
+						zap.String(
+							"Episode ID",
+							fmt.Sprintf("%x", md5.Sum([]byte("Whole new series Season 1 Episode 1"))),
+						),
 						zap.String("Episode Name", "Whole new series Season 1 Episode 1"),
 						zap.String("Season Name", "Whole new series Season 1"),
 						zap.String("Season ID", fmt.Sprintf("%x", md5.Sum([]byte("Whole new series Season 1")))),
