@@ -76,6 +76,28 @@ func getBaseItemsAndExpectedResults() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSe
 			NumberOfEpisodesPerSeason:    []int{30, 30, 30},
 			NumberOfNewEpisodesPerSeason: []int{0, 0, 0},
 		},
+		{
+			// Every season has new episodes, but none of them is entirely new:
+			// the series must not be considered as a whole new series.
+			SeriesName:                   "Some new episodes in every season",
+			IsSeriesNew:                  false,
+			NumberOfEpisodesPerSeason:    []int{30, 30, 30},
+			NumberOfNewEpisodesPerSeason: []int{5, 2, 20},
+		},
+		{
+			// A single season series with only a few new episodes must not be
+			// considered as a whole new series.
+			SeriesName:                   "Some new episodes in a single season series",
+			IsSeriesNew:                  false,
+			NumberOfEpisodesPerSeason:    []int{30},
+			NumberOfNewEpisodesPerSeason: []int{3},
+		},
+		{
+			SeriesName:                   "Whole new single season series",
+			IsSeriesNew:                  true,
+			NumberOfEpisodesPerSeason:    []int{30},
+			NumberOfNewEpisodesPerSeason: []int{30},
+		},
 	}
 
 	baseItemDto := []jellyfinAPI.BaseItemDto{}
@@ -434,17 +456,20 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series Season 1 Episode 1")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
 				seriesIndex := getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")
 
-				newEpisode := expectedResults[seriesIndex].NewSeasons[fmt.Sprintf("%x", md5.Sum([]byte("Whole new series Season 1")))].Episodes[fmt.Sprintf("%x", md5.Sum([]byte("Whole new series Season 1 Episode 1")))]
-				newEpisode.AdditionDate = time.Date(
-					1970,
-					01,
-					01,
-					00,
-					00,
-					00,
-					00,
-					time.UTC,
+				// Without an addition date the episode is not detected as new, so its
+				// season is not entirely new anymore, and neither is the series.
+				removeExpectedEpisode(
+					expectedResults,
+					"Whole new series",
+					"Whole new series Season 1",
+					"Whole new series Season 1 Episode 1",
 				)
+				seasonID := idFromName("Whole new series Season 1")
+				season := expectedResults[seriesIndex].NewSeasons[seasonID]
+				season.IsSeasonNew = false
+				expectedResults[seriesIndex].NewSeasons[seasonID] = season
+				expectedResults[seriesIndex].IsSeriesNew = false
+
 				return baseItems, expectedResults
 			},
 		},
