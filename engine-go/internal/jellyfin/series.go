@@ -262,9 +262,9 @@ func (client *APIClient) buildNewlyAddedSeriesList(
 }
 
 // createNewlyAddedSeriesItem builds a `NewlyAddedSeriesItem` from a
-// `seriesItem`. If the series addition date is after the cutoff the
-// series is marked as new. Otherwise the function scans seasons to
-// detect newly added seasons or episodes and populates `NewSeasons`.
+// `seriesItem`. It scans seasons to detect newly added seasons or episodes
+// and populates `NewSeasons`. The series is only marked as new when all of
+// its seasons are entirely new.
 func (client *APIClient) createNewlyAddedSeriesItem(
 	seriesID string,
 	series seriesItem,
@@ -279,11 +279,26 @@ func (client *APIClient) createNewlyAddedSeriesItem(
 	}
 
 	newSeries.NewSeasons = client.findNewSeasons(series.Seasons, minimumAdditionDate)
-	if len(newSeries.NewSeasons) != 0 && len(newSeries.NewSeasons) == len(series.Seasons) {
-		newSeries.IsSeriesNew = true
-	}
+	newSeries.IsSeriesNew = areAllSeasonsNew(newSeries.NewSeasons, series.Seasons)
 
 	return newSeries
+}
+
+// areAllSeasonsNew reports whether the whole series is new, i.e. every season
+// of the series has been detected as new and every one of them is entirely new
+// (all its episodes were added recently). A season that only contains a few new
+// episodes is not enough to consider the series as new, even if it is the only
+// season of the series.
+func areAllSeasonsNew(newSeasons map[string]SeasonItem, allSeasons map[string]SeasonItem) bool {
+	if len(newSeasons) == 0 || len(newSeasons) != len(allSeasons) {
+		return false
+	}
+	for _, season := range newSeasons {
+		if !season.IsSeasonNew {
+			return false
+		}
+	}
+	return true
 }
 
 // findNewSeasons iterates over seasons and returns a map of seasons
