@@ -341,7 +341,7 @@ func getBaseItemIndexByName(baseItems []jellyfinAPI.BaseItemDto, name string) in
 	return 0
 }
 
-func getExpectedSeriesIdIndexByName(expectedResults []NewlyAddedSeriesItem, name string) int {
+func getExpectedSeriesIDIndexByName(expectedResults []NewlyAddedSeriesItem, name string) int {
 	for i, series := range expectedResults {
 		if series.SeriesName == name {
 			return i
@@ -372,7 +372,7 @@ func removeExpectedEpisode(
 	seasonName string,
 	episodeName string,
 ) {
-	seriesIndex := getExpectedSeriesIdIndexByName(expectedResults, seriesName)
+	seriesIndex := getExpectedSeriesIDIndexByName(expectedResults, seriesName)
 	delete(expectedResults[seriesIndex].NewSeasons[idFromName(seasonName)].Episodes, idFromName(episodeName))
 }
 
@@ -389,7 +389,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
 				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].Name = *jellyfinAPI.NewNullableString(nil)
-				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].SeriesName = ""
+				expectedResults[getExpectedSeriesIDIndexByName(expectedResults, "Whole new series")].SeriesName = ""
 				return baseItems, expectedResults
 			},
 		},
@@ -399,7 +399,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
 				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].ProductionYear = *jellyfinAPI.NewNullableInt32(nil)
-				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].ProductionYear = 0
+				expectedResults[getExpectedSeriesIDIndexByName(expectedResults, "Whole new series")].ProductionYear = 0
 				return baseItems, expectedResults
 			},
 		},
@@ -423,7 +423,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
 				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
-				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].AdditionDate = time.Date(
+				expectedResults[getExpectedSeriesIDIndexByName(expectedResults, "Whole new series")].AdditionDate = time.Date(
 					1970,
 					01,
 					01,
@@ -460,7 +460,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
 				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series Season 1 Episode 1")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
-				seriesIndex := getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")
+				seriesIndex := getExpectedSeriesIDIndexByName(expectedResults, "Whole new series")
 
 				// Without an addition date the episode is not detected as new, so its
 				// season is not entirely new anymore, and neither is the series.
@@ -521,7 +521,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].ProviderIds = map[string]*string{
 					"Imdb": new("2276"),
 				}
-				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].TMDBId = ""
+				expectedResults[getExpectedSeriesIDIndexByName(expectedResults, "Whole new series")].TMDBId = ""
 				return baseItems, expectedResults
 			},
 		},
@@ -534,7 +534,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 					"Tmdb": nil,
 					"Imdb": new("2276"),
 				}
-				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].TMDBId = ""
+				expectedResults[getExpectedSeriesIDIndexByName(expectedResults, "Whole new series")].TMDBId = ""
 				return baseItems, expectedResults
 			},
 		},
