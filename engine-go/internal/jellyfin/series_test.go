@@ -377,7 +377,7 @@ func removeExpectedEpisode(
 }
 
 func TestGetNewlyAddedSeries(t *testing.T) {
-	baseItems, expectedResults := getBaseItemsAndExpectedResults()
+	refBaseItems, refExpectedResults := getBaseItemsAndExpectedResults()
 	tests := []TableTests{
 		{
 			name:                           "Valid data",
@@ -387,7 +387,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			name:           "seriesName is null",
 			loggedMessages: []observer.LoggedEntry{},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].Name = *jellyfinAPI.NewNullableString(nil)
 				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].SeriesName = ""
 				return baseItems, expectedResults
@@ -397,7 +397,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			name:           "series productionYear is null",
 			loggedMessages: []observer.LoggedEntry{},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].ProductionYear = *jellyfinAPI.NewNullableInt32(nil)
 				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].ProductionYear = 0
 				return baseItems, expectedResults
@@ -414,14 +414,14 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 					Context: []zapcore.Field{
 						zap.String(
 							"Series ID",
-							getExpectedSeriesItemBySeriesName(expectedResults, "Whole new series").SeriesID,
+							getExpectedSeriesItemBySeriesName(refExpectedResults, "Whole new series").SeriesID,
 						),
 						zap.String("Series Name", "Whole new series"),
 					},
 				},
 			},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
 				expectedResults[getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")].AdditionDate = time.Date(
 					1970,
@@ -458,7 +458,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				},
 			},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series Season 1 Episode 1")].DateCreated = *jellyfinAPI.NewNullableTime(nil)
 				seriesIndex := getExpectedSeriesIdIndexByName(expectedResults, "Whole new series")
 
@@ -483,7 +483,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			name:           "episode is virtual",
 			loggedMessages: []observer.LoggedEntry{},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				episodeIndex := getBaseItemIndexByName(baseItems, "Some new episodes Season 0 Episode 1")
 				baseItems[episodeIndex].LocationType = *jellyfinAPI.NewNullableLocationType(
 					new(jellyfinAPI.LOCATIONTYPE_VIRTUAL),
@@ -501,7 +501,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			name:           "episode locationType is null",
 			loggedMessages: []observer.LoggedEntry{},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				episodeIndex := getBaseItemIndexByName(baseItems, "Some new episodes Season 0 Episode 1")
 				baseItems[episodeIndex].LocationType = *jellyfinAPI.NewNullableLocationType(nil)
 				removeExpectedEpisode(
@@ -517,7 +517,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			name:           "series has no TMDB ID",
 			loggedMessages: []observer.LoggedEntry{},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].ProviderIds = map[string]*string{
 					"Imdb": new("2276"),
 				}
@@ -529,7 +529,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 			name:           "series TMDB ID is null",
 			loggedMessages: []observer.LoggedEntry{},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				baseItems[getBaseItemIndexByName(baseItems, "Whole new series")].ProviderIds = map[string]*string{
 					"Tmdb": nil,
 					"Imdb": new("2276"),
@@ -555,7 +555,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				},
 			},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				seasonID := idFromName("Orphan season")
 				seasonName := "Orphan season"
 				unknownSeriesID := idFromName("Unknown series")
@@ -587,7 +587,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				},
 			},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				seasonID := idFromName("Season without series")
 				seasonName := "Season without series"
 				baseItems = append(baseItems, jellyfinAPI.BaseItemDto{
@@ -621,7 +621,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				},
 			},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				episodeIndex := getBaseItemIndexByName(baseItems, "Some new episodes Season 0 Episode 1")
 				baseItems[episodeIndex].SeasonId = *jellyfinAPI.NewNullableString(nil)
 				removeExpectedEpisode(
@@ -652,7 +652,7 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 				},
 			},
 			getBaseItemsAndExpectedResults: func() ([]jellyfinAPI.BaseItemDto, []NewlyAddedSeriesItem) {
-				baseItems, expectedResults := cloneTestData(baseItems, expectedResults)
+				baseItems, expectedResults := cloneTestData(refBaseItems, refExpectedResults)
 				episodeIndex := getBaseItemIndexByName(baseItems, "Some new episodes Season 0 Episode 1")
 				baseItems[episodeIndex].SeriesId = *jellyfinAPI.NewNullableString(nil)
 				removeExpectedEpisode(
