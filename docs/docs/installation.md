@@ -2,6 +2,13 @@
 
 Jellyfin Newsletter ships as a Docker image.
 
+## Jellyfin Version support
+
+| Jellyfin version | Jellyfin-Newsletter compatible version |
+| --- | --- | 
+| < 12.0 | <= 1.3.0 |
+| >= 12.0 | >= 2.0 |
+
 ## Docker 
 
 ### Requirements

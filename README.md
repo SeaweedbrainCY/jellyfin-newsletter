@@ -17,10 +17,11 @@ It is fully customizable and can be run on a schedule using a cron job or a task
 
 [Official documentation](https://jellyfin-newsletter.seaweedbrain.xyz/)
 
-> [!warning]
-> **Upgrading to Jellyfin 12 ?**
->
-> [Read this first](https://github.com/SeaweedbrainCY/jellyfin-newsletter/discussions/162)
+Jellyfin version support:
+| Jellyfin version | Jellyfin-Newsletter compatible version |
+| --- | --- | 
+| < 12.0 | <= 1.3.0 |
+| >= 12.0 | >= 2.0 |
 
 ## Table of Contents
 1. [What it looks like](#what-it-looks-like)
