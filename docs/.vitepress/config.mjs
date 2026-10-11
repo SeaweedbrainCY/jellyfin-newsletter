@@ -7,7 +7,7 @@ export default defineConfig({
     lastUpdated: true,
     cleanUrls: true,
     head: [
-      ['link', { rel: 'icon', href: 'https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/docs/favicon.png' }]
+      ['link', { rel: 'icon', href: 'https://raw.githubusercontent.com/SeaweedbrainCY/jellyfin-newsletter/refs/heads/main/docs/favicon.png' }],
         ['meta', {name: 'msvalidate.01', content: "92E65474D6DE37DBC90DC1012DE3D2E6"}]
     ],
     themeConfig: {
