@@ -86,7 +86,7 @@ Use this if you'd rather trigger the send yourself — the container runs once a
    ```bash
    docker run --rm \
        -v ./config:/app/config \
-       ghcr.io/seaweedbraincy/jellyfin-newsletter:1.3.0
+       ghcr.io/seaweedbraincy/jellyfin-newsletter:2.0.0
    ```
 
 5. Schedule it to run regularly. For example, with `cron`, to send on the 1st of every month at 8am:
@@ -94,7 +94,7 @@ Use this if you'd rather trigger the send yourself — the container runs once a
    ```bash
    crontab -e
    # then add:
-   0 8 1 * * root docker run --rm -v PATH_TO_CONFIG_FOLDER/config:/app/config/ ghcr.io/seaweedbraincy/jellyfin-newsletter:1.3.0
+   0 8 1 * * root docker run --rm -v PATH_TO_CONFIG_FOLDER/config:/app/config/ ghcr.io/seaweedbraincy/jellyfin-newsletter:2.0.0
    ```
 
 ::: warning

@@ -2,7 +2,7 @@
 
 <p align="center">
     <img src="https://img.shields.io/github/stars/seaweedbraincy/jellyfin-newsletter" alt="GitHub stars" style="margin-right:10px" /> 
-    <img src="https://img.shields.io/badge/GHCR%20pulls-48.9K-blue?logo=docker" alt="GHCR pulls" />
+    <img src="https://img.shields.io/badge/GHCR%20pulls-52K-blue?logo=docker" alt="GHCR pulls" />
     <img src="https://img.shields.io/github/license/seaweedbraincy/jellyfin-newsletter"/>
 <img src="https://img.shields.io/github/v/release/seaweedbraincy/jellyfin-newsletter"/>
 </p>
