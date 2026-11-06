@@ -459,3 +459,21 @@ func TestLoadContext_MissingRequiredField(t *testing.T) {
 		})
 	}
 }
+
+func TestLoadConfig_Jellyseerr(t *testing.T) {
+	yamlWithJellyseerr := validConfigYAML + `
+jellyseerr:
+  enabled: true
+  url: "http://jellyseerr:5055"
+  api_key: "my-test-key"
+  exclude_users:
+    - "baduser"
+`
+	cfg, err := loadConfigFromReader("./config/config.yml", strings.NewReader(yamlWithJellyseerr))
+	require.NoError(t, err)
+	assert.True(t, cfg.Jellyseerr.Enabled)
+	assert.Equal(t, "http://jellyseerr:5055", cfg.Jellyseerr.URL)
+	assert.Equal(t, "my-test-key", cfg.Jellyseerr.APIKey.SafeString())
+	assert.Equal(t, []string{"baduser"}, cfg.Jellyseerr.ExcludeUsers)
+}
+

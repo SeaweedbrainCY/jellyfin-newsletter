@@ -59,6 +59,13 @@ type DryRunConfig struct {
 	SaveEmailData      bool
 }
 
+type JellyseerrConfig struct {
+	Enabled      bool
+	URL          string
+	APIKey       Secret
+	ExcludeUsers []string
+}
+
 type Configuration struct {
 	Log             LogConfig
 	EmailRecipients []string
@@ -68,6 +75,7 @@ type Configuration struct {
 	EmailTemplate   EmailTemplateConfig
 	SMTP            SMTPConfig
 	DryRun          DryRunConfig
+	Jellyseerr      JellyseerrConfig
 	ConfigFilePath  string
 }
 
@@ -86,10 +94,10 @@ type yamlConfiguration struct {
 		WatchedSeriesFolders                []string `yaml:"watched_tv_folders" validate:"required"`
 		ObservedPeriodDays                  int      `yaml:"observed_period_days" validate:"required,numeric"`
 		IgnoreItemsAddedAfterLastNewsletter *bool    `yaml:"ignore_item_added_before_last_newsletter,omitempty" validate:"omitempty,boolean"`
-	} `yaml:"jellyfin"            validate:"required"`
+	} `yaml:"jellyfin"             validate:"required"`
 	TMDB struct {
 		APIKey Secret `yaml:"api_key" validate:"required,jwt"`
-	} `yaml:"tmdb"                validate:"required"`
+	} `yaml:"tmdb"                 validate:"required"`
 	EmailTemplate struct {
 		Theme                   string   `yaml:"theme,omitempty" validate:"omitempty"`
 		Language                string   `yaml:"language" validate:"required,alpha"`
@@ -103,7 +111,7 @@ type yamlConfiguration struct {
 		SortMode                string   `yaml:"sort_mode,omitempty" validate:"omitempty,oneof=date_desc date_asc name_asc name_desc"`
 		MaxDisplayedItems       *int     `yaml:"max_displayed_items,omitempty" validate:"omitempty,numeric,min=0"`
 		IgnoredItems            []string `yaml:"ignored_items,omitempty" validate:"omitempty"`
-	} `yaml:"email_template"      validate:"required"`
+	} `yaml:"email_template"       validate:"required"`
 	Email struct {
 		SMTPServer     string `yaml:"smtp_server" validate:"required,hostname|ip"`
 		SMTPPort       int    `yaml:"smtp_port" validate:"required,numeric,min=1,max=65535"`
@@ -111,7 +119,7 @@ type yamlConfiguration struct {
 		SMTPUsername   string `yaml:"smtp_username" validate:"required_unless=SMTPTlsType NONE"`
 		SMTPPassword   Secret `yaml:"smtp_password" validate:"required_unless=SMTPTlsType NONE"`
 		SMTPSenderName string `yaml:"smtp_sender_email" validate:"required"`
-	} `yaml:"email"               validate:"required"`
+	} `yaml:"email"                validate:"required"`
 	DryRun *struct {
 		Enabled            bool   `yaml:"enabled" validate:"boolean"`
 		TestSMTPConnection *bool  `yaml:"test_smtp_connection,omitempty" validate:"omitempty,boolean"`
@@ -120,5 +128,11 @@ type yamlConfiguration struct {
 		IncludeMetadata    *bool  `yaml:"include_metadata,omitempty" validate:"omitempty,boolean"`
 		SaveEmailData      *bool  `yaml:"save_email_data,omitempty" validate:"omitempty,boolean"`
 	} `yaml:"dry-run,omitempty"`
-	Recipients []string `yaml:"recipients"          validate:"required"`
+	Jellyseerr *struct {
+		Enabled      bool     `yaml:"enabled" validate:"boolean"`
+		URL          string   `yaml:"url,omitempty" validate:"required_if=Enabled true,omitempty,http_url"`
+		APIKey       Secret   `yaml:"api_key,omitempty" validate:"required_if=Enabled true"`
+		ExcludeUsers []string `yaml:"exclude_users,omitempty" validate:"omitempty"`
+	} `yaml:"jellyseerr,omitempty"`
+	Recipients []string `yaml:"recipients"           validate:"required"`
 }
