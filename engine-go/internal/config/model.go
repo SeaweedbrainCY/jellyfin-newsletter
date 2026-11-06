@@ -17,6 +17,8 @@ type JellyfinConfig struct {
 	APIKey                              Secret
 	WatchedFilmFolders                  []string
 	WatchedSeriesFolders                []string
+	ExcludedPaths                       []string
+	ExcludedGenres                      []string
 	ObservedPeriodDays                  int
 	IgnoreItemsAddedAfterLastNewsletter bool
 }
@@ -84,6 +86,8 @@ type yamlConfiguration struct {
 		APIToken                            Secret   `yaml:"api_token" validate:"required"`
 		WatchedFilmFolders                  []string `yaml:"watched_film_folders" validate:"required"`
 		WatchedSeriesFolders                []string `yaml:"watched_tv_folders" validate:"required"`
+		ExcludedPaths                       []string `yaml:"excluded_paths,omitempty" validate:"omitempty"`
+		ExcludedGenres                      []string `yaml:"excluded_genres,omitempty" validate:"omitempty"`
 		ObservedPeriodDays                  int      `yaml:"observed_period_days" validate:"required,numeric"`
 		IgnoreItemsAddedAfterLastNewsletter *bool    `yaml:"ignore_item_added_before_last_newsletter,omitempty" validate:"omitempty,boolean"`
 	} `yaml:"jellyfin"            validate:"required"`

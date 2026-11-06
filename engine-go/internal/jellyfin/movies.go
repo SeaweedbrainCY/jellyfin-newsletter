@@ -85,6 +85,21 @@ func (client *APIClient) getRecentlyAddedMoviesByFolder(
 			continue
 		}
 
+		path := ""
+		if movie.Path.IsSet() && movie.Path.Get() != nil {
+			path = *movie.Path.Get()
+		}
+		if IsPathExcluded(path, app.Config.Jellyfin.ExcludedPaths) ||
+			HasMatchingProviderID(movie.ProviderIds, app.Config.Jellyfin.ExcludedPaths) ||
+			IsGenreOrTagExcluded(movie.Genres, movie.Tags, app.Config.Jellyfin.ExcludedGenres) {
+			app.Logger.Debug(
+				"Movie ignored because it matches excluded path or genre filter.",
+				zap.String("MovieID", *movie.Id),
+				zap.String("MovieName", name),
+			)
+			continue
+		}
+
 		tmdbID := getTMDBIDIfExist(&movie)
 		if movie.DateCreated.Get().After(minimumAdditionDate) {
 			items = append(items, MovieItem{

@@ -406,3 +406,62 @@ func TestGetRecentlyAddedMoviesByFolderWithErrorWhileRetrievingMovies(t *testing
 
 	require.Error(t, err)
 }
+
+func TestGetRecentlyAddedMoviesByFolder_WithExclusions(t *testing.T) {
+	app, _ := initApp()
+	app.Config.Jellyfin.ExcludedPaths = []string{"youtube", "youtube-music"}
+	app.Config.Jellyfin.ExcludedGenres = []string{"Anime", "Music"}
+
+	mockLibraryAPI := MockJellyfinLibraryAPI{
+		ExecuteGetMoviesItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			now := time.Now()
+			youtubePath := "/media/youtube/video.mkv"
+			normalPath := "/media/movies/good.mkv"
+			animePath := "/media/anime/anime.mkv"
+			items := []jellyfinAPI.BaseItemDto{
+				{
+					Id:          new("movie-youtube-path"),
+					Name:        *jellyfinAPI.NewNullableString(new("YouTube Movie")),
+					DateCreated: *jellyfinAPI.NewNullableTime(&now),
+					Path:        *jellyfinAPI.NewNullableString(&youtubePath),
+				},
+				{
+					Id:          new("movie-anime-genre"),
+					Name:        *jellyfinAPI.NewNullableString(new("Anime Movie")),
+					DateCreated: *jellyfinAPI.NewNullableTime(&now),
+					Path:        *jellyfinAPI.NewNullableString(&animePath),
+					Genres:      []string{"Animation", "Anime"},
+				},
+				{
+					Id:          new("movie-youtube-provider"),
+					Name:        *jellyfinAPI.NewNullableString(new("YouTube Provider Movie")),
+					DateCreated: *jellyfinAPI.NewNullableTime(&now),
+					Path:        *jellyfinAPI.NewNullableString(&normalPath),
+					ProviderIds: map[string]*string{"Youtube": new("12345")},
+				},
+				{
+					Id:          new("movie-valid"),
+					Name:        *jellyfinAPI.NewNullableString(new("Valid Movie")),
+					DateCreated: *jellyfinAPI.NewNullableTime(&now),
+					Path:        *jellyfinAPI.NewNullableString(&normalPath),
+					Genres:      []string{"Action", "Drama"},
+					ProviderIds: map[string]*string{"Tmdb": new("99999")},
+				},
+			}
+			return &items, nil
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
+	}
+	client := APIClient{
+		LibraryAPI: mockLibraryAPI,
+	}
+	minimumAdditionDate := time.Now().AddDate(0, 0, app.Config.Jellyfin.ObservedPeriodDays*-1-1)
+	movies, err := client.getRecentlyAddedMoviesByFolder(minimumAdditionDate, "folderName", app)
+
+	require.NoError(t, err)
+	require.Len(t, movies, 1)
+	assert.Equal(t, "movie-valid", movies[0].ID)
+	assert.Equal(t, "Valid Movie", movies[0].Name)
+}

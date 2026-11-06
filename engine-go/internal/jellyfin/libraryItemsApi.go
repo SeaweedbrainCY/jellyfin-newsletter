@@ -40,7 +40,7 @@ func (libraryAPI libraryItemAPI) GetMoviesItemsByFolderID(
 		ParentId(folderID).
 		LocationTypes([]jellyfinAPI.LocationType{jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM}).
 		IsMovie(true).
-		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear"}).
+		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear", "Path", "Genres", "Tags"}).
 		Execute()
 
 	err := checkHTTPRequest("GetMoviesItemsByFolderID", getMoviesHTTPResponse, httpErr, app.Logger)
@@ -64,7 +64,7 @@ func (libraryAPI libraryItemAPI) GetAllItemsByFolderID(
 		Recursive(true).
 		EnableImages(false).
 		ParentId(folderID).
-		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear", "IndexNumber", "SeriesId", "Type", "SeasonId"}).
+		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear", "IndexNumber", "SeriesId", "Type", "SeasonId", "Path", "Genres", "Tags"}).
 		Execute()
 
 	err := checkHTTPRequest("GetAllItemsByFolderID", httpResponse, httpErr, app.Logger)
