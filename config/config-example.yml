@@ -28,6 +28,20 @@ jellyfin:
     - ""
     # example for /media/tv folder add "tv"
 
+  # (Optional)
+  # List of path patterns or substrings to exclude (e.g. YouTube libraries, trailers, specific folders).
+  # Matches against file/folder paths and metadata provider IDs (e.g. 'Youtube').
+  #excluded_paths:
+  #  - "youtube"
+  #  - "youtube-music"
+
+  # (Optional)
+  # List of genre or tag patterns to exclude (e.g. Anime, Music, Documentary).
+  # Case-insensitive substring match against item genres and tags.
+  #excluded_genres:
+  #  - "Anime"
+  #  - "Music"
+
   # Number of days to look back for new items
   observed_period_days: 30
 

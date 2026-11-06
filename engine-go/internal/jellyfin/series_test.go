@@ -672,3 +672,107 @@ func TestGetNewlyAddedSeries(t *testing.T) {
 		})
 	}
 }
+
+func TestGetNewlyAddedSeriesByFolder_WithExclusions(t *testing.T) {
+	mockedApp, _ := testSeriesInitApp()
+	mockedApp.Config.Jellyfin.ExcludedPaths = []string{"youtube"}
+	mockedApp.Config.Jellyfin.ExcludedGenres = []string{"Anime"}
+
+	now := time.Now()
+	seriesType := jellyfinAPI.BASEITEMKIND_SERIES
+	seasonType := jellyfinAPI.BASEITEMKIND_SEASON
+	episodeType := jellyfinAPI.BASEITEMKIND_EPISODE
+	fsLocation := jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM
+
+	youtubePath := "/media/youtube/Channel"
+	animePath := "/media/series/AttackOnTitan"
+	validPath := "/media/series/BreakingBad"
+	validEpPath := "/media/series/BreakingBad/S01E01.mkv"
+	excludedEpPath := "/media/series/BreakingBad/youtube_extra.mkv"
+
+	series1ID := "series-youtube"
+	series2ID := "series-anime"
+	series3ID := "series-valid"
+
+	season3ID := "season-valid"
+	ep1ID := "ep-valid"
+	ep2ID := "ep-excluded-path"
+
+	mockItems := []jellyfinAPI.BaseItemDto{
+		{
+			Id:          &series1ID,
+			Name:        *jellyfinAPI.NewNullableString(new("YouTube Channel")),
+			Type:        &seriesType,
+			DateCreated: *jellyfinAPI.NewNullableTime(&now),
+			Path:        *jellyfinAPI.NewNullableString(&youtubePath),
+		},
+		{
+			Id:          &series2ID,
+			Name:        *jellyfinAPI.NewNullableString(new("Attack on Titan")),
+			Type:        &seriesType,
+			DateCreated: *jellyfinAPI.NewNullableTime(&now),
+			Path:        *jellyfinAPI.NewNullableString(&animePath),
+			Genres:      []string{"Animation", "Anime"},
+		},
+		{
+			Id:          &series3ID,
+			Name:        *jellyfinAPI.NewNullableString(new("Breaking Bad")),
+			Type:        &seriesType,
+			DateCreated: *jellyfinAPI.NewNullableTime(&now),
+			Path:        *jellyfinAPI.NewNullableString(&validPath),
+			Genres:      []string{"Crime", "Drama"},
+		},
+		{
+			Id:          &season3ID,
+			Name:        *jellyfinAPI.NewNullableString(new("Season 1")),
+			Type:        &seasonType,
+			SeriesId:    *jellyfinAPI.NewNullableString(&series3ID),
+			DateCreated: *jellyfinAPI.NewNullableTime(&now),
+			IndexNumber: *jellyfinAPI.NewNullableInt32(new(int32(1))),
+		},
+		{
+			Id:           &ep1ID,
+			Name:         *jellyfinAPI.NewNullableString(new("Pilot")),
+			Type:         &episodeType,
+			SeriesId:     *jellyfinAPI.NewNullableString(&series3ID),
+			SeasonId:     *jellyfinAPI.NewNullableString(&season3ID),
+			DateCreated:  *jellyfinAPI.NewNullableTime(&now),
+			LocationType: *jellyfinAPI.NewNullableLocationType(&fsLocation),
+			Path:         *jellyfinAPI.NewNullableString(&validEpPath),
+			IndexNumber:  *jellyfinAPI.NewNullableInt32(new(int32(1))),
+		},
+		{
+			Id:           &ep2ID,
+			Name:         *jellyfinAPI.NewNullableString(new("Behind the scenes YouTube")),
+			Type:         &episodeType,
+			SeriesId:     *jellyfinAPI.NewNullableString(&series3ID),
+			SeasonId:     *jellyfinAPI.NewNullableString(&season3ID),
+			DateCreated:  *jellyfinAPI.NewNullableTime(&now),
+			LocationType: *jellyfinAPI.NewNullableLocationType(&fsLocation),
+			Path:         *jellyfinAPI.NewNullableString(&excludedEpPath),
+			IndexNumber:  *jellyfinAPI.NewNullableInt32(new(int32(2))),
+		},
+	}
+
+	mockLibraryAPI := MockJellyfinLibraryAPI{
+		ExecuteGetAllItemsByFolderID: func() (*[]jellyfinAPI.BaseItemDto, error) {
+			return &mockItems, nil
+		},
+		ExecuteGetRootFolderIDByName: func() (string, error) {
+			return "id", nil
+		},
+	}
+
+	client := APIClient{
+		LibraryAPI: mockLibraryAPI,
+	}
+
+	res := client.GetNewlyAddedSeries(mockedApp)
+	require.NotNil(t, res)
+	require.Len(t, *res, 1)
+	assert.Equal(t, series3ID, (*res)[0].SeriesID)
+	assert.Equal(t, "Breaking Bad", (*res)[0].SeriesName)
+	assert.Len(t, (*res)[0].NewSeasons[season3ID].Episodes, 1)
+	assert.Contains(t, (*res)[0].NewSeasons[season3ID].Episodes, ep1ID)
+	assert.NotContains(t, (*res)[0].NewSeasons[season3ID].Episodes, ep2ID)
+}

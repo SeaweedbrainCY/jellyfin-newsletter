@@ -109,6 +109,8 @@ func buildJellyfinConfig(yamlParsedConfig *yamlConfiguration) JellyfinConfig {
 		APIKey:                              yamlParsedConfig.Jellyfin.APIToken,
 		WatchedFilmFolders:                  yamlParsedConfig.Jellyfin.WatchedFilmFolders,
 		WatchedSeriesFolders:                yamlParsedConfig.Jellyfin.WatchedSeriesFolders,
+		ExcludedPaths:                       yamlParsedConfig.Jellyfin.ExcludedPaths,
+		ExcludedGenres:                      yamlParsedConfig.Jellyfin.ExcludedGenres,
 		ObservedPeriodDays:                  yamlParsedConfig.Jellyfin.ObservedPeriodDays,
 		IgnoreItemsAddedAfterLastNewsletter: false,
 	}

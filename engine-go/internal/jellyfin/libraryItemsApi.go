@@ -17,6 +17,18 @@ type Nullable[T any] interface {
 	Get() *T
 }
 
+func itemFieldsWithExclusions(
+	baseFields []jellyfinAPI.ItemFields,
+	app *app.ApplicationContext,
+) []jellyfinAPI.ItemFields {
+	if app != nil &&
+		app.Config != nil &&
+		(len(app.Config.Jellyfin.ExcludedPaths) > 0 || len(app.Config.Jellyfin.ExcludedGenres) > 0) {
+		return append(baseFields, "Path", "Genres", "Tags")
+	}
+	return baseFields
+}
+
 func (libraryAPI libraryItemAPI) GetItemsStats(app *app.ApplicationContext) (int32, int32, error) {
 	itemsCounts, httpResponse, httpErr := libraryAPI.GetItemCounts(context.Background()).Execute()
 
@@ -34,13 +46,23 @@ func (libraryAPI libraryItemAPI) GetMoviesItemsByFolderID(
 	folderID string,
 	app *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
+	fields := itemFieldsWithExclusions(
+		[]jellyfinAPI.ItemFields{
+			"DateCreated",
+			"ProviderIds",
+			"Id",
+			"Name",
+			"ProductionYear",
+		},
+		app,
+	)
 	movies, getMoviesHTTPResponse, httpErr := libraryAPI.GetItems(context.Background()).
 		Recursive(false).
 		EnableImages(false).
 		ParentId(folderID).
 		LocationTypes([]jellyfinAPI.LocationType{jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM}).
 		IsMovie(true).
-		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear"}).
+		Fields(fields).
 		Execute()
 
 	err := checkHTTPRequest("GetMoviesItemsByFolderID", getMoviesHTTPResponse, httpErr, app.Logger)
@@ -60,11 +82,25 @@ func (libraryAPI libraryItemAPI) GetAllItemsByFolderID(
 	folderID string,
 	app *app.ApplicationContext,
 ) (*[]jellyfinAPI.BaseItemDto, error) {
+	fields := itemFieldsWithExclusions(
+		[]jellyfinAPI.ItemFields{
+			"DateCreated",
+			"ProviderIds",
+			"Id",
+			"Name",
+			"ProductionYear",
+			"IndexNumber",
+			"SeriesId",
+			"Type",
+			"SeasonId",
+		},
+		app,
+	)
 	items, httpResponse, httpErr := libraryAPI.GetItems(context.Background()).
 		Recursive(true).
 		EnableImages(false).
 		ParentId(folderID).
-		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear", "IndexNumber", "SeriesId", "Type", "SeasonId"}).
+		Fields(fields).
 		Execute()
 
 	err := checkHTTPRequest("GetAllItemsByFolderID", httpResponse, httpErr, app.Logger)
