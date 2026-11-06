@@ -476,4 +476,3 @@ jellyseerr:
 	assert.Equal(t, "my-test-key", cfg.Jellyseerr.APIKey.SafeString())
 	assert.Equal(t, []string{"baduser"}, cfg.Jellyseerr.ExcludeUsers)
 }
-
