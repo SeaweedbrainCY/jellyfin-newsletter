@@ -47,6 +47,7 @@ func loadConfigFromReader(configPath string, r io.Reader) (*Configuration, error
 	config.EmailTemplate = buildEmailTemplateConfig(yamlParsedConfig)
 	config.SMTP = buildSMTPConfig(yamlParsedConfig)
 	config.DryRun = buildDryRunConfig(yamlParsedConfig)
+	config.Jellyseerr = buildJellyseerrConfig(yamlParsedConfig)
 	config.EmailRecipients = buildRecipientsConfig(yamlParsedConfig)
 	config.ConfigFilePath = configPath
 
@@ -208,4 +209,27 @@ func buildDryRunConfig(yamlParsedConfig *yamlConfiguration) DryRunConfig {
 
 func buildRecipientsConfig(yamlParsedConfig *yamlConfiguration) []string {
 	return yamlParsedConfig.Recipients
+}
+
+func buildJellyseerrConfig(yamlParsedConfig *yamlConfiguration) JellyseerrConfig {
+	jellyseerrConfig := JellyseerrConfig{
+		Enabled: false,
+	}
+
+	if yamlParsedConfig.Jellyseerr != nil && yamlParsedConfig.Jellyseerr.Enabled {
+		// Remove trailing slash from URL
+		rawURL := yamlParsedConfig.Jellyseerr.URL
+		if len(rawURL) > 0 && rawURL[len(rawURL)-1] == '/' {
+			rawURL = rawURL[:len(rawURL)-1]
+		}
+
+		jellyseerrConfig = JellyseerrConfig{
+			Enabled:      true,
+			URL:          rawURL,
+			APIKey:       yamlParsedConfig.Jellyseerr.APIKey,
+			ExcludeUsers: yamlParsedConfig.Jellyseerr.ExcludeUsers,
+		}
+	}
+
+	return jellyseerrConfig
 }

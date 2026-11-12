@@ -116,6 +116,18 @@ email:
 #    enabled: false
 #    output_directory: /app/config/
 
+# (Optional) Automatically synchronize recipients from Jellyseerr / Overseerr
+# When enabled, users with valid email addresses are automatically fetched and merged into recipients.
+#jellyseerr:
+#  enabled: false
+#  # URL of your Jellyseerr or Overseerr instance (e.g. http://jellyseerr:5055)
+#  url: ""
+#  # API key generated in Jellyseerr Settings -> General
+#  api_key: ""
+#  # (Optional) List of usernames or email addresses to exclude from receiving the newsletter
+#  exclude_users:
+#    - ""
+
 # List of users to send the newsletter to
 recipients:
   - ""

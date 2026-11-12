@@ -1,9 +1,14 @@
 package newsletter
 
 import (
+	"context"
+	"net/mail"
+	"strings"
+
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/app"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/dryrun"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyfin"
+	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/jellyseerr"
 	persistentdata "github.com/SeaweedbrainCY/jellyfin-newsletter/internal/persistentData"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/smtp"
 	"github.com/SeaweedbrainCY/jellyfin-newsletter/internal/template"
@@ -55,6 +60,17 @@ func (workflow Workflow) Run(app *app.ApplicationContext) {
 		app.Logger.Fatal("Failed to build email HTML template.", zap.Error(err))
 	}
 
+	if app.Config.Jellyseerr.Enabled {
+		app.Logger.Info("Synchronizing recipients from Jellyseerr ...")
+		seerRecipients, seerErr := jellyseerr.FetchRecipients(context.Background(), &app.Config.Jellyseerr, nil)
+		if seerErr != nil {
+			app.Logger.Warn("Failed to synchronize recipients from Jellyseerr", zap.Error(seerErr))
+		} else {
+			app.Logger.Info("Fetched recipients from Jellyseerr", zap.Int("count", len(seerRecipients)))
+			app.Config.EmailRecipients = mergeRecipients(app.Config.EmailRecipients, seerRecipients)
+		}
+	}
+
 	if app.Config.DryRun.Enabled {
 		dryrun.SaveDryRunEmail(emailHTML, recentlyAddedMovies, recentlyAddedSeries, app)
 		app.Logger.Info("Successfully generated the newsletter (dry run).")
@@ -74,4 +90,40 @@ func (workflow Workflow) Run(app *app.ApplicationContext) {
 	}
 
 	app.Logger.Info("Thanks for using Jellyfin-Newsletter !")
+}
+
+func mergeRecipients(base, extra []string) []string {
+	seen := make(map[string]struct{})
+	var result []string
+	for _, r := range base {
+		trimmed := strings.TrimSpace(r)
+		if trimmed == "" {
+			continue
+		}
+		addr, err := mail.ParseAddress(trimmed)
+		key := strings.ToLower(trimmed)
+		if err == nil {
+			key = strings.ToLower(addr.Address)
+		}
+		if _, exists := seen[key]; !exists {
+			seen[key] = struct{}{}
+			result = append(result, trimmed)
+		}
+	}
+	for _, r := range extra {
+		trimmed := strings.TrimSpace(r)
+		if trimmed == "" {
+			continue
+		}
+		addr, err := mail.ParseAddress(trimmed)
+		key := strings.ToLower(trimmed)
+		if err == nil {
+			key = strings.ToLower(addr.Address)
+		}
+		if _, exists := seen[key]; !exists {
+			seen[key] = struct{}{}
+			result = append(result, trimmed)
+		}
+	}
+	return result
 }
