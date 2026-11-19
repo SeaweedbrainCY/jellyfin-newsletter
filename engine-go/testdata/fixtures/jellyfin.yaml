@@ -158,7 +158,7 @@ interactions:
                 - application/json
             User-Agent:
                 - ""
-        url: http://localhost:8096/Items?enableImages=false&enableTotalRecordCount=true&fields=DateCreated&fields=ProviderIds&fields=Id&fields=Name&fields=ProductionYear&isMovie=true&locationTypes=FileSystem&parentId=5b0d238e2f6d5609b709d7b76300e217&recursive=false
+        url: http://localhost:8096/Items?enableImages=false&enableTotalRecordCount=true&fields=DateCreated&fields=ProviderIds&fields=Id&fields=Name&fields=ProductionYear&includeItemTypes=Movie&isMovie=true&locationTypes=FileSystem&parentId=5b0d238e2f6d5609b709d7b76300e217&recursive=false
         method: GET
       response:
         proto: HTTP/1.1
