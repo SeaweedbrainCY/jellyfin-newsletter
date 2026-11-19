@@ -41,6 +41,7 @@ func (libraryAPI libraryItemAPI) GetMoviesItemsByFolderID(
 		LocationTypes([]jellyfinAPI.LocationType{jellyfinAPI.LOCATIONTYPE_FILE_SYSTEM}).
 		IsMovie(true).
 		Fields([]jellyfinAPI.ItemFields{"DateCreated", "ProviderIds", "Id", "Name", "ProductionYear"}).
+		IncludeItemTypes([]jellyfinAPI.BaseItemKind{jellyfinAPI.BASEITEMKIND_MOVIE}).
 		Execute()
 
 	err := checkHTTPRequest("GetMoviesItemsByFolderID", getMoviesHTTPResponse, httpErr, app.Logger)
